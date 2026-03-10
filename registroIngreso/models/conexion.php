@@ -3,7 +3,11 @@
 $servidor = "localhost";
 $usuario = "root";
 $password = "";
+<<<<<<< HEAD
 $base_datos = "conexionprueba2";
+=======
+$base_datos = "conexionprueba";
+>>>>>>> main
 
 $conexion = mysqli_connect($servidor, $usuario, $password, $base_datos);
 
