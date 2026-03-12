@@ -120,7 +120,7 @@
                 </a>
             </li>
             <li class="menu-item">
-                <a href="views/userViews/usuarios.php">
+                <a href="views/userViews/usuariosview.php">
                     <i class="bi bi-people"></i>
                     <span>Usuarios</span>
                 </a>
