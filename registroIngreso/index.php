@@ -120,7 +120,7 @@
                 </a>
             </li>
             <li class="menu-item">
-                <a href="#usuarios">
+                <a href="views/userViews/usuarios.php">
                     <i class="bi bi-people"></i>
                     <span>Usuarios</span>
                 </a>
@@ -176,13 +176,17 @@
     </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-<script>
+<<script>
     // Activar el menú según la sección actual
     document.querySelectorAll('.menu-item a').forEach(link => {
         link.addEventListener('click', function(e) {
-            e.preventDefault();
-            document.querySelectorAll('.menu-item a').forEach(a => a.classList.remove('active'));
-            this.classList.add('active');
+            // Verifica si el enlace es solo un ancla (empieza con #)
+            if (this.getAttribute('href').startsWith('#')) {
+                e.preventDefault(); // Solo cancela la navegación si es un #
+                document.querySelectorAll('.menu-item a').forEach(a => a.classList.remove('active'));
+                this.classList.add('active');
+            }
+            // Si el enlace NO empieza con #, dejará que el navegador cambie de página normalmente.
         });
     });
 </script>
