@@ -103,6 +103,13 @@
         .content-area {
             padding: 30px;
         }
+        .content-frame {
+            width: 100%;
+            min-height: calc(100vh - 130px);
+            border: 0;
+            border-radius: 12px;
+            background-color: #fff;
+        }
     </style>
 </head>
 <body>
@@ -114,43 +121,43 @@
         </div>
         <ul class="sidebar-menu">
             <li class="menu-item">
-                <a href="#dashboard">
+                <a href="#dashboard" data-title="Dashboard">
                     <i class="bi bi-house-door"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <li class="menu-item">
-                <a href="#usuarios">
+                <a href="views/userViews/userview.php" data-view="views/userViews/userview.php" data-title="Usuarios">
                     <i class="bi bi-people"></i>
                     <span>Usuarios</span>
                 </a>
             </li>
             <li class="menu-item">
-                <a href="#control-ingreso">
+                <a href="#control-ingreso" data-title="Control de Ingreso">
                     <i class="bi bi-grid"></i>
                     <span>Control de Ingreso</span>
                 </a>
             </li>
             <li class="menu-item">
-                <a href="keyviews/keyviews.php" class="active">
+                <a href="views/keyviews/keyviews.php" data-view="views/keyviews/keyviews.php" data-title="Control de Llaves" class="active">
                     <i class="bi bi-key"></i>
                     <span>Control de Llaves</span>
                 </a>
             </li>
             <li class="menu-item">
-                <a href="#permisos-salida">
+                <a href="views/Permisos/permisosview.php" data-view="views/Permisos/permisosview.php" data-title="Permisos de Salida">
                     <i class="bi bi-door-open"></i>
                     <span>Permisos de Salida</span>
                 </a>
             </li>
             <li class="menu-item">
-                <a href="#reportes">
+                <a href="#reportes" data-title="Reportes">
                     <i class="bi bi-bar-chart"></i>
                     <span>Reportes</span>
                 </a>
             </li>
             <li class="menu-item">
-                <a href="#personal-externo">
+                <a href="#personal-externo" data-title="Personal Externo">
                     <i class="bi bi-person-badge"></i>
                     <span>Personal Externo</span>
                 </a>
@@ -162,7 +169,7 @@
     <div class="main-content">
         <!-- Top Bar -->
         <div class="top-bar">
-            <h4>Control de Llaves</h4>
+            <h4 id="titulo-seccion">Control de Llaves</h4>
             <div class="admin-badge">
                 <span>Administrador Sistema</span>
                 <i class="bi bi-person-circle"></i>
@@ -171,18 +178,35 @@
 
         <!-- Content Area -->
         <div class="content-area">
-            <!-- Contenido dinámico aquí -->
+            <iframe id="contenido-frame" class="content-frame" src="views/keyviews/keyviews.php" title="Contenido principal"></iframe>
         </div>
     </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 <script>
-    // Activar el menú según la sección actual
-    document.querySelectorAll('.menu-item a').forEach(link => {
+    const linksMenu = document.querySelectorAll('.menu-item a');
+    const tituloSeccion = document.getElementById('titulo-seccion');
+    const contenidoFrame = document.getElementById('contenido-frame');
+
+    linksMenu.forEach(link => {
         link.addEventListener('click', function(e) {
-            e.preventDefault();
+            const titulo = this.dataset.title || this.textContent.trim();
+            const vista = this.dataset.view;
+
             document.querySelectorAll('.menu-item a').forEach(a => a.classList.remove('active'));
             this.classList.add('active');
+            tituloSeccion.textContent = titulo;
+
+            if (vista) {
+                e.preventDefault();
+                contenidoFrame.src = vista;
+                return;
+            }
+
+            if (this.getAttribute('href').startsWith('#')) {
+                e.preventDefault();
+                contenidoFrame.src = 'about:blank';
+            }
         });
     });
 </script>
