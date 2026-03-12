@@ -2,9 +2,9 @@
 // Configuración de datos simulados para recrear la imagen exacta
 date_default_timezone_set('America/Bogota'); // Ajustar a la zona horaria adecuada si es necesario
 
-// Para la recreación fiel de la imagen, fijaremos la hora y el contador.
-// En un entorno de producción, esto usaría date('g:i a') y datos de base de datos.
-$currentTime = "05:38 p. m.";
+// Se carga la hora inicial con PHP
+$currentTime = date('h:i a');
+$currentTime = str_replace(['am', 'pm'], ['a. m.', 'p. m.'], $currentTime);
 $totalMarcaciones = 0;
 
 // Lista de personas para el simulador
@@ -23,7 +23,6 @@ $marcaciones = [
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if ($_POST['action'] === 'simular' && !empty($_POST['persona_simulada'])) {
         // En un entorno real, aquí se añadiría la marcación a la base de datos
-        $currentTime = date('g:i a'); // Actualizar la hora si se simula
         echo "<script>alert('Simulación exitosa para: " . htmlspecialchars($_POST['persona_simulada']) . "');</script>";
     }
 }
@@ -209,80 +208,88 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             gap: 10px;
         }
 
-        /* Simulador de Código de Barras (Overlay) */
+      /* Simulador de Código de Barras (Overlay) */
         .simulator-overlay {
             position: fixed;
             left: 40px;
             bottom: 40px;
-            width: 320px;
-            background-color: #121212; /* Fondo casi negro */
-            border-radius: 10px;
+            width: 360px; /* Ligeramente más ancho */
+            background-color: #0a0a0a; /* Fondo casi negro puro */
+            border-radius: 6px;
             padding: 20px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-            border: 2px solid #ffcc00; /* Borde amarillo para resaltar */
+            border: 2px solid #d4af37; /* Borde amarillo/mostaza */
             z-index: 1000;
         }
 
         .simulator-header {
             display: flex;
             align-items: center;
-            color: #ffcc00;
-            margin-bottom: 15px;
+            color: #d4af37; /* Color amarillo del título */
+            margin-bottom: 20px;
             font-size: 14px;
             font-weight: bold;
-        }
-        .simulator-header::before {
-            content: '✎'; /* Icono de lápiz simulado */
-            margin-right: 8px;
+            letter-spacing: 0.5px;
         }
 
-        /* Estilo para los elementos del simulador */
+        /* Se eliminó el ::before que ponía el lápiz, ahora usamos el emoji en el HTML */
+
         .simulator-overlay form {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
 
         .simulator-overlay select {
             width: 100%;
-            padding: 12px;
+            padding: 8px 12px;
             background-color: white;
-            color: black;
-            border-radius: 5px;
+            color: #333;
+            border-radius: 4px;
             border: none;
             box-sizing: border-box;
-            appearance: none; /* Quitar flecha predeterminada */
+            /* QUITA appearance: none; para que aparezca la flechita nativa del menú desplegable */
             font-size: 14px;
         }
 
         .simulator-overlay .btn {
             width: 100%;
-            padding: 12px;
-            border-radius: 5px;
+            padding: 10px;
+            border-radius: 4px;
             border: none;
             cursor: pointer;
-            font-weight: bold;
             text-align: center;
             font-size: 14px;
-            display: block;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px; /* Espacio entre el icono y el texto */
             box-sizing: border-box;
-            text-decoration: none; /* Para el enlace 'Salir' */
+            text-decoration: none;
         }
 
         .simulator-overlay .btn-simular {
-            background-color: #ffcc00;
-            color: black;
+            background-color: #a38114; /* Amarillo oscuro / ocre como en la imagen */
+            color: #111;
         }
 
         .simulator-overlay .btn-desconocido {
-            background-color: #555;
+            background-color: #687077; /* Gris azulado */
             color: white;
         }
 
+        /* Nueva línea separadora antes del botón salir */
+        .simulator-divider {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin: 8px 0;
+        }
+
         .simulator-overlay .btn-salir {
-            background-color: #e74c3c; /* Rojo */
+            background-color: #df3b4b; /* Rojo */
             color: white;
-            margin-top: 10px;
+            width: max-content; /* Hace que el botón mida solo lo que ocupa el texto */
+            padding: 8px 16px;
+            margin-top: 0;
         }
     </style>
 </head>
@@ -299,7 +306,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         </div>
         <div class="header-info">
             <div class="info-panel">
-                <p class="info-main"><?php echo $currentTime; ?></p>
+                <p class="info-main" id="reloj"><?php echo $currentTime; ?></p>
                 <p class="info-label">Hora Actual</p>
             </div>
             <div class="info-panel">
@@ -340,7 +347,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     </main>
 
     <div class="simulator-overlay">
-        <div class="simulator-header">SIMULADOR DE CÓDIGO DE BARRAS</div>
+        <div class="simulator-header">🧪 SIMULADOR DE CÓDIGO DE BARRAS</div>
         <form action="" method="post">
             <select name="persona_simulada">
                 <option value="" disabled selected>Seleccione persona...</option>
@@ -348,11 +355,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     <option value="<?php echo htmlspecialchars($persona); ?>"><?php echo htmlspecialchars($persona); ?></option>
                 <?php endforeach; ?>
             </select>
-            <button type="submit" class="btn btn-simular" name="action" value="simular">Simular Escaneo</button>
-            <button type="submit" class="btn btn-desconocido" name="action" value="desconocido">Código Desconocido</button>
+            <button type="submit" class="btn btn-simular" name="action" value="simular">📷 Simular Escaneo</button>
+            <button type="submit" class="btn btn-desconocido" name="action" value="desconocido"><span style="color: #ff4d4d;">❓</span> Código Desconocido</button>
+            
+            <div class="simulator-divider"></div>
+            
             <a href="#" class="btn btn-salir">Salir del Kiosko</a>
         </form>
     </div>
 
+    <script>
+        function actualizarReloj() {
+            const ahora = new Date();
+            let horas = ahora.getHours();
+            let minutos = ahora.getMinutes();
+            let ampm = horas >= 12 ? 'p. m.' : 'a. m.';
+
+            // Convertir a formato de 12 horas
+            horas = horas % 12;
+            horas = horas ? horas : 12; // La hora '0' debe ser '12'
+
+            horas = horas < 10 ? '0' + horas : horas;
+            minutos = minutos < 10 ? '0' + minutos : minutos;
+            const strTiempo = horas + ':' + minutos + ' ' + ampm;
+            document.getElementById('reloj').textContent = strTiempo;
+        }
+
+        setInterval(actualizarReloj, 1000);
+        actualizarReloj();
+    </script>
 </body>
 </html>
