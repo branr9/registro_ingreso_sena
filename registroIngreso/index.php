@@ -132,7 +132,7 @@
                 </a>
             </li>
             <li class="menu-item">
-                <a href="#control-llaves" class="active">
+                <a href="keyviews/keyviews.php" class="active">
                     <i class="bi bi-key"></i>
                     <span>Control de Llaves</span>
                 </a>
