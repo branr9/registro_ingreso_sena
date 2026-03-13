@@ -146,20 +146,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
         /* Panel de Actividad Reciente */
         .activity-panel {
-            width: 350px;
-            background-color: #1a5334; /* Fondo de actividad */
-            border-radius: 12px;
-            padding: 25px;
+            width: 380px;
+            /* Se eliminó el fondo oscuro para que se funda con la página como en la imagen */
+            background-color: transparent; 
+            padding: 0;
             display: flex;
             flex-direction: column;
         }
 
         .activity-panel h3 {
-            font-size: 20px;
-            margin: 0 0 20px 0;
+            font-size: 22px;
+            margin: 0 0 15px 0;
             border-bottom: 2px solid #ffcc00;
             padding-bottom: 10px;
             color: white;
+            font-weight: 600;
+            letter-spacing: 0.5px;
         }
 
         .activity-list {
@@ -174,31 +176,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         .activity-list::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 3px; }
 
         .activity-item {
-            background-color: #26794a;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 10px;
+            background-color: #318a4c; /* Verde más claro de las tarjetas */
+            border-radius: 10px; /* Bordes más redondeados */
+            padding: 15px 20px;
+            margin-bottom: 12px;
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 6px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* Sombra sutil */
         }
 
         .activity-header {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-start; /* Pone la etiqueta pegada al nombre */
             align-items: center;
+            gap: 12px;
         }
 
-        .activity-name { font-weight: bold; color: white; }
-        .status-tag {
-            font-size: 11px;
-            font-weight: bold;
-            padding: 3px 8px;
-            border-radius: 4px;
-            color: white;
+        .activity-name { 
+            font-weight: bold; 
+            color: white; 
+            font-size: 15px;
         }
-        .status-tag.salida { background-color: #3bbfb8; } /* Verde azulado */
-        .status-tag.entrada { background-color: #63d179; } /* Verde */
+
+        .status-tag {
+            font-size: 10px;
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 12px; /* Forma de píldora */
+            color: white;
+            text-transform: uppercase;
+        }
+        .status-tag.salida { background-color: #1b8a66; } /* Verde azulado */
+        .status-tag.entrada { background-color: #219653; } /* Verde brillante */
+
+        .activity-details {
+            font-size: 13px;
+            opacity: 0.85;
+            color: white;
+            display: flex;
+            align-items: center; /* Alinea el texto con el puntito */
+            gap: 6px;
+        }
+
+        /* Estilos para el puntito de color (Rojo/Verde) */
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: inset -2px -2px 4px rgba(0,0,0,0.2); /* Efecto 3D en el punto */
+        }
+        .status-dot.salida { background-color: #e74c3c; } /* Rojo */
+        .status-dot.entrada { background-color: #2ecc71; } /* Verde claro */
 
         .activity-details {
             font-size: 12px;
@@ -338,6 +368,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                         </div>
                         <div class="activity-details">
                             <span><?php echo htmlspecialchars($marcacion['hora']); ?> - </span>
+                            <span class="status-dot <?php echo strtolower($marcacion['estado']); ?>"></span>
                             <span><?php echo htmlspecialchars($marcacion['accion']); ?></span>
                         </div>
                     </div>
@@ -360,7 +391,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             
             <div class="simulator-divider"></div>
             
-            <a href="#" class="btn btn-salir">Salir del Kiosko</a>
+            <a href="../../index.php" class="btn btn-salir">Salir del Kiosko</a>
         </form>
     </div>
 
