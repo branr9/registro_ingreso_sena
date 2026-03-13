@@ -150,7 +150,7 @@
                 </a>
             </li>
             <li class="menu-item">
-                <a href="#personal-externo">
+                <a href="views/personalExterno/personalExternoview.php">
                     <i class="bi bi-person-badge"></i>
                     <span>Personal Externo</span>
                 </a>
