@@ -14,42 +14,32 @@ $estado = $_GET['estado'] ?? 'Todos';
 // ==============================================================================
 // 3. CONSULTAS DE ESTADÍSTICAS
 // ==============================================================================
-/* Aquí debes ejecutar tus consultas SQL para obtener los totales reales.
-Ejemplo:
-$sqlTotal = "SELECT COUNT(*) as total FROM usuarios";
-$sqlActivos = "SELECT COUNT(*) as activos FROM usuarios WHERE estado = 1"; // Asumiendo 1 = activo
-$sqlInactivos = "SELECT COUNT(*) as inactivos FROM usuarios WHERE estado = 0"; // Asumiendo 0 = inactivo
-// Luego asignas los resultados a estas variables:
-*/
-$totalUsuarios = 0; 
-$totalActivos = 0;  
+/* Aquí debes ejecutar tus consultas SQL para obtener los totales reales. */
+// ESTOS VALORES SON SIMULADOS PARA QUE PRUEBES LA INTERFAZ
+$totalUsuarios = 1; 
+$totalActivos = 1;  
 $totalInactivos = 0; 
 
 // ==============================================================================
 // 4. CONSULTA PRINCIPAL DE USUARIOS (Con Filtros)
 // ==============================================================================
 /*
-$sql = "SELECT * FROM usuarios WHERE 1=1";
-
-if (!empty($search)) {
-    $sql .= " AND (documento LIKE '%$search%' OR nombre LIKE '%$search%' OR email LIKE '%$search%')";
-}
-if ($tipo !== 'Todos') {
-    $sql .= " AND tipo = '$tipo'";
-}
-if ($estado !== 'Todos') {
-    $estadoValor = ($estado === 'Activos') ? 1 : 0;
-    $sql .= " AND estado = $estadoValor";
-}
-
-// Ejecutar la consulta y guardar los resultados en $usuarios_db
-// $stmt = $pdo->prepare($sql);
-// $stmt->execute();
-// $usuarios_db = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// Lógica real de base de datos...
 */
 
-// Inicializamos la variable vacía para que la tabla no muestre datos falsos
-$usuarios_db = []; 
+// UN USUARIO DE PRUEBA PARA ENSAYAR LOS BOTONES Y LA TABLA
+$usuarios_db = [
+    [
+        'documento' => '123321456',
+        'nombre' => 'Alberto Cárdenas',
+        'tipo' => 'Vigilante',
+        'empresa' => 'Atlas',
+        'email' => 'alberti@gmail.com',
+        'username' => '@alberto12',
+        'rol' => 'Vigilante',
+        'estado' => 1 // 1 para Activo, 0 para Inactivo
+    ]
+]; 
 ?>
 <!DOCTYPE html>
 <html lang="es">
