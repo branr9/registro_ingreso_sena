@@ -35,6 +35,7 @@
             min-height: 100vh;
         }
 
+<<<<<<< HEAD
         /* ===== SIDEBAR ===== */
         .sidebar {
             width: 260px;
@@ -150,6 +151,10 @@
         /* ===== MAIN CONTENT ===== */
         .main-content {
             margin-left: 260px;
+
+
+
+
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -585,14 +590,18 @@
         }
 
         @media (max-width: 768px) {
+<<<<<<< HEAD
             .sidebar { transform: translateX(-100%); }
             .main-content { margin-left: 0; }
+=======
+>>>>>>> main
             .form-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
+<<<<<<< HEAD
 <!-- ===== SIDEBAR ===== -->
 <aside class="sidebar">
     <div class="sidebar-brand">
@@ -638,6 +647,8 @@
     </div>
 </aside>
 
+=======
+>>>>>>> main
 <!-- ===== MAIN CONTENT ===== -->
 <main class="main-content">
 
