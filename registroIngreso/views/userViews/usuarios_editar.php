@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Usuario - Sistema Ingreso</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/heroicons@^2/24/outline.js" defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
     <script>
         tailwind.config = {
             theme: {
@@ -26,34 +30,72 @@
 <body class="bg-gray-50 font-sans antialiased text-gray-800">
     <div class="min-h-screen flex">
 
-        <nav class="w-64 bg-sidebar-bg text-white flex flex-col p-4">
-            <div class="flex items-center gap-3 mb-10 pb-4 border-b border-white/20">
-                <div class="bg-active-menu p-2 rounded-lg">
-                    <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                    </svg>
-                </div>
-                <h1 class="text-xl font-bold">Sistema Ingreso</h1>
+        <nav class="w-[230px] flex-shrink-0 bg-gradient-to-b from-[#6b4db8] to-[#5a3d9e] flex flex-col shadow-[2px_0_5px_rgba(0,0,0,0.1)] min-h-screen relative z-10">
+            <div class="bg-black/10 py-[20px] px-[15px] flex items-center gap-[10px]">
+                <i class="bi bi-flower2 text-[#4ade80] text-[35px]"></i>
+                <h5 class="text-white m-0 text-[18px] font-semibold">Sistema Ingreso</h5>
             </div>
 
-            <div class="flex flex-col gap-2 flex-grow">
-                <a href="../../index.php" class="flex items-center gap-3 p-3 rounded-lg hover:bg-sidebar-hover transition">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21.75h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21.75h7.5" /></svg>
-                    Dashboard
-                </a>
-                <a href="usuarios.php" class="flex items-center gap-3 p-3 rounded-lg bg-active-menu hover:bg-green-600 transition">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
-                    Usuarios
-                </a>
-            </div>
+            <ul class="list-none p-0 my-[20px] flex-grow flex flex-col gap-1">
+                <li>
+                    <a href="../../index.php" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10">
+                        <i class="bi bi-house-door text-[20px] w-[25px]"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="usuariosview.php" class="flex items-center px-[20px] py-[15px] bg-[#4ade80] text-white font-semibold no-underline transition-all duration-300 gap-[12px] text-[15px]">
+                        <i class="bi bi-people text-[20px] w-[25px]"></i>
+                        <span>Usuarios</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10">
+                        <i class="bi bi-grid text-[20px] w-[25px]"></i>
+                        <span>Control de Ingreso</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10">
+                        <i class="bi bi-key text-[20px] w-[25px]"></i>
+                        <span>Control de Llaves</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10">
+                        <i class="bi bi-door-open text-[20px] w-[25px]"></i>
+                        <span>Permisos de Salida</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10">
+                        <i class="bi bi-bar-chart text-[20px] w-[25px]"></i>
+                        <span>Reportes</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10">
+                        <i class="bi bi-person-badge text-[20px] w-[25px]"></i>
+                        <span>Personal Externo</span>
+                    </a>
+                </li>
+            </ul>
 
-            <div class="mt-auto pt-6 border-t border-white/20">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="bg-sky-500 rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg text-white">A</div>
-                    <div>
-                        <p class="font-semibold text-sm">Administrador Sistema</p>
-                        <p class="text-xs text-white/70">ADMIN</p>
+            <div class="mt-auto pt-6 pb-4 border-t border-white/20">
+                <div class="flex items-center gap-3 px-5 mb-4">
+                    <div class="bg-blue-400 rounded-full w-10 h-10 flex items-center justify-center font-bold text-[22px] text-white">
+                        <i class="bi bi-person-circle"></i>
                     </div>
+                    <div>
+                        <p class="text-white font-semibold text-sm m-0">Administrador Sistema</p>
+                        <p class="text-xs text-white/70 m-0">ADMIN</p>
+                    </div>
+                </div>
+                <div class="px-3">
+                    <button class="flex w-full items-center gap-[12px] px-[15px] py-[10px] rounded-lg text-red-300 hover:bg-white/10 transition-all duration-300">
+                        <i class="bi bi-box-arrow-left text-[20px] w-[25px]"></i>
+                        <span class="text-[15px] font-medium">Salir</span>
+                    </button>
                 </div>
             </div>
         </nav>
@@ -63,7 +105,9 @@
                 <h2 class="text-2xl font-bold text-gray-800">Editar Usuario</h2>
                 <div class="flex items-center gap-3">
                     <p class="text-sm font-medium">Administrador Sistema</p>
-                    <div class="bg-active-menu rounded-full w-9 h-9 flex items-center justify-center font-bold text-lg text-white">A</div>
+                    <div class="bg-[#4ade80] rounded-full w-9 h-9 flex items-center justify-center font-bold text-lg text-white">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
                 </div>
             </header>
 
@@ -72,9 +116,9 @@
                 <div class="mb-8">
                     <div class="flex items-center gap-4 mb-2">
                         <a href="usuariosview.php" class="bg-gray-500 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 hover:bg-gray-600 transition">
-    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" /></svg>
-    Volver
-</a>
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" /></svg>
+                            Volver
+                        </a>
                         <div class="flex items-center gap-2 text-gray-700">
                             <h3 class="text-3xl font-bold">Editar Usuario</h3>
                         </div>
