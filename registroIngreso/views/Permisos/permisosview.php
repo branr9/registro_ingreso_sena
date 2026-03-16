@@ -35,126 +35,9 @@
             min-height: 100vh;
         }
 
-<<<<<<< HEAD
-        /* ===== SIDEBAR ===== */
-        .sidebar {
-            width: 260px;
-            min-height: 100vh;
-            background: var(--sidebar-bg);
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            z-index: 100;
-        }
-
-        .sidebar-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 22px 20px;
-            color: white;
-            font-size: 1.2rem;
-            font-weight: 800;
-            border-bottom: 1px solid rgba(255,255,255,0.12);
-        }
-
-        .sidebar-brand .brand-icon {
-            width: 38px;
-            height: 38px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-        }
-
-        .sidebar-nav {
-            flex: 1;
-            padding: 16px 0;
-            overflow-y: auto;
-        }
-
-        .nav-item-link {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 20px;
-            color: rgba(255,255,255,0.82);
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 600;
-            transition: all 0.2s;
-            border-left: 3px solid transparent;
-        }
-
-        .nav-item-link:hover {
-            background: var(--sidebar-hover);
-            color: white;
-            border-left-color: rgba(255,255,255,0.4);
-        }
-
-        .nav-item-link.active {
-            background: var(--accent-green);
-            color: white;
-            border-left-color: white;
-        }
-
-        .nav-item-link i {
-            font-size: 1.1rem;
-            width: 22px;
-            text-align: center;
-        }
-
-        .sidebar-footer {
-            padding: 16px 20px;
-            border-top: 1px solid rgba(255,255,255,0.12);
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: white;
-            margin-bottom: 10px;
-        }
-
-        .user-avatar {
-            width: 38px;
-            height: 38px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .user-name { font-weight: 700; font-size: 0.9rem; }
-        .user-role { font-size: 0.75rem; opacity: 0.7; }
-
-        .btn-logout {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #ff6b6b;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 0.88rem;
-            padding: 6px 4px;
-            transition: opacity 0.2s;
-        }
-        .btn-logout:hover { opacity: 0.8; color: #ff6b6b; }
-
         /* ===== MAIN CONTENT ===== */
         .main-content {
-            margin-left: 260px;
-
-
-
-
+            margin-left: 0;
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -590,65 +473,12 @@
         }
 
         @media (max-width: 768px) {
-<<<<<<< HEAD
-            .sidebar { transform: translateX(-100%); }
-            .main-content { margin-left: 0; }
-=======
->>>>>>> main
             .form-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-<<<<<<< HEAD
-<!-- ===== SIDEBAR ===== -->
-<aside class="sidebar">
-    <div class="sidebar-brand">
-        <div class="brand-icon">✳</div>
-        Sistema Ingreso
-    </div>
-
-    <nav class="sidebar-nav">
-        <a href="#" class="nav-item-link">
-            <i class="bi bi-house-door-fill"></i> Dashboard
-        </a>
-        <a href="#" class="nav-item-link">
-            <i class="bi bi-people-fill"></i> Usuarios
-        </a>
-        <a href="#" class="nav-item-link">
-            <i class="bi bi-grid-3x3-gap-fill"></i> Control de Ingreso
-        </a>
-        <a href="#" class="nav-item-link">
-            <i class="bi bi-key-fill"></i> Control de Llaves
-        </a>
-        <a href="#" class="nav-item-link active" id="nav-permisos">
-            <i class="bi bi-clipboard-check-fill"></i> Permisos de Salida
-        </a>
-        <a href="#" class="nav-item-link">
-            <i class="bi bi-bar-chart-line-fill"></i> Reportes
-        </a>
-        <a href="#" class="nav-item-link">
-            <i class="bi bi-person-lines-fill"></i> Personal Externo
-        </a>
-    </nav>
-
-    <div class="sidebar-footer">
-        <div class="user-info">
-            <div class="user-avatar"><i class="bi bi-person-fill"></i></div>
-            <div>
-                <div class="user-name">Administrador Sistema</div>
-                <div class="user-role">ADMIN</div>
-            </div>
-        </div>
-        <a href="#" class="btn-logout">
-            <i class="bi bi-box-arrow-right"></i> Salir
-        </a>
-    </div>
-</aside>
-
-=======
->>>>>>> main
 <!-- ===== MAIN CONTENT ===== -->
 <main class="main-content">
 
