@@ -121,7 +121,7 @@
         </div>
         <ul class="sidebar-menu">
             <li class="menu-item">
-                <a href="#" data-view="views/controldeIngreso/controldeIngresoview.php" data-title="Dashboard">
+                <a href="#" data-view="views/controldeIngreso/dashboardview.php" data-title="Dashboard" class="active">
                     <i class="bi bi-house-door"></i>
                     <span>Dashboard</span>
                 </a>
@@ -145,7 +145,7 @@
                 </a>
             </li>
             <li class="menu-item">
-                <a href="#" data-view="views/Permisos/permisosview.php" data-title="Permisos de Salida" class="active">
+                <a href="#" data-view="views/Permisos/permisosview.php" data-title="Permisos de Salida">
                     <i class="bi bi-door-open"></i>
                     <span>Permisos de Salida</span>
                 </a>
@@ -169,7 +169,7 @@
     <div class="main-content">
         <!-- Top Bar -->
         <div class="top-bar">
-            <h4 id="titulo-seccion">Permisos de Salida</h4>
+            <h4 id="titulo-seccion">Dashboard</h4>
             <div class="admin-badge">
                 <span>Administrador Sistema</span>
                 <i class="bi bi-person-circle"></i>
@@ -178,7 +178,7 @@
 
         <!-- Content Area -->
         <div class="content-area">
-            <iframe id="contenido-frame" class="content-frame" src="views/Permisos/permisosview.php" title="Contenido principal"></iframe>
+            <iframe id="contenido-frame" class="content-frame" src="views/controldeIngreso/dashboardview.php" title="Contenido principal"></iframe>
         </div>
     </div>
 
