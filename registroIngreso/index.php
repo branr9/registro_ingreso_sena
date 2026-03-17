@@ -121,43 +121,43 @@
         </div>
         <ul class="sidebar-menu">
             <li class="menu-item">
-                <a href="#dashboard" data-title="Dashboard">
+                <a href="#" data-view="views/controldeIngreso/controldeIngresoview.php" data-title="Dashboard">
                     <i class="bi bi-house-door"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <li class="menu-item">
-                <a href="views/userViews/userview.php" data-view="views/userViews/userview.php" data-title="Usuarios">
+                <a href="#" data-view="views/userViews/userview.php" data-title="Usuarios">
                     <i class="bi bi-people"></i>
                     <span>Usuarios</span>
                 </a>
             </li>
             <li class="menu-item">
-                <a href="#control-ingreso" data-title="Control de Ingreso">
+                <a href="#" data-view="views/controldeIngreso/controldeIngresoview.php" data-title="Control de Ingreso">
                     <i class="bi bi-grid"></i>
                     <span>Control de Ingreso</span>
                 </a>
             </li>
             <li class="menu-item">
-                <a href="views/keyviews/keyviews.php" data-view="views/keyviews/keyviews.php" data-title="Control de Llaves">
+                <a href="#" data-view="views/keyviews/keyviews.php" data-title="Control de Llaves">
                     <i class="bi bi-key"></i>
                     <span>Control de Llaves</span>
                 </a>
             </li>
             <li class="menu-item">
-                <a href="views/Permisos/permisosview.php" data-view="views/Permisos/permisosview.php" data-title="Permisos de Salida" class="active">
+                <a href="#" data-view="views/Permisos/permisosview.php" data-title="Permisos de Salida" class="active">
                     <i class="bi bi-door-open"></i>
                     <span>Permisos de Salida</span>
                 </a>
             </li>
             <li class="menu-item">
-                <a href="#reportes" data-title="Reportes">
+                <a href="#" data-view="views/userViews/userview.php" data-title="Reportes">
                     <i class="bi bi-bar-chart"></i>
                     <span>Reportes</span>
                 </a>
             </li>
             <li class="menu-item">
-                <a href="#personal-externo" data-title="Personal Externo">
+                <a href="#" data-view="views/personalExterno/personalExternoview.php" data-title="Personal Externo">
                     <i class="bi bi-person-badge"></i>
                     <span>Personal Externo</span>
                 </a>
@@ -191,22 +191,23 @@
 
     linksMenu.forEach(link => {
         link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
             const titulo = this.dataset.title || this.textContent.trim();
             const vista = this.dataset.view;
 
+            // Remover clase active de todos los links
             document.querySelectorAll('.menu-item a').forEach(a => a.classList.remove('active'));
+            
+            // Agregar clase active al link clickeado
             this.classList.add('active');
+            
+            // Cambiar el título de la sección
             tituloSeccion.textContent = titulo;
 
+            // Cargar la vista en el iframe
             if (vista) {
-                e.preventDefault();
                 contenidoFrame.src = vista;
-                return;
-            }
-
-            if (this.getAttribute('href').startsWith('#')) {
-                e.preventDefault();
-                contenidoFrame.src = 'about:blank';
             }
         });
     });
