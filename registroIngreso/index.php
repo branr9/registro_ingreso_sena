@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Ingreso SENA</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <title>Sistema Ingreso SENA</title>
     <style>
         body {
             margin: 0;
@@ -139,13 +139,13 @@
                 </a>
             </li>
             <li class="menu-item">
-                <a href="views/keyviews/keyviews.php" data-view="views/keyviews/keyviews.php" data-title="Control de Llaves" class="active">
+                <a href="views/keyviews/keyviews.php" data-view="views/keyviews/keyviews.php" data-title="Control de Llaves">
                     <i class="bi bi-key"></i>
                     <span>Control de Llaves</span>
                 </a>
             </li>
             <li class="menu-item">
-                <a href="views/Permisos/permisosview.php" data-view="views/Permisos/permisosview.php" data-title="Permisos de Salida">
+                <a href="views/Permisos/permisosview.php" data-view="views/Permisos/permisosview.php" data-title="Permisos de Salida" class="active">
                     <i class="bi bi-door-open"></i>
                     <span>Permisos de Salida</span>
                 </a>
@@ -169,7 +169,7 @@
     <div class="main-content">
         <!-- Top Bar -->
         <div class="top-bar">
-            <h4 id="titulo-seccion">Control de Llaves</h4>
+            <h4 id="titulo-seccion">Permisos de Salida</h4>
             <div class="admin-badge">
                 <span>Administrador Sistema</span>
                 <i class="bi bi-person-circle"></i>
@@ -178,9 +178,10 @@
 
         <!-- Content Area -->
         <div class="content-area">
-            <iframe id="contenido-frame" class="content-frame" src="views/keyviews/keyviews.php" title="Contenido principal"></iframe>
+            <iframe id="contenido-frame" class="content-frame" src="views/Permisos/permisosview.php" title="Contenido principal"></iframe>
         </div>
     </div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 <script>

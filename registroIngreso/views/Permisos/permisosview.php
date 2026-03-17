@@ -35,10 +35,9 @@
             min-height: 100vh;
         }
 
-
-
         /* ===== MAIN CONTENT ===== */
         .main-content {
+            margin-left: 0;
             flex: 1;
             display: flex;
             flex-direction: column;
