@@ -91,5 +91,15 @@ class UsuarioController {
             return "<div class='alert alert-danger'>Error al eliminar el usuario</div>";
         }
     }
+
+    // Iniciar sesión con correo y DNI
+    public function iniciarSesion($correo, $dni) {
+        return $this->modelUser->validarCredenciales($correo, $dni);
+    }
+
+    // Verificar si hay una sesión activa
+    public function validarSesionActiva() {
+        return isset($_SESSION['usuario']) && !empty($_SESSION['usuario']);
+    }
 }
 ?>

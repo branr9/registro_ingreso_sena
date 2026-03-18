@@ -1,3 +1,17 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['usuario'])) {
+    header("Location: login.php");
+    exit();
+}
+
+$usuarioSesion = $_SESSION['usuario'];
+$nombreUsuario = trim(($usuarioSesion['nombre'] ?? '') . ' ' . ($usuarioSesion['apellido'] ?? ''));
+if ($nombreUsuario === '') {
+    $nombreUsuario = $usuarioSesion['correo'] ?? 'Usuario';
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -100,6 +114,20 @@
         .admin-badge i {
             font-size: 18px;
         }
+        .btn-logout {
+            border: none;
+            background: transparent;
+            color: white;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-logout:hover {
+            opacity: 0.9;
+        }
         .content-area {
             padding: 30px;
         }
@@ -171,8 +199,13 @@
         <div class="top-bar">
             <h4 id="titulo-seccion">Dashboard</h4>
             <div class="admin-badge">
-                <span>Administrador Sistema</span>
+                <span><?php echo htmlspecialchars($nombreUsuario, ENT_QUOTES, 'UTF-8'); ?></span>
                 <i class="bi bi-person-circle"></i>
+                <form action="logout.php" method="POST" style="margin: 0;">
+                    <button type="submit" class="btn-logout" title="Cerrar sesión">
+                        <i class="bi bi-box-arrow-right"></i>
+                    </button>
+                </form>
             </div>
         </div>
 
