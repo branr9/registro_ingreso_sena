@@ -35,5 +35,22 @@ class ModelUser {
         $sql = $this->conexion->query("DELETE FROM usuarios WHERE Id_usuario='$id'");
         return $sql;
     }
+
+    // Validar credenciales para login (correo + DNI)
+    public function validarCredenciales($correo, $dni) {
+        $stmt = $this->conexion->prepare("SELECT Id_usuario, nombre, apellido, correo, Dni FROM usuarios WHERE correo = ? AND Dni = ? LIMIT 1");
+
+        if (!$stmt) {
+            return null;
+        }
+
+        $stmt->bind_param("ss", $correo, $dni);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
+        $usuario = $resultado ? $resultado->fetch_assoc() : null;
+        $stmt->close();
+
+        return $usuario;
+    }
 }
 ?>
