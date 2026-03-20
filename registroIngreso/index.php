@@ -1,4 +1,32 @@
-<!DOCTYPE html>
+<?php
+session_start();
+
+// Validar que el usuario esté autenticado
+if (!isset($_SESSION['usuario'])) {
+    header("Location: login.php");
+    exit();
+}
+
+require_once __DIR__ . "/models/conexion.php";
+
+// Determinar qué sección mostrar (default: dashboard)
+$seccion = $_GET['seccion'] ?? 'dashboard';
+$titulo_seccion = 'Dashboard';
+
+// Mapear secciones a títulos
+$titulos = [
+    'dashboard' => 'Dashboard',
+    'usuarios' => 'Gestión de Usuarios',
+    'control-ingreso' => 'Control de Ingreso',
+    'control-llaves' => 'Control de Llaves',
+    'permisos-salida' => 'Permisos de Salida',
+    'reportes' => 'Reportes de Acceso',
+    'personal-externo' => 'Personal Externo'
+];
+
+$titulo_seccion = $titulos[$seccion] ?? 'Dashboard';
+
+?><!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -96,6 +124,23 @@
             border-radius: 25px;
             color: white;
             font-size: 14px;
+            cursor: pointer;
+            border: none;
+            padding: 0;
+        }
+        .admin-badge a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 15px;
+            color: white;
+            text-decoration: none;
+            background-color: #4ade80;
+            border-radius: 25px;
+            transition: background-color 0.3s;
+        }
+        .admin-badge a:hover {
+            background-color: #2d8a4d;
         }
         .admin-badge i {
             font-size: 18px;
@@ -114,43 +159,43 @@
         </div>
         <ul class="sidebar-menu">
             <li class="menu-item">
-                <a href="#dashboard">
+                <a href="?seccion=dashboard" <?php echo ($seccion === 'dashboard') ? 'class="active"' : ''; ?>>
                     <i class="bi bi-house-door"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <li class="menu-item">
-                <a href="views/userViews/usuariosview.php">
+                <a href="?seccion=usuarios" <?php echo ($seccion === 'usuarios') ? 'class="active"' : ''; ?>>
                     <i class="bi bi-people"></i>
                     <span>Usuarios</span>
                 </a>
             </li>
             <li class="menu-item">
-                <a href="#control-ingreso">
+                <a href="?seccion=control-ingreso" <?php echo ($seccion === 'control-ingreso') ? 'class="active"' : ''; ?>>
                     <i class="bi bi-grid"></i>
                     <span>Control de Ingreso</span>
                 </a>
             </li>
             <li class="menu-item">
-                <a href="#control-llaves" class="active">
+                <a href="?seccion=control-llaves" <?php echo ($seccion === 'control-llaves') ? 'class="active"' : ''; ?>>
                     <i class="bi bi-key"></i>
                     <span>Control de Llaves</span>
                 </a>
             </li>
             <li class="menu-item">
-                <a href="#permisos-salida">
+                <a href="?seccion=permisos-salida" <?php echo ($seccion === 'permisos-salida') ? 'class="active"' : ''; ?>>
                     <i class="bi bi-door-open"></i>
                     <span>Permisos de Salida</span>
                 </a>
             </li>
             <li class="menu-item">
-                <a href="#reportes">
+                <a href="?seccion=reportes" <?php echo ($seccion === 'reportes') ? 'class="active"' : ''; ?>>
                     <i class="bi bi-bar-chart"></i>
                     <span>Reportes</span>
                 </a>
             </li>
             <li class="menu-item">
-                <a href="#personal-externo">
+                <a href="?seccion=personal-externo" <?php echo ($seccion === 'personal-externo') ? 'class="active"' : ''; ?>>
                     <i class="bi bi-person-badge"></i>
                     <span>Personal Externo</span>
                 </a>
@@ -162,32 +207,49 @@
     <div class="main-content">
         <!-- Top Bar -->
         <div class="top-bar">
-            <h4>Control de Llaves</h4>
+            <h4><?php echo htmlspecialchars($titulo_seccion); ?></h4>
             <div class="admin-badge">
-                <span>Administrador Sistema</span>
-                <i class="bi bi-person-circle"></i>
+                <a href="logout.php" title="Cerrar sesión">
+                    <span><?php echo htmlspecialchars($_SESSION['usuario']['nombre'] ?? 'Usuario'); ?></span>
+                    <i class="bi bi-box-arrow-right"></i>
+                </a>
             </div>
         </div>
 
-        <!-- Content Area -->
+        <!-- Content Area - Cargar componentes dinámicamente -->
         <div class="content-area">
-            <!-- Contenido dinámico aquí -->
+            <?php
+                // Mapear secciones a archivos de vistas
+                $vistas = [
+                    'dashboard' => 'views/controldeIngreso/dashboardview.php',
+                    'usuarios' => 'views/userViews/usuariosview.php',
+                    'control-ingreso' => 'views/controldeIngreso/controldeIngresoview.php',
+                    'control-llaves' => 'views/keyviews/keyviews.php',
+                    'permisos-salida' => 'views/Permisos/permisosview.php',
+                    'reportes' => 'views/reportes/reportesview.php',
+                    'personal-externo' => 'views/personalExterno/personalExternoview.php'
+                ];
+
+                if (isset($vistas[$seccion])) {
+                    $archivo_vista = __DIR__ . '/' . $vistas[$seccion];
+                    
+                    if (file_exists($archivo_vista)) {
+                        include $archivo_vista;
+                    } else {
+                        echo '<div class="alert alert-danger">Error: No se pudo cargar la vista.</div>';
+                    }
+                } else {
+                    echo '<div class="alert alert-danger">Error: Sección no válida.</div>';
+                }
+            ?>
         </div>
     </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-<<script>
-    // Activar el menú según la sección actual
-    document.querySelectorAll('.menu-item a').forEach(link => {
-        link.addEventListener('click', function(e) {
-            // Verifica si el enlace es solo un ancla (empieza con #)
-            if (this.getAttribute('href').startsWith('#')) {
-                e.preventDefault(); // Solo cancela la navegación si es un #
-                document.querySelectorAll('.menu-item a').forEach(a => a.classList.remove('active'));
-                this.classList.add('active');
-            }
-            // Si el enlace NO empieza con #, dejará que el navegador cambie de página normalmente.
-        });
+<script>
+    // Evento para logout
+    document.addEventListener('DOMContentLoaded', function() {
+        // Aquí puedes agregar más funcionalidades si es necesario
     });
 </script>
 </body>

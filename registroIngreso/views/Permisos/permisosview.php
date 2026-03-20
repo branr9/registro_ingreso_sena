@@ -1,50 +1,15 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Permisos de Salida - Sistema Ingreso SENA</title>
-    <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
-        :root {
-            --sidebar-bg: #6a3fa5;
-            --sidebar-hover: #7b4db8;
-            --sidebar-active: #28b463;
-            --accent-green: #28b463;
-            --accent-teal: #1abc9c;
-            --accent-blue: #3498db;
-            --accent-orange: #e67e22;
-            --text-light: #ffffff;
-            --body-bg: #f4f6f9;
-            --card-shadow: 0 2px 10px rgba(0,0,0,0.08);
-        }
-
-        * { box-sizing: border-box; }
-
-        body {
+        /* ===== PERMISOS SALIDA STYLES ===== */
+        .permisos-container {
+            width: 100%;
+            padding: 0;
             font-family: 'Nunito', sans-serif;
-            background: var(--body-bg);
-            margin: 0;
-            display: flex;
-            min-height: 100vh;
+            background: #f4f6f9;
         }
 
-        /* ===== MAIN CONTENT ===== */
-        .main-content {
-            margin-left: 0;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        .topbar {
+        .permisos-topbar {
             background: white;
             padding: 14px 30px;
             display: flex;
@@ -54,47 +19,26 @@
             box-shadow: 0 1px 4px rgba(0,0,0,0.05);
         }
 
-        .topbar-title {
+        .permisos-topbar-title {
             font-size: 1.05rem;
             font-weight: 700;
             color: #333;
         }
 
-        .topbar-user {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            color: #333;
-            font-size: 0.95rem;
-        }
-
-        .topbar-avatar {
-            width: 36px;
-            height: 36px;
-            background: var(--accent-green);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1rem;
-        }
-
-        .page-body {
+        .permisos-page-body {
             padding: 30px;
-            flex: 1;
+            width: 100%;
         }
 
         /* ===== PAGE HEADER ===== */
-        .page-header {
+        .permisos-page-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             margin-bottom: 28px;
         }
 
-        .page-title {
+        .permisos-page-title {
             display: flex;
             align-items: center;
             gap: 12px;
@@ -103,10 +47,10 @@
             color: #222;
         }
 
-        .page-title i { color: #555; }
+        .permisos-page-title i { color: #555; }
 
         .btn-crear {
-            background: var(--accent-green);
+            background: #28b463;
             color: white;
             border: none;
             padding: 10px 22px;
@@ -476,23 +420,21 @@
             .form-grid { grid-template-columns: 1fr; }
         }
     </style>
-</head>
-<body>
 
 <!-- ===== MAIN CONTENT ===== -->
-<main class="main-content">
+<div class="permisos-container">
 
     <!-- TOPBAR -->
-    <div class="topbar" id="topbar-title">
-        <span class="topbar-title">Permisos de Salida</span>
+    <div class="permisos-topbar" id="topbar-title">
+        <span class="permisos-topbar-title">Permisos de Salida</span>
       
     </div>
 
     <!-- PAGE BODY — LIST VIEW -->
-    <div class="page-body" id="view-list">
+    <div class="permisos-page-body" id="view-list">
 
-        <div class="page-header">
-            <h1 class="page-title">
+        <div class="permisos-page-header">
+            <h1 class="permisos-page-title">
                 <i class="bi bi-clipboard-check-fill"></i>
                 Permisos de Salida
             </h1>
@@ -945,6 +887,4 @@
     actualizarEstadisticas();
     renderTabla();
 </script>
-
-</body>
-</html>
+</div>

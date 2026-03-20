@@ -27,13 +27,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SENA Control de Ingreso</title>
-    <style>
+
+<!-- Control de Ingreso Content -->
+<style>
         /* Estilos Globales */
         body {
             font-family: Arial, sans-serif;
@@ -322,8 +318,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             margin-top: 0;
         }
     </style>
-</head>
-<body>
+
+    <!-- Control de Ingreso Content -->
     <header>
         <div class="header-logo">
             <div class="sena-logo-simulated">
@@ -415,5 +411,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         setInterval(actualizarReloj, 1000);
         actualizarReloj();
     </script>
-</body>
-</html>

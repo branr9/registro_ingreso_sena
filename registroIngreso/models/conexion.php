@@ -3,7 +3,7 @@
 $servidor = "localhost";
 $usuario = "root";
 $password = "";
-$base_datos = "nexusnexus";
+$base_datos = "nexus";
 
 $conexion = mysqli_connect($servidor, $usuario, $password, $base_datos);
 

@@ -1,148 +1,157 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control de Llaves - Solo Vista</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <style type="text/tailwindcss">
-        .stat-card { @apply bg-white rounded-xl shadow-sm border p-5 flex items-center gap-5; }
-        .btn-primario { @apply bg-[#2e7d32] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-800 transition shadow-sm; }
-        .btn-secundario { @apply bg-[#10b981] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-emerald-600 transition shadow-sm; }
-        .input-form { @apply w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#673ab7] focus:border-transparent transition; }
-    </style>
-</head>
+<style>
+    .keys-container { width: 100%; padding: 0; }
+    .keys-header { background: white; border-bottom: 1px solid #e5e7eb; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; }
+    .keys-header h2 { margin: 0; font-size: 18px; font-weight: 500; color: #333; }
+    .keys-main { flex: 1; overflow-y: auto; padding: 32px; }
+    .keys-title { font-size: 30px; font-weight: bold; color: #111827; display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+    .keys-subtitle { font-size: 14px; color: #6b7280; font-style: italic; margin-bottom: 32px; }
+    .keys-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; margin-bottom: 40px; }
+    .keys-stat-card { background: white; border-radius: 12px; border: 1px solid #e5e7eb; padding: 20px; display: flex; align-items: center; gap: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .keys-stat-icon { width: 48px; height: 48px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+    .keys-stat-icon.cyan { background: #cffafe; color: #06b6d4; }
+    .keys-stat-icon.blue { background: #bfdbfe; color: #3b82f6; }
+    .keys-stat-icon.red { background: #fecaca; color: #ef4444; }
+    .keys-stat-icon.green { background: #bbf7d0; color: #10b981; }
+    .keys-stat-info { flex: 1; }
+    .keys-stat-value { font-size: 24px; font-weight: bold; color: #111827; margin: 0; }
+    .keys-stat-label { font-size: 12px; color: #6b7280; font-weight: 600; margin: 4px 0 0 0; text-transform: uppercase; }
+    .keys-section { background: white; border-radius: 12px; border: 1px solid #e5e7eb; padding: 24px; }
+    .keys-section-title { font-size: 16px; font-weight: bold; color: #333; display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+    .keys-button-group { display: flex; gap: 12px; margin-bottom: 20px; }
+    .keys-btn { padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s; }
+    .keys-btn-primary { background: #2d7c32; color: white; }
+    .keys-btn-primary:hover { background: #1f5623; }
+    .keys-btn-secondary { background: #10b981; color: white; }
+    .keys-btn-secondary:hover { background: #059669; }
+    .keys-table { width: 100%; border-collapse: collapse; }
+    .keys-table thead th { background: #f9fafb; padding: 12px; text-align: left; font-size: 12px; font-weight: 800; color: #666; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #e5e7eb; }
+    .keys-table tbody td { padding: 12px; border-bottom: 1px solid #f3f4f6; font-size: 14px; color: #333; }
+    .keys-table tbody tr:hover { background: #fafbff; }
+    .keys-badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+    .keys-badge.disponible { background: #e8f8f0; color: #28b463; }
+    .keys-badge.prestada { background: #e8f4fd; color: #3498db; }
+    .keys-empty-state { text-align: center; padding: 48px 20px; color: #aaa; }
+    .keys-empty-state i { font-size: 48px; margin-bottom: 12px; display: block; }
+</style>
 
-<body class="bg-slate-50 text-slate-800 h-screen flex flex-col overflow-hidden relative">
-
-    <header class="h-16 bg-white border-b flex items-center justify-between px-8 shrink-0">
-        <h2 class="text-lg font-medium tracking-tight">Control de Llaves</h2>
-       
+<!-- Control de Llaves Content -->
+<div class="keys-container">
+    <header class="keys-header">
+        <h2>Control de Llaves</h2>
     </header>
 
-    <main class="flex-1 overflow-y-auto p-8">
-        
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-slate-800 flex items-center gap-3 mb-1">
-                <i class="fa-solid fa-key text-[#2c3e50]"></i> Gestión de Préstamos
+    <main class="keys-main">
+        <div style="margin-bottom: 32px;">
+            <h1 class="keys-title">
+                <i class="fa-solid fa-key" style="color: #2c3e50;"></i> Gestión de Préstamos
             </h1>
-            <p class="text-slate-500 italic">Panel administrativo de inventario y disponibilidad</p>
+            <p class="keys-subtitle">Panel administrativo de inventario y disponibilidad</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-            <div class="stat-card">
-                <div class="w-12 h-12 rounded-full bg-cyan-50 flex items-center justify-center text-cyan-500 text-xl"><i class="fa-solid fa-door-closed"></i></div>
-                <div><p class="text-2xl font-bold" id="stat-total-aulas">0</p><p class="text-xs text-slate-500 uppercase font-semibold">Aulas</p></div>
-            </div>
-            <div class="stat-card">
-                <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-400 text-xl"><i class="fa-solid fa-key"></i></div>
-                <div><p class="text-2xl font-bold" id="stat-total-llaves">0</p><p class="text-xs text-slate-500 uppercase font-semibold">Llaves</p></div>
-            </div>
-            <div class="stat-card">
-                <div class="w-12 h-12 rounded-full bg-red-500 flex items-center justify-center text-white text-xl"><i class="fa-solid fa-hand-holding"></i></div>
-                <div><p class="text-2xl font-bold" id="stat-llaves-prestadas">0</p><p class="text-xs text-slate-500 uppercase font-semibold">Prestadas</p></div>
-            </div>
-            <div class="stat-card">
-                <div class="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center text-white text-xl"><i class="fa-solid fa-clock"></i></div>
-                <div><p class="text-2xl font-bold" id="stat-prestamos-hoy">0</p><p class="text-xs text-slate-500 uppercase font-semibold">Hoy</p></div>
-            </div>
-        </div>
-        <h1>hola</h1>
-        <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
-            <div class="flex items-center justify-between mb-6">
-                <h3 class="text-lg font-bold">Listado de Aulas</h3>
-                <div class="flex gap-3">
-                    <button id="btn-nueva-aula" class="btn-primario"><i class="fa-solid fa-plus mr-1"></i> Nueva Aula</button>
-                    <button id="btn-registrar-prestamo" class="btn-secundario"><i class="fa-solid fa-hand-holding-hand mr-1"></i> Tomar/Devolver</button>
+        <!-- Stats Cards -->
+        <div class="keys-stats">
+            <div class="keys-stat-card">
+                <div class="keys-stat-icon cyan"><i class="fa-solid fa-door-closed"></i></div>
+                <div class="keys-stat-info">
+                    <p class="keys-stat-value" id="stat-total-aulas">0</p>
+                    <p class="keys-stat-label">Aulas</p>
                 </div>
             </div>
-
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse" id="tabla-aulas">
-                    <thead>
-                        <tr>
-                            <th class="pb-4 font-bold uppercase tracking-widest text-xs text-slate-400 border-b border-slate-100">Aula / Descripción</th>
-                            <th class="pb-4 font-bold uppercase tracking-widest text-xs text-slate-400 border-b border-slate-100 text-center">Capacidad</th>
-                            <th class="pb-4 font-bold uppercase tracking-widest text-xs text-slate-400 border-b border-slate-100 text-center">Llaves</th>
-                            <th class="pb-4 font-bold uppercase tracking-widest text-xs text-slate-400 border-b border-slate-100 text-center">Estado</th>
-                            <th class="pb-4 font-bold uppercase tracking-widest text-xs text-slate-400 border-b border-slate-100 text-center">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody-aulas">
-                        </tbody>
-                </table>
-                <div id="mensaje-sin-datos" class="py-16 text-center text-slate-400 border-2 border-dashed border-slate-50 mt-4 rounded-lg">
-                    <i class="fa-solid fa-inbox text-4xl mb-3 block"></i> No hay aulas registradas en el sistema.
+            <div class="keys-stat-card">
+                <div class="keys-stat-icon blue"><i class="fa-solid fa-key"></i></div>
+                <div class="keys-stat-info">
+                    <p class="keys-stat-value" id="stat-total-llaves">0</p>
+                    <p class="keys-stat-label">Llaves</p>
+                </div>
+            </div>
+            <div class="keys-stat-card">
+                <div class="keys-stat-icon red"><i class="fa-solid fa-hand-holding"></i></div>
+                <div class="keys-stat-info">
+                    <p class="keys-stat-value" id="stat-llaves-prestadas">0</p>
+                    <p class="keys-stat-label">Prestadas</p>
+                </div>
+            </div>
+            <div class="keys-stat-card">
+                <div class="keys-stat-icon green"><i class="fa-solid fa-clock"></i></div>
+                <div class="keys-stat-info">
+                    <p class="keys-stat-value" id="stat-prestamos-hoy">0</p>
+                    <p class="keys-stat-label">Hoy</p>
                 </div>
             </div>
         </div>
-    </main>
 
-    <div id="modal-nueva-aula" class="fixed inset-0 bg-slate-900/60 hidden items-center justify-center z-50 backdrop-blur-sm transition-all">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden transform transition-all">
-            
-            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
-                    <i class="fa-solid fa-door-open text-[#673ab7]"></i> Registrar Nueva Aula
-                </h3>
-                <button id="btn-cerrar-modal" class="text-slate-400 hover:text-red-500 transition text-xl">
-                    <i class="fa-solid fa-xmark"></i>
+        <!-- Aulas Section -->
+        <div class="keys-section" style="margin-bottom: 24px;">
+            <div class="keys-section-title">
+                <i class="fa-solid fa-door-closed"></i>Listado de Aulas
+            </div>
+
+            <div class="keys-button-group">
+                <button class="keys-btn keys-btn-primary" id="btn-nueva-aula">
+                    <i class="fa-solid fa-plus"></i> Nueva Aula
+                </button>
+                <button class="keys-btn keys-btn-secondary" id="btn-registrar-prestamo">
+                    <i class="fa-solid fa-hand-holding-hand"></i> Tomar/Devolver
                 </button>
             </div>
 
-            <div class="p-6">
-                <form id="form-nueva-aula" class="space-y-5">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="col-span-2">
-                            <label class="block text-sm font-semibold text-slate-700 mb-1">Nombre del Aula <span class="text-red-500">*</span></label>
-                            <input type="text" id="input-nombre" class="input-form" placeholder="Ej. Aula 101, Laboratorio A..." required>
-                        </div>
-                        <div class="col-span-2">
-                            <label class="block text-sm font-semibold text-slate-700 mb-1">Descripción breve</label>
-                            <input type="text" id="input-desc" class="input-form" placeholder="Ej. Aula de sistemas piso 1">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-1">Capacidad (Personas)</label>
-                            <input type="number" id="input-capacidad" class="input-form" placeholder="Ej. 30" min="1">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-1">Total de Llaves <span class="text-red-500">*</span></label>
-                            <input type="number" id="input-llaves" class="input-form" placeholder="Ej. 2" min="1" required>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-            <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-3 bg-slate-50">
-                <button id="btn-cancelar-modal" type="button" class="px-5 py-2 text-slate-600 font-medium hover:bg-slate-200 rounded-lg transition">Cancelar</button>
-                <button type="submit" form="form-nueva-aula" class="px-5 py-2 bg-[#673ab7] text-white font-medium rounded-lg hover:bg-[#5e35b1] transition shadow-md">Guardar Aula</button>
-            </div>
-
+            <table class="keys-table" id="tabla-aulas">
+                <thead>
+                    <tr>
+                        <th>Aula / Descripción</th>
+                        <th>Capacidad</th>
+                        <th>Llaves</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 32px; color: #aaa;">
+                            <i class="fa-solid fa-inbox" style="font-size: 32px; display: block; margin-bottom: 12px;"></i>
+                            No hay aulas registradas en el sistema.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-    </div>
 
-    <script>
-        const modal = document.getElementById('modal-nueva-aula');
-        const btnAbrir = document.getElementById('btn-nueva-aula');
-        const btnCerrar = document.getElementById('btn-cerrar-modal');
-        const btnCancelar = document.getElementById('btn-cancelar-modal');
+        <!-- Registro Nueva Aula -->
+        <div class="keys-section">
+            <div class="keys-section-title">
+                <i class="fa-solid fa-folder-plus"></i>Registrar Nueva Aula
+            </div>
 
-        btnAbrir.addEventListener('click', () => {
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        });
+            <form style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                <div>
+                    <label style="display: block; font-size: 13px; font-weight: 700; color: #555; margin-bottom: 6px;">Nombre Aula *</label>
+                    <input type="text" placeholder="Ej: Aula 101" style="width: 100%; padding: 10px; border: 1.5px solid #d1d5db; border-radius: 8px; font-size: 14px;">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 13px; font-weight: 700; color: #555; margin-bottom: 6px;">Capacidad *</label>
+                    <input type="number" placeholder="30" style="width: 100%; padding: 10px; border: 1.5px solid #d1d5db; border-radius: 8px; font-size: 14px;">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 13px; font-weight: 700; color: #555; margin-bottom: 6px;">Total de Llaves *</label>
+                    <input type="number" placeholder="5" style="width: 100%; padding: 10px; border: 1.5px solid #d1d5db; border-radius: 8px; font-size: 14px;">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 13px; font-weight: 700; color: #555; margin-bottom: 6px;">Descripción</label>
+                    <input type="text" placeholder="Descripción opcional" style="width: 100%; padding: 10px; border: 1.5px solid #d1d5db; border-radius: 8px; font-size: 14px;">
+                </div>
+                <div style="grid-column: 1 / -1;">
+                    <button type="submit" class="keys-btn keys-btn-primary">
+                        <i class="fa-solid fa-check"></i> Guardar Aula
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
 
-        const cerrarModal = () => {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        };
-
-        btnCerrar.addEventListener('click', cerrarModal);
-        btnCancelar.addEventListener('click', cerrarModal);
-    </script>
-
-</body>
-</html>
+<script>
+    // Placeholder para funcionalidad
+    console.log('Control de Llaves cargado');
+</script>
