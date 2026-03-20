@@ -59,7 +59,9 @@
                 <h3 class="text-lg font-bold">Listado de Aulas</h3>
                 <div class="flex gap-3">
                     <button id="btn-nueva-aula" class="btn-primario"><i class="fa-solid fa-plus mr-1"></i> Nueva Aula</button>
-                    <button id="btn-registrar-prestamo" class="btn-secundario"><i class="fa-solid fa-hand-holding-hand mr-1"></i> Tomar/Devolver</button>
+                    <a href="prestamo_llaves.php" id="btn-registrar-prestamo" class="btn-secundario inline-block">
+                        <i class="fa-solid fa-hand-holding-hand mr-1"></i> Tomar/Devolver
+                    </a>
                 </div>
             </div>
 
