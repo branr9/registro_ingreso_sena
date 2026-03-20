@@ -20,10 +20,7 @@
 
     <header class="h-16 bg-white border-b flex items-center justify-between px-8 shrink-0">
         <h2 class="text-lg font-medium tracking-tight">Control de Llaves</h2>
-        <div class="flex items-center gap-3">
-            <span id="usuario-logeado-nombre" class="text-sm font-medium">Administrador</span>
-            <div class="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center"><i class="fa-regular fa-user"></i></div>
-        </div>
+       
     </header>
 
     <main class="flex-1 overflow-y-auto p-8">

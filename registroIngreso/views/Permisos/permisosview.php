@@ -485,10 +485,7 @@
     <!-- TOPBAR -->
     <div class="topbar" id="topbar-title">
         <span class="topbar-title">Permisos de Salida</span>
-        <div class="topbar-user">
-            Administrador Sistema
-            <div class="topbar-avatar"><i class="bi bi-person-fill"></i></div>
-        </div>
+      
     </div>
 
     <!-- PAGE BODY — LIST VIEW -->
