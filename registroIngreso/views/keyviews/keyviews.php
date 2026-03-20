@@ -50,7 +50,7 @@
                 <div><p class="text-2xl font-bold" id="stat-prestamos-hoy">0</p><p class="text-xs text-slate-500 uppercase font-semibold">Hoy</p></div>
             </div>
         </div>
-
+        <h1>hola</h1>
         <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
             <div class="flex items-center justify-between mb-6">
                 <h3 class="text-lg font-bold">Listado de Aulas</h3>
