@@ -93,7 +93,9 @@ $registros_filtrados = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <p>Control de entrada y salida de personal sin carnet (visitantes, contratistas, proveedores)</p>
     </div>
     <div class="action-buttons">
-        <button class="btn-custom btn-cyan" onclick="verPersonasDentro()"><i class="bi bi-door-open"></i> Personas Dentro</button>
+        <a href="personasDentrobutton.php" class="btn-custom btn-cyan" style="text-decoration: none;">
+            <i class="bi bi-door-open"></i> Personas Dentro
+        </a>
         <a href="index.php?vista=registrarEntradabutton" class="btn-custom btn-green">
             <i class="bi bi-person-plus-fill"></i> Registrar Entrada
         </a>

@@ -1,8 +1,65 @@
 <?php
-// Simulación básica del funcionamiento del botón enviar
+// ==========================================
+// 1. CONEXIÓN A LA BASE DE DATOS NEXUS
+// ==========================================
+$host = '127.0.0.1';
+$dbname = 'nexus';
+$username = 'root'; 
+$password = 'root';     // Cambia esto si en HeidiSQL le tienes contraseña a 'root'
+
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("<div class='alert alert-danger m-3'>Error de conexión: " . $e->getMessage() . "</div>");
+}
+
 $mensaje = '';
+
+// ==========================================
+// 2. PROCESAR EL FORMULARIO AL PRESIONAR "GUARDAR"
+// ==========================================
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $mensaje = "<div class='alert alert-success mt-3 mb-3'><i class='bi bi-check-circle-fill'></i> Registro guardado exitosamente.</div>";
+    // Recibir los datos del formulario
+    $tipo_documento = $_POST['tipo_documento'] ?? '';
+    $numero_documento = $_POST['numero_documento'] ?? '';
+    $nombres = $_POST['nombres'] ?? '';
+    $apellidos = $_POST['apellidos'] ?? '';
+    $empresa = $_POST['empresa'] ?? '';
+    $telefono = $_POST['telefono'] ?? '';
+    
+    // Unir nombres y apellidos para la columna 'nombre' de tu tabla
+    $nombre_completo = trim($nombres . ' ' . $apellidos);
+
+    // Configurar la zona horaria a Colombia para que la hora sea exacta
+    date_default_timezone_set('America/Bogota');
+    $fecha_actual = date('Y-m-d');
+    $hora_actual = date('H:i:s');
+
+    try {
+        // Preparar la consulta para insertar los datos
+        $sql = "INSERT INTO personal_externo 
+                (documento, tipo_documento, nombre, telefono, empresa, fecha, hora_ingreso, estado) 
+                VALUES 
+                (:documento, :tipo_documento, :nombre, :telefono, :empresa, :fecha, :hora_ingreso, 'Dentro')";
+        
+        $stmt = $pdo->prepare($sql);
+        
+        // Ejecutar la inserción
+        $stmt->execute([
+            ':documento' => $numero_documento,
+            ':tipo_documento' => $tipo_documento,
+            ':nombre' => $nombre_completo,
+            ':telefono' => $telefono,
+            ':empresa' => $empresa,
+            ':fecha' => $fecha_actual,
+            ':hora_ingreso' => $hora_actual
+        ]);
+
+        $mensaje = "<div class='alert alert-success mt-3 mb-3'><i class='bi bi-check-circle-fill'></i> Registro de entrada guardado exitosamente para <strong>" . htmlspecialchars($nombre_completo) . "</strong>.</div>";
+    } catch (PDOException $e) {
+        $mensaje = "<div class='alert alert-danger mt-3 mb-3'><i class='bi bi-x-circle-fill'></i> Error al guardar en la base de datos: " . $e->getMessage() . "</div>";
+    }
 }
 ?>
 
