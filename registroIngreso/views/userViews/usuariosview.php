@@ -2,44 +2,67 @@
 // ==============================================================================
 // 1. CONEXIÓN A LA BASE DE DATOS
 // ==============================================================================
-// require_once 'conexion.php'; // Descomenta y ajusta esta línea
+require_once 'C:\Users\Aprendiz\Documents\GitHub\registro_ingreso_sena\registroIngreso\models\conexion.php'; 
 
 // ==============================================================================
-// 2. CAPTURA DE FILTROS (Búsqueda, Tipo, Estado)
+// 2. CAPTURA DE FILTROS (Búsqueda, Estado)
 // ==============================================================================
 $search = $_GET['search'] ?? '';
-$tipo = $_GET['tipo'] ?? 'Todos';
+$tipo = $_GET['tipo'] ?? 'Todos'; // Nota: El tipo no existe en la BD actual, no filtrará.
 $estado = $_GET['estado'] ?? 'Todos';
 
 // ==============================================================================
-// 3. CONSULTAS DE ESTADÍSTICAS
+// 3. CONSULTAS DE ESTADÍSTICAS REALES
 // ==============================================================================
-/* Aquí debes ejecutar tus consultas SQL para obtener los totales reales. */
-// ESTOS VALORES SON SIMULADOS PARA QUE PRUEBES LA INTERFAZ
-$totalUsuarios = 1; 
-$totalActivos = 1;  
-$totalInactivos = 0; 
+// Total Usuarios
+$resTotales = mysqli_query($conexion, "SELECT COUNT(*) as total FROM usuarios");
+$totalUsuarios = mysqli_fetch_assoc($resTotales)['total'] ?? 0;
 
-// ====================================================miau=================k=========
+// Total Activos
+$resActivos = mysqli_query($conexion, "SELECT COUNT(*) as total FROM usuarios WHERE estado = 'Activo'");
+$totalActivos = mysqli_fetch_assoc($resActivos)['total'] ?? 0;
+
+// Total Inactivos
+$resInactivos = mysqli_query($conexion, "SELECT COUNT(*) as total FROM usuarios WHERE estado = 'Inactivo'");
+$totalInactivos = mysqli_fetch_assoc($resInactivos)['total'] ?? 0;
+
+// ==============================================================================
 // 4. CONSULTA PRINCIPAL DE USUARIOS (Con Filtros)
 // ==============================================================================
-/*
-// Lógica real de base de datos...
-*/
+$query = "SELECT * FROM usuarios WHERE 1=1";
 
-// UN USUARIO DE PRUEBA PARA ENSAYAR LOS BOTONES Y LA TABLA
-$usuarios_db = [
-    [
-        'documento' => '123321456',
-        'nombre' => 'Alberto Cárdenas',
-        'tipo' => 'Vigilante',
-        'empresa' => 'Atlas',
-        'email' => 'alberti@gmail.com',
-        'username' => '@alberto12',
-        'rol' => 'Vigilante',
-        'estado' => 1 // 1 para Activo, 0 para Inactivo
-    ]
-]; 
+// Filtro de búsqueda
+if (!empty($search)) {
+    $search_esc = mysqli_real_escape_string($conexion, $search);
+    $query .= " AND (Dni LIKE '%$search_esc%' OR nombre LIKE '%$search_esc%' OR apellido LIKE '%$search_esc%' OR correo LIKE '%$search_esc%')";
+}
+
+// Filtro de estado
+if ($estado === 'Activos') {
+    $query .= " AND estado = 'Activo'";
+} elseif ($estado === 'Inactivos') {
+    $query .= " AND estado = 'Inactivo'";
+}
+
+$query .= " ORDER BY fecha_creacion DESC";
+$resultado = mysqli_query($conexion, $query);
+
+// Construir el array con los datos reales de la BD
+$usuarios_db = [];
+if ($resultado && mysqli_num_rows($resultado) > 0) {
+    while ($row = mysqli_fetch_assoc($resultado)) {
+        $usuarios_db[] = [
+            'documento' => $row['Dni'],
+            'nombre' => $row['nombre'] . ' ' . $row['apellido'],
+            'tipo' => 'Persona', // Por defecto (No existe en BD)
+            'empresa' => '-', // Por defecto (No existe en BD)
+            'email' => $row['correo'],
+            'username' => '', // Por defecto (No existe en BD)
+            'rol' => 'Usuario', // Por defecto (No existe en BD)
+            'estado' => ($row['estado'] == 'Activo') ? 1 : 0
+        ];
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -166,13 +189,13 @@ $usuarios_db = [
                         <h3 class="text-3xl font-bold">Gestión de Usuarios</h3>
                     </div>
                     <div class="flex gap-3">
-                        <button class="bg-btn-blue text-white px-5 py-2.5 rounded-lg font-medium flex items-center gap-2">
+                        <a href="importar_usuarios.php" class="bg-btn-blue text-white px-5 py-2.5 rounded-lg font-medium flex items-center gap-2 hover:bg-blue-500 transition">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" /></svg>
                             Importar CSV
-                        </button>
+                        </a>
                         <a href="crear_usuario.php" class="bg-btn-green text-white px-5 py-2.5 rounded-lg font-medium flex items-center gap-2 hover:bg-green-600 transition">
-                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
-                        Crear Usuario
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                            Crear Usuario
                         </a>
                     </div>
                 </div>
@@ -283,7 +306,9 @@ $usuarios_db = [
                                         <td class="p-5 text-gray-900">
                                             <?php if (!empty($user['email'])): ?>
                                                 <?php echo htmlspecialchars($user['email']); ?><br>
-                                                <span class="text-xs text-gray-500"><?php echo htmlspecialchars($user['username']); ?></span>
+                                                <?php if(!empty($user['username'])): ?>
+                                                    <span class="text-xs text-gray-500"><?php echo htmlspecialchars($user['username']); ?></span>
+                                                <?php endif; ?>
                                             <?php else: ?>
                                                 -
                                             <?php endif; ?>
