@@ -2,10 +2,10 @@
 // Crear la conexión con la base de datos
 $servidor = "localhost";
 $usuario = "root";
-$password = "";
+$password = "root";
 
 
-$base_datos = "conexionprueba";
+$base_datos = "nexus";
 $conexion = mysqli_connect($servidor, $usuario, $password, $base_datos);
 
 if (!$conexion) {

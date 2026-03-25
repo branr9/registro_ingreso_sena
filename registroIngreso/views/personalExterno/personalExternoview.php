@@ -1,42 +1,67 @@
 <?php
-// Simulación de base de datos para la tabla
-$registros_db = [
-    [
-        'fecha' => '27/02/2026', 'hora' => '06:12 PM',
-        'documento' => '1236486', 'tipo_doc' => 'CE',
-        'nombre' => 'yirlene perez', 'telefono' => '21562',
-        'empresa' => 'centro aguas', 'motivo' => 'revisar acueducto',
-        'estado' => 'Salió', 'tiempo' => '0h 1m'
-    ],
-    [
-        'fecha' => '20/02/2026', 'hora' => '08:18 PM',
-        'documento' => '1234569', 'tipo_doc' => 'CC',
-        'nombre' => 'merian lopez', 'telefono' => '12364',
-        'empresa' => 'celcia', 'motivo' => 'revision',
-        'estado' => 'Salió', 'tiempo' => '-'
-    ]
-];
+// ==========================================
+// 1. CONEXIÓN A LA BASE DE DATOS NEXUS (HEIDISQL / MYSQL)
+// ==========================================
+$host = '127.0.0.1'; // Usar 127.0.0.1 es más directo que localhost para HeidiSQL
+$dbname = 'nexus';
+$username = 'root'; // Usuario por defecto
+$password = 'root';     // Contraseña por defecto (déjala vacía si no le pusiste una)
 
-$busqueda = isset($_GET['buscar']) ? strtolower($_GET['buscar']) : '';
-$estado_filtro = isset($_GET['estado']) ? $_GET['estado'] : 'Todos';
-
-$registros_filtrados = [];
-foreach ($registros_db as $reg) {
-    $coincide_busqueda = empty($busqueda) || 
-                         strpos(strtolower($reg['nombre']), $busqueda) !== false || 
-                         strpos(strtolower($reg['documento']), $busqueda) !== false ||
-                         strpos(strtolower($reg['empresa']), $busqueda) !== false;
-                         
-    $coincide_estado = ($estado_filtro === 'Todos') || ($reg['estado'] === $estado_filtro);
-
-    if ($coincide_busqueda && $coincide_estado) {
-        $registros_filtrados[] = $reg;
-    }
+try {
+    // La conexión dice 'mysql' porque HeidiSQL administra bases de datos MySQL/MariaDB
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("<div class='alert alert-danger m-3'><strong>Error de conexión a la base de datos:</strong><br>Asegúrate de que tu servidor (XAMPP/Laragon) esté encendido. Detalles: " . $e->getMessage() . "</div>");
 }
+
+// ==========================================
+// 2. RECIBIR FILTROS DEL FORMULARIO
+// ==========================================
+$busqueda = isset($_GET['buscar']) ? trim($_GET['buscar']) : '';
+$estado_filtro = isset($_GET['estado']) ? $_GET['estado'] : 'Todos';
+$fecha_desde = isset($_GET['desde']) ? $_GET['desde'] : '';
+$fecha_hasta = isset($_GET['hasta']) ? $_GET['hasta'] : '';
+
+// ==========================================
+// 3. CONSTRUIR LA CONSULTA SQL DINÁMICA
+// ==========================================
+$sql = "SELECT * FROM personal_externo WHERE 1=1";
+$params = [];
+
+if ($busqueda !== '') {
+    $sql .= " AND (nombre LIKE ? OR documento LIKE ? OR empresa LIKE ?)";
+    $like_term = "%$busqueda%";
+    $params[] = $like_term;
+    $params[] = $like_term;
+    $params[] = $like_term;
+}
+
+if ($estado_filtro !== 'Todos') {
+    $sql .= " AND estado = ?";
+    $params[] = $estado_filtro;
+}
+
+if ($fecha_desde !== '') {
+    $sql .= " AND fecha >= ?";
+    $params[] = $fecha_desde;
+}
+
+if ($fecha_hasta !== '') {
+    $sql .= " AND fecha <= ?";
+    $params[] = $fecha_hasta;
+}
+
+$sql .= " ORDER BY fecha DESC, hora_ingreso DESC";
+
+// Ejecutar la consulta en la base de datos (HeidiSQL)
+$stmt = $pdo->prepare($sql);
+$stmt->execute($params);
+$registros_filtrados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <style>
-    /* Estilos exclusivos de esta vista */
+    /* Estilos exclusivos de la vista Personal Externo */
     .page-header-custom { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; }
     .title-section h2 { margin: 0; font-size: 22px; display: flex; align-items: center; gap: 10px; color: #2c3e50; font-weight: 700; }
     .title-section p { margin: 5px 0 0 38px; color: #6c757d; font-size: 13px; }
@@ -70,17 +95,18 @@ foreach ($registros_db as $reg) {
     <div class="action-buttons">
         <button class="btn-custom btn-cyan" onclick="verPersonasDentro()"><i class="bi bi-door-open"></i> Personas Dentro</button>
         <a href="index.php?vista=registrarEntradabutton" class="btn-custom btn-green">
-    <i class="bi bi-person-plus-fill"></i> Registrar Entrada
-</a>
+            <i class="bi bi-person-plus-fill"></i> Registrar Entrada
+        </a>
     </div>
 </div>
 
 <div class="custom-card">
     <form class="filters-form" method="GET" action="index.php">
         <input type="hidden" name="vista" value="personalExterno">
+        
         <div class="form-group-custom">
             <label>Buscar</label>
-            <input type="text" name="buscar" class="form-control-custom" placeholder="Documento, nombre..." value="<?php echo htmlspecialchars($busqueda); ?>">
+            <input type="text" name="buscar" class="form-control-custom" placeholder="Documento, nombre, empresa..." value="<?php echo htmlspecialchars($busqueda); ?>">
         </div>
         <div class="form-group-custom">
             <label>Estado</label>
@@ -92,11 +118,11 @@ foreach ($registros_db as $reg) {
         </div>
         <div class="form-group-custom">
             <label>Desde</label>
-            <input type="date" name="desde" class="form-control-custom" style="min-width: 150px;">
+            <input type="date" name="desde" class="form-control-custom" style="min-width: 150px;" value="<?php echo htmlspecialchars($fecha_desde); ?>">
         </div>
         <div class="form-group-custom">
             <label>Hasta</label>
-            <input type="date" name="hasta" class="form-control-custom" style="min-width: 150px;">
+            <input type="date" name="hasta" class="form-control-custom" style="min-width: 150px;" value="<?php echo htmlspecialchars($fecha_hasta); ?>">
         </div>
         <div class="action-buttons" style="margin-bottom: 2px;">
             <button type="submit" class="btn-custom btn-green"><i class="bi bi-search"></i> Buscar</button>
@@ -110,25 +136,47 @@ foreach ($registros_db as $reg) {
         <table class="custom-table">
             <thead>
                 <tr>
-                    <th>Fecha/Hora Entrada</th><th>Documento</th><th>Nombre Completo</th><th>Empresa</th><th>Motivo</th><th>Estado</th><th>Tiempo</th><th>Acciones</th>
+                    <th>Fecha/Hora Entrada</th>
+                    <th>Documento</th>
+                    <th>Nombre Completo</th>
+                    <th>Empresa</th>
+                    <th>Motivo</th>
+                    <th>Estado</th>
+                    <th>Tiempo</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 <?php if (count($registros_filtrados) > 0): ?>
                     <?php foreach ($registros_filtrados as $reg): ?>
                         <tr>
-                            <td><span class="data-primary"><?php echo $reg['fecha']; ?></span><span class="data-secondary"><?php echo $reg['hora']; ?></span></td>
-                            <td><span class="data-primary"><?php echo $reg['documento']; ?></span><span class="data-secondary"><?php echo $reg['tipo_doc']; ?></span></td>
-                            <td><span class="data-primary"><?php echo ucwords($reg['nombre']); ?></span><span class="data-secondary"><i class="bi bi-telephone"></i> <?php echo $reg['telefono']; ?></span></td>
-                            <td><?php echo $reg['empresa']; ?></td>
-                            <td><?php echo $reg['motivo']; ?></td>
-                            <td><strong><?php echo $reg['estado']; ?></strong></td>
-                            <td><?php echo $reg['tiempo']; ?></td>
-                            <td><i class="bi bi-eye-fill action-icon" onclick="verDetalles('<?php echo $reg['documento']; ?>')"></i></td>
+                            <td>
+                                <span class="data-primary"><?php echo date('d/m/Y', strtotime($reg['fecha'])); ?></span>
+                                <span class="data-secondary"><?php echo date('h:i A', strtotime($reg['hora_ingreso'])); ?></span>
+                            </td>
+                            <td>
+                                <span class="data-primary"><?php echo htmlspecialchars($reg['documento']); ?></span>
+                                <span class="data-secondary"><?php echo htmlspecialchars($reg['tipo_documento']); ?></span>
+                            </td>
+                            <td>
+                                <span class="data-primary"><?php echo ucwords(htmlspecialchars($reg['nombre'])); ?></span>
+                                <span class="data-secondary">
+                                    <i class="bi bi-telephone"></i> <?php echo htmlspecialchars($reg['telefono'] ?? ''); ?>
+                                </span>
+                            </td>
+                            <td><?php echo htmlspecialchars($reg['empresa'] ?? ''); ?></td>
+                            <td><?php echo htmlspecialchars($reg['motivo'] ?? ''); ?></td>
+                            <td><strong><?php echo htmlspecialchars($reg['estado']); ?></strong></td>
+                            <td><?php echo htmlspecialchars($reg['tiempo_estancia'] ?? '-'); ?></td>
+                            <td>
+                                <i class="bi bi-eye-fill action-icon" onclick="verDetalles('<?php echo htmlspecialchars($reg['documento']); ?>')"></i>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <tr><td colspan="8" class="empty-state">No se encontraron registros.</td></tr>
+                    <tr>
+                        <td colspan="8" class="empty-state">No se encontraron registros en la base de datos nexus.</td>
+                    </tr>
                 <?php endif; ?>
             </tbody>
         </table>
@@ -137,7 +185,6 @@ foreach ($registros_db as $reg) {
 
 <script>
     function limpiarFiltros() { window.location.href = "index.php?vista=personalExterno"; }
-    function registrarEntrada() { alert("Abriendo formulario para Registrar Nueva Entrada..."); }
-    function verPersonasDentro() { window.location.href = "index.php?vista=personalExterno&buscar=&estado=Dentro"; }
+    function verPersonasDentro() { window.location.href = "index.php?vista=personalExterno&estado=Dentro"; }
     function verDetalles(documento) { alert("Viendo detalles del documento: " + documento); }
 </script>
