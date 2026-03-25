@@ -6,8 +6,12 @@ if (isset($_SESSION['usuario'])) {
     exit();
 }
 
+// ✅ Después
 require_once __DIR__ . "/models/conexion.php";
 require_once __DIR__ . "/controller/usuarioController.php";
+
+$db = new Conexion();
+$conexion = $db->conectar(); // Ahora sí existe $conexion
 
 $controller = new UsuarioController($conexion);
 $error = "";

@@ -3,7 +3,7 @@
 class Conexion {
     private $servidor = "localhost";
     private $usuario = "root";
-    private $password = "";
+    private $password = "root";
     private $base_datos = "nexus";
     private $conexion;
 
