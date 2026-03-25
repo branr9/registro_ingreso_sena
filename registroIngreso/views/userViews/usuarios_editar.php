@@ -1,36 +1,56 @@
 <?php
 // ==============================================================================
-// 1. CAPTURAR EL ID DEL USUARIO A EDITAR
+// 1. CONEXIÓN A LA BASE DE DATOS
+// ==============================================================================
+require_once 'C:\Users\Aprendiz\Documents\GitHub\registro_ingreso_sena\registroIngreso\models\conexion.php'; 
+
+// ==============================================================================
+// 2. PROCESAR ACTUALIZACIÓN (Si se envió el formulario)
+// ==============================================================================
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $documento = mysqli_real_escape_string($conexion, $_POST['id_usuario']);
+    $nombre_completo = mysqli_real_escape_string($conexion, trim($_POST['nombre']));
+    $email = mysqli_real_escape_string($conexion, trim($_POST['email']));
+    
+    // Separar el nombre completo en Nombre y Apellido para la base de datos
+    $partes = explode(' ', $nombre_completo, 2);
+    $nombre = $partes[0];
+    $apellido = $partes[1] ?? '';
+
+    // Actualizar en la base de datos
+    // Nota: tipo_persona, empresa y usuario no se actualizan porque no existen en la BD actual
+    $query_update = "UPDATE usuarios SET nombre = '$nombre', apellido = '$apellido', correo = '$email' WHERE Dni = '$documento'";
+    
+    if (mysqli_query($conexion, $query_update)) {
+        // Redirigir a la vista de usuarios tras actualizar correctamente
+        header("Location: usuariosview.php");
+        exit;
+    } else {
+        $error_msg = "Error al actualizar: " . mysqli_error($conexion);
+    }
+}
+
+// ==============================================================================
+// 3. OBTENER DATOS DEL USUARIO (Al cargar la página)
 // ==============================================================================
 $id_usuario = $_GET['id'] ?? null;
-
-// ==============================================================================
-// 2. BUSCAR EL USUARIO EN LA BASE DE DATOS
-// ==============================================================================
-$usuario_actual = null; // Inicializamos en null asumiendo que no hay datos
+$usuario_actual = null;
 
 if ($id_usuario) {
-    /* Aquí iría tu consulta real a la base de datos:
-    require_once 'conexion.php';
-    $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE documento = :id");
-    $stmt->execute(['id' => $id_usuario]);
-    $usuario_actual = $stmt->fetch(PDO::FETCH_ASSOC);
-    */
+    $id_seguro = mysqli_real_escape_string($conexion, $id_usuario);
+    $resultado = mysqli_query($conexion, "SELECT * FROM usuarios WHERE Dni = '$id_seguro'");
     
-    // Como me comentaste que por ahora la base de datos está vacía, 
-    // dejaremos $usuario_actual como null. Esto activará la vista de "No encontrado".
-    // (Si quieres ver cómo se ve el formulario, puedes descomentar el bloque de abajo para simular datos)
-    
-    
-    $usuario_actual = [
-        'documento' => '123321456',
-        'nombre' => 'alberto cardenas',
-        'tipo_persona' => 'Vigilante',
-        'empresa' => 'atlas',
-        'usuario' => '@alberto12',
-        'email' => 'alberti@gmail.com'
-    ];
-
+    if ($row = mysqli_fetch_assoc($resultado)) {
+        // Adaptamos los datos de la BD a lo que pide el formulario
+        $usuario_actual = [
+            'documento' => $row['Dni'],
+            'nombre' => trim($row['nombre'] . ' ' . $row['apellido']),
+            'tipo_persona' => 'Persona', // Valor por defecto
+            'empresa' => '-', // Valor por defecto
+            'usuario' => '', // Valor por defecto
+            'email' => $row['correo']
+        ];
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -70,69 +90,11 @@ if ($id_usuario) {
                 <i class="bi bi-flower2 text-[#4ade80] text-[35px]"></i>
                 <h5 class="text-white m-0 text-[18px] font-semibold">Sistema Ingreso</h5>
             </div>
-
+            
             <ul class="list-none p-0 my-[20px] flex-grow flex flex-col gap-1">
-                <li>
-                    <a href="../../index.php" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10">
-                        <i class="bi bi-house-door text-[20px] w-[25px]"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="usuariosview.php" class="flex items-center px-[20px] py-[15px] bg-[#4ade80] text-white font-semibold no-underline transition-all duration-300 gap-[12px] text-[15px]">
-                        <i class="bi bi-people text-[20px] w-[25px]"></i>
-                        <span>Usuarios</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10">
-                        <i class="bi bi-grid text-[20px] w-[25px]"></i>
-                        <span>Control de Ingreso</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10">
-                        <i class="bi bi-key text-[20px] w-[25px]"></i>
-                        <span>Control de Llaves</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10">
-                        <i class="bi bi-door-open text-[20px] w-[25px]"></i>
-                        <span>Permisos de Salida</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10">
-                        <i class="bi bi-bar-chart text-[20px] w-[25px]"></i>
-                        <span>Reportes</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10">
-                        <i class="bi bi-person-badge text-[20px] w-[25px]"></i>
-                        <span>Personal Externo</span>
-                    </a>
-                </li>
-            </ul>
-
-            <div class="mt-auto pt-6 pb-4 border-t border-white/20">
-                <div class="flex items-center gap-3 px-5 mb-4">
-                    <div class="bg-blue-400 rounded-full w-10 h-10 flex items-center justify-center font-bold text-[22px] text-white">
-                        <i class="bi bi-person-circle"></i>
-                    </div>
-                    <div>
-                        <p class="text-white font-semibold text-sm m-0">Administrador Sistema</p>
-                        <p class="text-xs text-white/70 m-0">ADMIN</p>
-                    </div>
-                </div>
-                <div class="px-3">
-                    <button class="flex w-full items-center gap-[12px] px-[15px] py-[10px] rounded-lg text-red-300 hover:bg-white/10 transition-all duration-300">
-                        <i class="bi bi-box-arrow-left text-[20px] w-[25px]"></i>
-                        <span class="text-[15px] font-medium">Salir</span>
-                    </button>
-                </div>
-            </div>
+                <li><a href="../../index.php" class="flex items-center px-[20px] py-[15px] text-white/90 gap-[12px] text-[15px] hover:bg-white/10"><i class="bi bi-house-door text-[20px] w-[25px]"></i><span>Dashboard</span></a></li>
+                <li><a href="usuariosview.php" class="flex items-center px-[20px] py-[15px] bg-[#4ade80] text-white font-semibold gap-[12px] text-[15px]"><i class="bi bi-people text-[20px] w-[25px]"></i><span>Usuarios</span></a></li>
+                </ul>
         </nav>
 
         <main class="flex-grow">
@@ -158,13 +120,19 @@ if ($id_usuario) {
                     </div>
                 </div>
 
+                <?php if (isset($error_msg)): ?>
+                    <div class="bg-red-100 text-red-800 p-4 rounded-lg mb-6 border border-red-200">
+                        <?= htmlspecialchars($error_msg) ?>
+                    </div>
+                <?php endif; ?>
+
                 <?php if ($usuario_actual): ?>
                     
                     <p class="text-gray-500 ml-[115px] mb-8 mt-[-30px]">
                         Editando: <span class="font-semibold text-gray-700"><?= htmlspecialchars($usuario_actual['nombre']) ?></span> (<?= htmlspecialchars($usuario_actual['documento']) ?>)
                     </p>
 
-                    <form action="procesar_edicion.php" method="POST" class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                    <form action="" method="POST" class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
                         
                         <input type="hidden" name="id_usuario" value="<?= htmlspecialchars($usuario_actual['documento']) ?>">
 
@@ -228,7 +196,7 @@ if ($id_usuario) {
                             <i class="bi bi-person-x text-[50px]"></i>
                         </div>
                         <h3 class="text-2xl font-bold text-gray-700">No se encontró el usuario</h3>
-                        <p class="text-gray-500 mt-2 max-w-md">Actualmente la base de datos está vacía o no has seleccionado un usuario válido para editar desde la tabla.</p>
+                        <p class="text-gray-500 mt-2 max-w-md">El documento no existe en la base de datos.</p>
                         <a href="usuariosview.php" class="mt-8 bg-btn-green text-white font-medium py-2.5 px-6 rounded-lg shadow-md hover:bg-green-600 transition flex items-center gap-2">
                             <i class="bi bi-arrow-left"></i>
                             Regresar a la lista
