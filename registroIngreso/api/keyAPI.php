@@ -141,9 +141,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                     
                     // Actualizar estado del préstamo
-                    // ✅ Después
-                    // ✅ Correcto
-                    $sql = $db->prepare("UPDATE prestamos_llaves SET estado = 'Devuelto', fecha_devolucion = CURDATE(), hora_devolucion = CURTIME() WHERE id_prestamo = ?");                    $sql->bind_param("i", $id_prestamo);
+                    $sql = $db->prepare("UPDATE prestamos_llaves SET estado = 'Devuelto', fecha_devolucion = CURDATE(), hora_devolucion = CURTIME() WHERE id_prestamo = ?");
+                    $sql->bind_param("i", $id_prestamo);
                     
                     if (!$sql->execute()) {
                         throw new Exception("Error al devolver: " . $sql->error);

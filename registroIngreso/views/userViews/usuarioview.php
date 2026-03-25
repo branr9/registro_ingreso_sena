@@ -1,6 +1,6 @@
 <?php 
-require_once __DIR__ . "/models/conexion.php";
-require_once __DIR__ . "/controller/usuarioController.php";
+require_once __DIR__ . "/../../models/conexion.php";
+require_once __DIR__ . "/../../controller/usuarioController.php";
 
 // Instanciar el controlador
 $controller = new UsuarioController($conexion);
@@ -20,7 +20,7 @@ $usuarios = $controller->listarUsuarios();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
 <body>
-    <h1 class="text-center">FORMULARIO</h1>
+<h1 class="text-center">REGISTRO DE USUARIOS</h1>
     <div class="container-fluid row">
         <form method="POST" class="col-4 p-3">
             <h3 class="text-center text-secondary">Registro usuarios</h3>
