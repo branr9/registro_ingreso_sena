@@ -915,29 +915,37 @@
 
     // Procesar devolución
     function procesarDevolucion(event) {
-        event.preventDefault();
-        
-        const formData = new FormData(document.getElementById('formDevolucion'));
-        formData.append('action', 'devolver_llave');
+    event.preventDefault();
 
-        fetch(API_URL, {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                mostrarAlerta('✅ ' + data.message, 'success');
-                document.getElementById('formDevolucion').reset();
-                cargarPrestamosActivos();
-                cargarAulasGrid();
-                setTimeout(() => cargarHistorial(), 1000);
-            } else {
-                mostrarAlerta('❌ ' + data.message, 'error');
-            }
-        })
-        .catch(error => mostrarAlerta('Error: ' + error, 'error'));
+    const select = document.getElementById('prestamo_activo');
+
+    if (!select.value) {
+        mostrarAlerta('❌ Selecciona un préstamo activo', 'error');
+        return;
     }
+
+    const formData = new FormData(document.getElementById('formDevolucion'));
+    formData.append('action', 'devolver_llave');
+    formData.append('id_prestamo', select.value); // ✅ esto es todo lo que necesita el API
+
+    fetch(API_URL, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            mostrarAlerta('✅ ' + data.message, 'success');
+            document.getElementById('formDevolucion').reset();
+            cargarPrestamosActivos();
+            cargarAulasGrid();
+            setTimeout(() => cargarHistorial(), 1000);
+        } else {
+            mostrarAlerta('❌ ' + data.message, 'error');
+        }
+    })
+    .catch(error => mostrarAlerta('Error: ' + error.message, 'error'));
+}
 
     // Procesar nueva aula
     function procesarNuevaAula(event) {
