@@ -18,7 +18,7 @@ $titulos = [
     'dashboard' => 'Dashboard',
     'usuarios' => 'Gestión de Usuarios',
     'control-ingreso' => 'Control de Ingreso',
-    'control-llaves' => 'Control de Llaves',
+    'prestamo-devolucion' => 'Préstamo de Llaves',
     'permisos-salida' => 'Permisos de Salida',
     'reportes' => 'Reportes de Acceso',
     'personal-externo' => 'Personal Externo'
@@ -177,9 +177,9 @@ $titulo_seccion = $titulos[$seccion] ?? 'Dashboard';
                 </a>
             </li>
             <li class="menu-item">
-                <a href="?seccion=control-llaves" <?php echo ($seccion === 'control-llaves') ? 'class="active"' : ''; ?>>
+                <a href="?seccion=prestamo-devolucion" <?php echo ($seccion === 'prestamo-devolucion') ? 'class="active"' : ''; ?>>
                     <i class="bi bi-key"></i>
-                    <span>Control de Llaves</span>
+                    <span>Préstamo de Llaves</span>
                 </a>
             </li>
             <li class="menu-item">
@@ -219,27 +219,28 @@ $titulo_seccion = $titulos[$seccion] ?? 'Dashboard';
         <!-- Content Area - Cargar componentes dinámicamente -->
         <div class="content-area">
             <?php
-                // Mapear secciones a archivos de vistas
-                $vistas = [
-                    'dashboard' => 'views/controldeIngreso/dashboardview.php',
-                    'usuarios' => 'views/userViews/usuariosview.php',
-                    'control-ingreso' => 'views/controldeIngreso/controldeIngresoview.php',
-                    'control-llaves' => 'views/keyviews/keyviews.php',
-                    'permisos-salida' => 'views/Permisos/permisosview.php',
-                    'reportes' => 'views/reportes/reportesview.php',
-                    'personal-externo' => 'views/personalExterno/personalExternoview.php'
-                ];
-
-                if (isset($vistas[$seccion])) {
-                    $archivo_vista = __DIR__ . '/' . $vistas[$seccion];
-                    
-                    if (file_exists($archivo_vista)) {
-                        include $archivo_vista;
-                    } else {
-                        echo '<div class="alert alert-danger">Error: No se pudo cargar la vista.</div>';
-                    }
+                // Lógica especial para préstamo-devolucion con tabs
+                if ($seccion === 'prestamo-devolucion' && isset($_GET['tab'])) {
+                    $archivo_vista = __DIR__ . '/views/keyviews/prestamo_devolucion.php';
                 } else {
-                    echo '<div class="alert alert-danger">Error: Sección no válida.</div>';
+                    // Mapear secciones a archivos de vistas
+                    $vistas = [
+                        'dashboard' => 'views/controldeIngreso/dashboardview.php',
+                        'usuarios' => 'views/userViews/usuariosview.php',
+                        'control-ingreso' => 'views/controldeIngreso/controldeIngresoview.php',
+                        'prestamo-devolucion' => 'views/keyviews/keyviews.php',
+                        'permisos-salida' => 'views/Permisos/permisosview.php',
+                        'reportes' => 'views/reportes/reportesview.php',
+                        'personal-externo' => 'views/personalExterno/personalExternoview.php'
+                    ];
+
+                    $archivo_vista = isset($vistas[$seccion]) ? __DIR__ . '/' . $vistas[$seccion] : null;
+                }
+
+                if ($archivo_vista && file_exists($archivo_vista)) {
+                    include $archivo_vista;
+                } else {
+                    echo '<div class="alert alert-danger">Error: No se pudo cargar la vista.</div>';
                 }
             ?>
         </div>

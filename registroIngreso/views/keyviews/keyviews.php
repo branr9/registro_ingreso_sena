@@ -89,12 +89,12 @@
             </div>
 
             <div class="keys-button-group">
-                <button class="keys-btn keys-btn-primary" id="btn-nueva-aula">
+                <a href="?seccion=prestamo-devolucion&tab=nueva-aula" class="keys-btn keys-btn-primary">
                     <i class="fa-solid fa-plus"></i> Nueva Aula
-                </button>
-                <button class="keys-btn keys-btn-secondary" id="btn-registrar-prestamo">
+                </a>
+                <a href="?seccion=prestamo-devolucion&tab=tomar" class="keys-btn keys-btn-secondary">
                     <i class="fa-solid fa-hand-holding-hand"></i> Tomar/Devolver
-                </button>
+                </a>
             </div>
 
             <table class="keys-table" id="tabla-aulas">
