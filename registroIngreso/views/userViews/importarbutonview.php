@@ -4,7 +4,7 @@
 // ==============================================================================
 // Ajusta la ruta dependiendo de dónde esté exactamente tu conexion.php
 // Basado en tu VS Code, si está en la raíz de registroIngreso, sería así:
-require_once 'C:\Users\Aprendiz\Documents\GitHub\registro_ingreso_sena\registroIngreso\models\conexion.php'; 
+require_once '../../models/conexion.php';
 
 $mensaje = '';
 $tipo_mensaje = '';

@@ -2,7 +2,7 @@
 // Crear la conexión con la base de datos
 $servidor = "localhost";
 $usuario = "root";
-$password = "root";
+$password = "";
 
 
 $base_datos = "nexus";

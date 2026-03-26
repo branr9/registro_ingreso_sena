@@ -2,7 +2,7 @@
 // ==============================================================================
 // 1. CONEXIÓN A LA BASE DE DATOS
 // ==============================================================================
-require_once 'C:\Users\Aprendiz\Documents\GitHub\registro_ingreso_sena\registroIngreso\models\conexion.php'; 
+require_once '../../models/conexion.php';
 
 // ==============================================================================
 // 2. PROCESAR ACTUALIZACIÓN (Si se envió el formulario)
