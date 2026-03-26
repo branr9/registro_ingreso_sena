@@ -1,18 +1,9 @@
 <?php
 // ==========================================
-// 1. CONEXIÓN A LA BASE DE DATOS NEXUS
+// 1. LLAMAR A LA CONEXIÓN (conexion.php)
 // ==========================================
-$host = '127.0.0.1';
-$dbname = 'nexus';
-$username = 'root'; 
-$password = 'root';     // Cambia esto si en HeidiSQL le tienes contraseña a 'root'
-
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("<div class='alert alert-danger m-3'>Error de conexión: " . $e->getMessage() . "</div>");
-}
+// Asegúrate de que la ruta sea correcta. Si conexion.php está en otra carpeta, ajusta la ruta (ej: '../../conexion.php')
+include_once "models/conexion.php";
 
 $mensaje = '';
 
@@ -36,29 +27,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fecha_actual = date('Y-m-d');
     $hora_actual = date('H:i:s');
 
-    try {
-        // Preparar la consulta para insertar los datos
-        $sql = "INSERT INTO personal_externo 
-                (documento, tipo_documento, nombre, telefono, empresa, fecha, hora_ingreso, estado) 
-                VALUES 
-                (:documento, :tipo_documento, :nombre, :telefono, :empresa, :fecha, :hora_ingreso, 'Dentro')";
-        
-        $stmt = $pdo->prepare($sql);
+    // Preparar la consulta SQL para insertar los datos usando MySQLi (?)
+    $sql = "INSERT INTO personal_externo 
+            (documento, tipo_documento, nombre, telefono, empresa, fecha, hora_ingreso, estado) 
+            VALUES 
+            (?, ?, ?, ?, ?, ?, ?, 'Dentro')";
+    
+    $stmt = mysqli_prepare($conexion, $sql);
+
+    if ($stmt) {
+        // Vincular los parámetros (indicamos "sssssss" porque los 7 parámetros se tratan como strings)
+        mysqli_stmt_bind_param($stmt, "sssssss", $numero_documento, $tipo_documento, $nombre_completo, $telefono, $empresa, $fecha_actual, $hora_actual);
         
         // Ejecutar la inserción
-        $stmt->execute([
-            ':documento' => $numero_documento,
-            ':tipo_documento' => $tipo_documento,
-            ':nombre' => $nombre_completo,
-            ':telefono' => $telefono,
-            ':empresa' => $empresa,
-            ':fecha' => $fecha_actual,
-            ':hora_ingreso' => $hora_actual
-        ]);
-
-        $mensaje = "<div class='alert alert-success mt-3 mb-3'><i class='bi bi-check-circle-fill'></i> Registro de entrada guardado exitosamente para <strong>" . htmlspecialchars($nombre_completo) . "</strong>.</div>";
-    } catch (PDOException $e) {
-        $mensaje = "<div class='alert alert-danger mt-3 mb-3'><i class='bi bi-x-circle-fill'></i> Error al guardar en la base de datos: " . $e->getMessage() . "</div>";
+        if (mysqli_stmt_execute($stmt)) {
+            $mensaje = "<div class='alert alert-success mt-3 mb-3'><i class='bi bi-check-circle-fill'></i> Registro de entrada guardado exitosamente para <strong>" . htmlspecialchars($nombre_completo) . "</strong>.</div>";
+        } else {
+            $mensaje = "<div class='alert alert-danger mt-3 mb-3'><i class='bi bi-x-circle-fill'></i> Error al guardar en la base de datos: " . mysqli_error($conexion) . "</div>";
+        }
+        
+        // Cerrar la sentencia
+        mysqli_stmt_close($stmt);
+    } else {
+        $mensaje = "<div class='alert alert-danger mt-3 mb-3'><i class='bi bi-x-circle-fill'></i> Error al preparar la consulta: " . mysqli_error($conexion) . "</div>";
     }
 }
 ?>

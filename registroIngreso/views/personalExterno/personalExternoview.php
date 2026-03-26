@@ -1,19 +1,9 @@
 <?php
 // ==========================================
-// 1. CONEXIÓN A LA BASE DE DATOS NEXUS (HEIDISQL / MYSQL)
+// 1. LLAMAR A LA CONEXIÓN (conexion.php)
 // ==========================================
-$host = '127.0.0.1'; // Usar 127.0.0.1 es más directo que localhost para HeidiSQL
-$dbname = 'nexus';
-$username = 'root'; // Usuario por defecto
-$password = 'root';     // Contraseña por defecto (déjala vacía si no le pusiste una)
-
-try {
-    // La conexión dice 'mysql' porque HeidiSQL administra bases de datos MySQL/MariaDB
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("<div class='alert alert-danger m-3'><strong>Error de conexión a la base de datos:</strong><br>Asegúrate de que tu servidor (XAMPP/Laragon) esté encendido. Detalles: " . $e->getMessage() . "</div>");
-}
+// Ajusta la ruta si tu archivo conexion.php está en otra carpeta
+include_once "models/conexion.php"; 
 
 // ==========================================
 // 2. RECIBIR FILTROS DEL FORMULARIO
@@ -24,10 +14,11 @@ $fecha_desde = isset($_GET['desde']) ? $_GET['desde'] : '';
 $fecha_hasta = isset($_GET['hasta']) ? $_GET['hasta'] : '';
 
 // ==========================================
-// 3. CONSTRUIR LA CONSULTA SQL DINÁMICA
+// 3. CONSTRUIR LA CONSULTA SQL DINÁMICA (Para MySQLi)
 // ==========================================
 $sql = "SELECT * FROM personal_externo WHERE 1=1";
 $params = [];
+$tipos = ""; // Almacena los tipos de datos para mysqli (s = string)
 
 if ($busqueda !== '') {
     $sql .= " AND (nombre LIKE ? OR documento LIKE ? OR empresa LIKE ?)";
@@ -35,29 +26,50 @@ if ($busqueda !== '') {
     $params[] = $like_term;
     $params[] = $like_term;
     $params[] = $like_term;
+    $tipos .= "sss"; // 3 strings
 }
 
 if ($estado_filtro !== 'Todos') {
     $sql .= " AND estado = ?";
     $params[] = $estado_filtro;
+    $tipos .= "s"; // 1 string
 }
 
 if ($fecha_desde !== '') {
     $sql .= " AND fecha >= ?";
     $params[] = $fecha_desde;
+    $tipos .= "s";
 }
 
 if ($fecha_hasta !== '') {
     $sql .= " AND fecha <= ?";
     $params[] = $fecha_hasta;
+    $tipos .= "s";
 }
 
 $sql .= " ORDER BY fecha DESC, hora_ingreso DESC";
 
-// Ejecutar la consulta en la base de datos (HeidiSQL)
-$stmt = $pdo->prepare($sql);
-$stmt->execute($params);
-$registros_filtrados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// ==========================================
+// 4. EJECUTAR LA CONSULTA CON MYSQLI
+// ==========================================
+$stmt = mysqli_prepare($conexion, $sql);
+
+if ($stmt) {
+    // Si hay parámetros, los vinculamos
+    if (!empty($params)) {
+        mysqli_stmt_bind_param($stmt, $tipos, ...$params);
+    }
+    
+    mysqli_stmt_execute($stmt);
+    $resultado = mysqli_stmt_get_result($stmt);
+    
+    // Extraer todos los datos en un arreglo
+    $registros_filtrados = mysqli_fetch_all($resultado, MYSQLI_ASSOC);
+    
+    mysqli_stmt_close($stmt);
+} else {
+    die("<div class='alert alert-danger'>Error en la consulta SQL: " . mysqli_error($conexion) . "</div>");
+}
 ?>
 
 <style>
@@ -93,7 +105,7 @@ $registros_filtrados = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <p>Control de entrada y salida de personal sin carnet (visitantes, contratistas, proveedores)</p>
     </div>
     <div class="action-buttons">
-        <a href="personasDentrobutton.php" class="btn-custom btn-cyan" style="text-decoration: none;">
+        <a href="index.php?vista=personasDentrobutton" class="btn-custom btn-cyan" style="text-decoration: none;">
             <i class="bi bi-door-open"></i> Personas Dentro
         </a>
         <a href="index.php?vista=registrarEntradabutton" class="btn-custom btn-green">
@@ -187,6 +199,6 @@ $registros_filtrados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <script>
     function limpiarFiltros() { window.location.href = "index.php?vista=personalExterno"; }
-    function verPersonasDentro() { window.location.href = "index.php?vista=personalExterno&estado=Dentro"; }
+    function verPersonasDentro() { window.location.href = "index.php?vista=personasDentrobutton"; }
     function verDetalles(documento) { alert("Viendo detalles del documento: " + documento); }
 </script>

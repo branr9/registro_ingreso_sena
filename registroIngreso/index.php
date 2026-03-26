@@ -74,7 +74,7 @@ $vista = isset($_GET['vista']) ? $_GET['vista'] : 'dashboard';
                 </a>
             </li>
             <li class="menu-item">
-                <a href="index.php?vista=personalExterno" class="<?php echo ($vista == 'personalExterno' || $vista == 'registrarEntradabutton') ? 'active' : ''; ?>">
+                <a href="index.php?vista=personalExterno" class="<?php echo ($vista == 'personalExterno' || $vista == 'registrarEntradabutton' || $vista == 'personasDentrobutton') ? 'active' : ''; ?>">
                     <i class="bi bi-person-badge"></i>
                     <span>Personal Externo</span>
                 </a>
@@ -86,10 +86,13 @@ $vista = isset($_GET['vista']) ? $_GET['vista'] : 'dashboard';
         <div class="top-bar">
             <h4>
                 <?php 
+                    // Título dinámico según la vista
                     if($vista == 'personalExterno') {
                         echo "Registro de Personal Externo";
                     } else if($vista == 'registrarEntradabutton') {
                         echo "Registrar Entrada";
+                    } else if($vista == 'personasDentrobutton') {
+                        echo "Personas Dentro";
                     } else if($vista == 'dashboard') {
                         echo "Dashboard Principal";
                     } else {
@@ -105,7 +108,9 @@ $vista = isset($_GET['vista']) ? $_GET['vista'] : 'dashboard';
 
         <div class="content-area">
             <?php
-            // RUTAS DE LAS VISTAS
+            // ==========================================
+            // RUTAS DE LAS VISTAS (ENRUTADOR)
+            // ==========================================
             if ($vista == 'personalExterno') {
                 if (file_exists('views/personalExterno/personalExternoview.php')) {
                     include 'views/personalExterno/personalExternoview.php';
@@ -120,6 +125,14 @@ $vista = isset($_GET['vista']) ? $_GET['vista'] : 'dashboard';
                     echo "<div class='alert alert-danger'>Error: No se encontró views/personalExterno/registrarEntradabutton.php</div>";
                 }
             } 
+            // AQUÍ ESTÁ LA LÍNEA QUE FALTABA
+            else if ($vista == 'personasDentrobutton') {
+                if (file_exists('views/personalExterno/personasDentrobutton.php')) {
+                    include 'views/personalExterno/personasDentrobutton.php';
+                } else {
+                    echo "<div class='alert alert-danger'>Error: No se encontró views/personalExterno/personasDentrobutton.php</div>";
+                }
+            }
             else if ($vista == 'dashboard') {
                 echo "<h3>Bienvenido al Sistema de Ingreso</h3>";
                 echo "<p>Seleccione una opción en el menú de la izquierda para comenzar.</p>";

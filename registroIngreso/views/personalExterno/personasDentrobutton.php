@@ -1,28 +1,27 @@
 <?php
 // ==========================================
-// 1. CONEXIÓN A LA BASE DE DATOS NEXUS
+// 1. LLAMAR A LA CONEXIÓN (conexion.php)
 // ==========================================
-$host = '127.0.0.1';
-$dbname = 'nexus';
-$username = 'root'; 
-$password = 'root'; // Pon 'root' aquí si tu base de datos tiene esa contraseña
-
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("<div class='alert alert-danger m-3'>Error de conexión a la BD: " . $e->getMessage() . "</div>");
-}
+// Al estar incluido desde index.php, la ruta parte desde la raíz
+include_once "models/conexion.php"; 
 
 // ==========================================
-// 2. CONSULTAR SÓLO LOS QUE ESTÁN 'DENTRO'
+// 2. CONSULTAR SÓLO LOS QUE ESTÁN 'DENTRO' (Con MySQLi)
 // ==========================================
 $sql = "SELECT * FROM personal_externo WHERE estado = 'Dentro' ORDER BY fecha DESC, hora_ingreso DESC";
-$stmt = $pdo->prepare($sql);
-$stmt->execute();
-$personas_dentro = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$resultado = mysqli_query($conexion, $sql);
 
-// Contar cuántas personas hay
+$personas_dentro = [];
+
+if ($resultado) {
+    // Extraer todos los registros en un arreglo asociativo
+    $personas_dentro = mysqli_fetch_all($resultado, MYSQLI_ASSOC);
+} else {
+    // Si hay un error en la consulta, lo mostramos
+    die("<div class='alert alert-danger m-3'>Error en la consulta SQL: " . mysqli_error($conexion) . "</div>");
+}
+
+// Contar cuántas personas hay dentro
 $cantidad_dentro = count($personas_dentro);
 ?>
 
@@ -38,7 +37,7 @@ $cantidad_dentro = count($personas_dentro);
     }
 
     .btn-volver-gray {
-        background-color: #6b7280; /* Gris azulado idéntico a la imagen */
+        background-color: #6b7280; 
         color: white;
         padding: 6px 14px;
         border-radius: 4px;
@@ -65,7 +64,7 @@ $cantidad_dentro = count($personas_dentro);
 
     /* Cuadro verde de contador de personas */
     .badge-count {
-        background-color: #22c55e; /* Verde brillante */
+        background-color: #22c55e; 
         color: white;
         padding: 4px 14px;
         border-radius: 20px;
@@ -76,7 +75,7 @@ $cantidad_dentro = count($personas_dentro);
     }
 
     .subtitle-dentro {
-        margin: 5px 0 25px 95px; /* Alineado al texto del título, saltando el botón */
+        margin: 5px 0 25px 95px; 
         color: #64748b;
         font-size: 14px;
     }
