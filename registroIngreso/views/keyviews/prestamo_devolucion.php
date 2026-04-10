@@ -399,10 +399,14 @@
 
 <div class="llaves-container" data-base-url="<?php echo isset($_GET['tab']) ? '../../' : './'; ?>">
     <!-- Header -->
-    <div class="llaves-header">
-        <h1><i class="fas fa-key llaves-icon"></i> Préstamo de Llaves</h1>
-        <p>Seleccione el aula para tomar o devolver la llave</p>
-    </div>
+    <!-- ✅ Reemplaza el llaves-header actual por este -->
+<div class="llaves-header" style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px;">
+    <a href="?seccion=prestamo-devolucion" class="llaves-btn llaves-btn-secondary" style="text-decoration: none;">
+        <i class="fas fa-arrow-left"></i> Volver
+    </a>
+    <h1><i class="fas fa-key llaves-icon"></i> Préstamo de Llaves</h1>
+    <p>Seleccione el aula para tomar o devolver la llave</p>
+</div>
 
     <!-- Alertas -->
     <div id="llaveAlert" style="display: none;"></div>
