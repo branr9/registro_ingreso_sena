@@ -9,9 +9,14 @@ require_once '../../models/conexion.php';
 // ==============================================================================
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_dni'])) {
     $dni_eliminar = mysqli_real_escape_string($conexion, $_POST['delete_dni']);
+    $origen = mysqli_real_escape_string($conexion, $_POST['origen']); // Saber de qué tabla borrar
     
-    // Ejecutar la consulta para borrar
-    $query_delete = "DELETE FROM usuarios WHERE Dni = '$dni_eliminar'";
+    if ($origen === 'usuario') {
+        $query_delete = "DELETE FROM usuarios WHERE Dni = '$dni_eliminar'";
+    } else if ($origen === 'externo') {
+        $query_delete = "DELETE FROM personal_externo WHERE documento = '$dni_eliminar'";
+    }
+    
     mysqli_query($conexion, $query_delete);
     
     // Recargar la página para actualizar la tabla y los contadores
@@ -27,54 +32,113 @@ $tipo = $_GET['tipo'] ?? 'Todos'; // Nota: El tipo no existe en la BD actual, no
 $estado = $_GET['estado'] ?? 'Todos';
 
 // ==============================================================================
-// 3. CONSULTAS DE ESTADÍSTICAS REALES
+// 3. CONSULTAS DE ESTADÍSTICAS REALES (Combinadas)
 // ==============================================================================
-// Total Usuarios
-$resTotales = mysqli_query($conexion, "SELECT COUNT(*) as total FROM usuarios");
-$totalUsuarios = mysqli_fetch_assoc($resTotales)['total'] ?? 0;
+// Total Usuarios (Usuarios + Externos)
+$resTotales = mysqli_query($conexion, "
+    SELECT SUM(total) as gran_total FROM (
+        SELECT COUNT(*) as total FROM usuarios
+        UNION ALL
+        SELECT COUNT(*) as total FROM personal_externo
+    ) as conteos
+");
+$totalUsuarios = mysqli_fetch_assoc($resTotales)['gran_total'] ?? 0;
 
-// Total Activos
-$resActivos = mysqli_query($conexion, "SELECT COUNT(*) as total FROM usuarios WHERE estado = 'Activo'");
-$totalActivos = mysqli_fetch_assoc($resActivos)['total'] ?? 0;
+// Total Activos (Usuarios Activos + Externos Dentro)
+$resActivos = mysqli_query($conexion, "
+    SELECT SUM(total) as gran_total FROM (
+        SELECT COUNT(*) as total FROM usuarios WHERE estado = 'Activo'
+        UNION ALL
+        SELECT COUNT(*) as total FROM personal_externo WHERE estado = 'Dentro'
+    ) as conteos
+");
+$totalActivos = mysqli_fetch_assoc($resActivos)['gran_total'] ?? 0;
 
-// Total Inactivos
-$resInactivos = mysqli_query($conexion, "SELECT COUNT(*) as total FROM usuarios WHERE estado = 'Inactivo'");
-$totalInactivos = mysqli_fetch_assoc($resInactivos)['total'] ?? 0;
+// Total Inactivos (Usuarios Inactivos + Externos Salió)
+$resInactivos = mysqli_query($conexion, "
+    SELECT SUM(total) as gran_total FROM (
+        SELECT COUNT(*) as total FROM usuarios WHERE estado = 'Inactivo'
+        UNION ALL
+        SELECT COUNT(*) as total FROM personal_externo WHERE estado = 'Salió'
+    ) as conteos
+");
+$totalInactivos = mysqli_fetch_assoc($resInactivos)['gran_total'] ?? 0;
 
 // ==============================================================================
-// 4. CONSULTA PRINCIPAL DE USUARIOS (Con Filtros)
+// 4. CONSULTA PRINCIPAL COMBINADA (Usuarios + Personal Externo)
 // ==============================================================================
-$query = "SELECT * FROM usuarios WHERE 1=1";
+$search_esc = mysqli_real_escape_string($conexion, $search);
 
-// Filtro de búsqueda
+// Consulta para usuarios
+$query_usuarios = "
+    SELECT 
+        Dni as documento, 
+        CONCAT(nombre, ' ', apellido) as nombre_completo,
+        'Persona' as tipo,
+        '-' as empresa,
+        correo as email,
+        '' as username,
+        'Usuario' as rol,
+        IF(estado = 'Activo', 1, 0) as estado_num,
+        'usuario' as origen,
+        fecha_creacion
+    FROM usuarios 
+    WHERE 1=1
+";
+
+// Consulta para personal externo
+$query_externos = "
+    SELECT 
+        documento, 
+        nombre as nombre_completo,
+        tipo_documento as tipo,
+        IFNULL(empresa, '-') as empresa,
+        '-' as email,
+        '' as username,
+        'Personal Externo' as rol,
+        IF(estado = 'Dentro', 1, 0) as estado_num,
+        'externo' as origen,
+        fecha_creacion
+    FROM personal_externo
+    WHERE 1=1
+";
+
+// Filtros de búsqueda
 if (!empty($search)) {
-    $search_esc = mysqli_real_escape_string($conexion, $search);
-    $query .= " AND (Dni LIKE '%$search_esc%' OR nombre LIKE '%$search_esc%' OR apellido LIKE '%$search_esc%' OR correo LIKE '%$search_esc%')";
+    $cond_search_u = " AND (Dni LIKE '%$search_esc%' OR nombre LIKE '%$search_esc%' OR apellido LIKE '%$search_esc%' OR correo LIKE '%$search_esc%')";
+    $cond_search_e = " AND (documento LIKE '%$search_esc%' OR nombre LIKE '%$search_esc%' OR empresa LIKE '%$search_esc%')";
+    
+    $query_usuarios .= $cond_search_u;
+    $query_externos .= $cond_search_e;
 }
 
-// Filtro de estado
+// Filtros de estado
 if ($estado === 'Activos') {
-    $query .= " AND estado = 'Activo'";
+    $query_usuarios .= " AND estado = 'Activo'";
+    $query_externos .= " AND estado = 'Dentro'";
 } elseif ($estado === 'Inactivos') {
-    $query .= " AND estado = 'Inactivo'";
+    $query_usuarios .= " AND estado = 'Inactivo'";
+    $query_externos .= " AND estado = 'Salió'";
 }
 
-$query .= " ORDER BY fecha_creacion DESC";
-$resultado = mysqli_query($conexion, $query);
+// Unir ambas consultas
+$query_final = "($query_usuarios) UNION ALL ($query_externos) ORDER BY fecha_creacion DESC";
+$resultado = mysqli_query($conexion, $query_final);
 
-// Construir el array con los datos reales de la BD
+// Construir el array con los datos combinados
 $usuarios_db = [];
 if ($resultado && mysqli_num_rows($resultado) > 0) {
     while ($row = mysqli_fetch_assoc($resultado)) {
         $usuarios_db[] = [
-            'documento' => $row['Dni'],
-            'nombre' => $row['nombre'] . ' ' . $row['apellido'],
-            'tipo' => 'Persona', // Por defecto (No existe en BD)
-            'empresa' => '-', // Por defecto (No existe en BD)
-            'email' => $row['correo'],
-            'username' => '', // Por defecto (No existe en BD)
-            'rol' => 'Usuario', // Por defecto (No existe en BD)
-            'estado' => ($row['estado'] == 'Activo') ? 1 : 0
+            'documento' => $row['documento'],
+            'nombre' => $row['nombre_completo'],
+            'tipo' => $row['tipo'],
+            'empresa' => $row['empresa'],
+            'email' => $row['email'],
+            'username' => $row['username'],
+            'rol' => $row['rol'],
+            'estado' => $row['estado_num'],
+            'origen' => $row['origen'] // Agregamos origen para saber de dónde viene
         ];
     }
 }
@@ -248,7 +312,7 @@ if ($resultado && mysqli_num_rows($resultado) > 0) {
                 <form method="GET" action="usuariosview.php" class="bg-card-bg p-6 rounded-2xl border border-gray-100 mb-8 grid grid-cols-[1fr,200px,200px,auto,auto] gap-4 items-end">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Buscar</label>
-                        <input type="text" name="search" value="<?= htmlspecialchars($search) ?>" placeholder="Documento, nombre, email..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-1 focus:ring-sidebar-bg focus:border-sidebar-bg">
+                        <input type="text" name="search" value="<?= htmlspecialchars($search) ?>" placeholder="Documento, nombre, empresa, email..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-1 focus:ring-sidebar-bg focus:border-sidebar-bg">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
@@ -263,8 +327,8 @@ if ($resultado && mysqli_num_rows($resultado) > 0) {
                         <label class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
                         <select name="estado" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-1 focus:ring-sidebar-bg focus:border-sidebar-bg appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22feather%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%20%3E%3C%2Fsvg%3E')] bg-[length:20px] bg-[position:calc(100%-12px)_50%] bg-no-repeat">
                             <option value="Todos" <?= $estado == 'Todos' ? 'selected' : '' ?>>Todos</option>
-                            <option value="Activos" <?= $estado == 'Activos' ? 'selected' : '' ?>>Activos</option>
-                            <option value="Inactivos" <?= $estado == 'Inactivos' ? 'selected' : '' ?>>Inactivos</option>
+                            <option value="Activos" <?= $estado == 'Activos' ? 'selected' : '' ?>>Activos/Dentro</option>
+                            <option value="Inactivos" <?= $estado == 'Inactivos' ? 'selected' : '' ?>>Inactivos/Salió</option>
                         </select>
                     </div>
                     <button type="submit" class="bg-btn-green text-white px-5 py-2.5 rounded-lg font-medium flex items-center gap-2">
@@ -301,13 +365,14 @@ if ($resultado && mysqli_num_rows($resultado) > 0) {
                             <?php else: ?>
                                 <?php foreach ($usuarios_db as $index => $user): 
                                     $row_class = ($index % 2 == 1) ? 'bg-gray-50' : '';
-                                    $type_badge_class = '';
-                                    switch ($user['tipo']) { 
-                                        case 'Vigilante': $type_badge_class = 'bg-badge-vigilante'; break;
-                                        case 'Contratista': $type_badge_class = 'bg-badge-contratista'; break;
-                                        default: $type_badge_class = 'bg-badge-persona';
+                                    
+                                    // Asignar colores a los badges de Rol y Tipo
+                                    $rol_badge_class = ($user['rol'] == 'Personal Externo') ? 'bg-purple-500 text-white' : 'bg-gray-300 text-gray-800';
+                                    
+                                    $type_badge_class = 'bg-badge-persona'; // Default
+                                    if ($user['origen'] == 'externo') {
+                                        $type_badge_class = 'bg-blue-400';
                                     }
-                                    $rol_badge_class = ($user['rol'] == 'Vigilante') ? 'bg-gray-500 text-white' : 'bg-gray-300 text-gray-800';
                                 ?>
                                     <tr class="<?php echo $row_class; ?> border-b border-gray-200 text-sm hover:bg-gray-100 transition">
                                         <td class="p-5 font-medium"><?php echo htmlspecialchars($user['documento']); ?></td>
@@ -319,13 +384,13 @@ if ($resultado && mysqli_num_rows($resultado) > 0) {
                                         </td>
                                         <td class="p-5 text-gray-600"><?php echo htmlspecialchars($user['empresa']); ?></td>
                                         <td class="p-5 text-gray-900">
-                                            <?php if (!empty($user['email'])): ?>
+                                            <?php if (!empty($user['email']) && $user['email'] !== '-'): ?>
                                                 <?php echo htmlspecialchars($user['email']); ?><br>
                                                 <?php if(!empty($user['username'])): ?>
                                                     <span class="text-xs text-gray-500"><?php echo htmlspecialchars($user['username']); ?></span>
                                                 <?php endif; ?>
                                             <?php else: ?>
-                                                -
+                                                <span class="text-gray-400 italic">No aplica</span>
                                             <?php endif; ?>
                                         </td>
                                         <td class="p-5">
@@ -337,23 +402,28 @@ if ($resultado && mysqli_num_rows($resultado) > 0) {
                                             <?php if ($user['estado'] == 1): ?>
                                                 <div class="flex items-center gap-1.5 text-btn-green font-semibold">
                                                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                                    Activo
+                                                    <?= ($user['origen'] == 'externo') ? 'Dentro' : 'Activo' ?>
                                                 </div>
                                             <?php else: ?>
                                                 <div class="flex items-center gap-1.5 text-red-500 font-semibold">
                                                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                                    Inactivo
+                                                    <?= ($user['origen'] == 'externo') ? 'Salió' : 'Inactivo' ?>
                                                 </div>
                                             <?php endif; ?>
                                         </td>
                                         <td class="p-5">
                                             <div class="flex gap-2.5">
-                                                <a href="usuarios_editar.php?id=<?php echo htmlspecialchars($user['documento']); ?>" class="bg-btn-blue text-white p-2 rounded hover:opacity-80 inline-block">
-                                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /></svg>
-                                                </a>
+                                                <?php if ($user['origen'] == 'usuario'): ?>
+                                                    <a href="usuarios_editar.php?id=<?php echo htmlspecialchars($user['documento']); ?>" class="bg-btn-blue text-white p-2 rounded hover:opacity-80 inline-block">
+                                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /></svg>
+                                                    </a>
+                                                <?php else: ?>
+                                                    <div class="w-8"></div> 
+                                                <?php endif; ?>
                                                 
-                                                <form method="POST" action="" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este usuario definitivamente? Esta acción no se puede deshacer.');" class="inline-block m-0">
+                                                <form method="POST" action="" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este registro definitivamente?');" class="inline-block m-0">
                                                     <input type="hidden" name="delete_dni" value="<?php echo htmlspecialchars($user['documento']); ?>">
+                                                    <input type="hidden" name="origen" value="<?php echo htmlspecialchars($user['origen']); ?>">
                                                     <button type="submit" class="bg-orange-500 text-white p-2 rounded hover:opacity-80">
                                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
                                                     </button>
