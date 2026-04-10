@@ -1,3 +1,48 @@
+<?php
+// ==============================================================================
+// 1. CONEXIÓN A LA BASE DE DATOS
+// ==============================================================================
+require_once '../../models/conexion.php';
+
+$error_msg = '';
+
+// ==============================================================================
+// 2. PROCESAR EL FORMULARIO
+// ==============================================================================
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Capturar y limpiar los datos
+    $documento = mysqli_real_escape_string($conexion, trim($_POST['documento']));
+    $nombre_completo = mysqli_real_escape_string($conexion, trim($_POST['nombre']));
+    $correo = mysqli_real_escape_string($conexion, trim($_POST['correo']));
+    $estado = mysqli_real_escape_string($conexion, $_POST['estado'] ?? 'Activo');
+    
+    // Separar nombre y apellido para la base de datos
+    $partes = explode(' ', $nombre_completo, 2);
+    $nombre = $partes[0];
+    $apellido = $partes[1] ?? ''; // Si no pone apellido, queda en blanco
+    $fecha_actual = date('Y-m-d'); // La base de datos pide una fecha obligatoria
+
+    // Verificar si el documento o correo ya existen para evitar errores fatales
+    $check_query = "SELECT Dni FROM usuarios WHERE Dni = '$documento' OR correo = '$correo'";
+    $check_result = mysqli_query($conexion, $check_query);
+
+    if (mysqli_num_rows($check_result) > 0) {
+        $error_msg = "Error: El documento o el correo electrónico ya están registrados en el sistema.";
+    } else {
+        // Insertar el nuevo usuario en la base de datos
+        $query_insert = "INSERT INTO usuarios (nombre, apellido, fecha, Dni, correo, estado) 
+                         VALUES ('$nombre', '$apellido', '$fecha_actual', '$documento', '$correo', '$estado')";
+        
+        if (mysqli_query($conexion, $query_insert)) {
+            // Éxito: Redirigir a la lista de usuarios
+            header("Location: usuariosview.php");
+            exit;
+        } else {
+            $error_msg = "Error al guardar el usuario: " . mysqli_error($conexion);
+        }
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -37,48 +82,13 @@
             </div>
 
             <ul class="list-none p-0 my-[20px] flex-grow flex flex-col gap-1">
-                <li>
-                    <a href="../../index.php" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10">
-                        <i class="bi bi-house-door text-[20px] w-[25px]"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="usuariosview.php" class="flex items-center px-[20px] py-[15px] bg-[#4ade80] text-white font-semibold no-underline transition-all duration-300 gap-[12px] text-[15px]">
-                        <i class="bi bi-people text-[20px] w-[25px]"></i>
-                        <span>Usuarios</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10">
-                        <i class="bi bi-grid text-[20px] w-[25px]"></i>
-                        <span>Control de Ingreso</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10">
-                        <i class="bi bi-key text-[20px] w-[25px]"></i>
-                        <span>Control de Llaves</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10">
-                        <i class="bi bi-door-open text-[20px] w-[25px]"></i>
-                        <span>Permisos de Salida</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10">
-                        <i class="bi bi-bar-chart text-[20px] w-[25px]"></i>
-                        <span>Reportes</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10">
-                        <i class="bi bi-person-badge text-[20px] w-[25px]"></i>
-                        <span>Personal Externo</span>
-                    </a>
-                </li>
+                <li><a href="../../index.php" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10"><i class="bi bi-house-door text-[20px] w-[25px]"></i><span>Dashboard</span></a></li>
+                <li><a href="usuariosview.php" class="flex items-center px-[20px] py-[15px] bg-[#4ade80] text-white font-semibold no-underline transition-all duration-300 gap-[12px] text-[15px]"><i class="bi bi-people text-[20px] w-[25px]"></i><span>Usuarios</span></a></li>
+                <li><a href="#" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10"><i class="bi bi-grid text-[20px] w-[25px]"></i><span>Control de Ingreso</span></a></li>
+                <li><a href="#" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10"><i class="bi bi-key text-[20px] w-[25px]"></i><span>Control de Llaves</span></a></li>
+                <li><a href="#" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10"><i class="bi bi-door-open text-[20px] w-[25px]"></i><span>Permisos de Salida</span></a></li>
+                <li><a href="#" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10"><i class="bi bi-bar-chart text-[20px] w-[25px]"></i><span>Reportes</span></a></li>
+                <li><a href="#" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10"><i class="bi bi-person-badge text-[20px] w-[25px]"></i><span>Personal Externo</span></a></li>
             </ul>
 
             <div class="mt-auto pt-6 pb-4 border-t border-white/20">
@@ -126,7 +136,13 @@
                     </div>
                 </div>
 
-                <form class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                <?php if (!empty($error_msg)): ?>
+                    <div class="bg-red-100 text-red-800 p-4 rounded-lg mb-6 border border-red-200">
+                        <?= htmlspecialchars($error_msg) ?>
+                    </div>
+                <?php endif; ?>
+
+                <form method="POST" action="" class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
                     
                     <div class="mb-8">
                         <div class="flex items-center gap-2 text-btn-green border-b-2 border-btn-green pb-2 mb-6">
@@ -138,7 +154,7 @@
                         
                         <div class="grid grid-cols-2 gap-x-8 gap-y-6">
                             <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-1">Documento <span class="text-red-500">*</span></label>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">Documento (DNI) <span class="text-red-500">*</span></label>
                                 <input type="text" name="documento" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-1 focus:ring-btn-green outline-none" required>
                             </div>
                             <div>
@@ -147,8 +163,8 @@
                             </div>
                             
                             <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-1">Tipo de Persona <span class="text-red-500">*</span></label>
-                                <select name="tipo_persona" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-1 focus:ring-btn-green outline-none bg-white" required>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">Tipo de Persona</label>
+                                <select name="tipo_persona" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-1 focus:ring-btn-green outline-none bg-white">
                                     <option value="" disabled selected>Seleccione...</option>
                                     <option value="Vigilante">Vigilante</option>
                                     <option value="Contratista">Contratista</option>
@@ -158,6 +174,11 @@
                             <div>
                                 <label class="block text-sm font-bold text-gray-700 mb-1">Empresa/Institución</label>
                                 <input type="text" name="empresa" placeholder="Opcional" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-1 focus:ring-btn-green outline-none">
+                            </div>
+
+                            <div class="col-span-2">
+                                <label class="block text-sm font-bold text-gray-700 mb-1">Correo Electrónico <span class="text-red-500">*</span></label>
+                                <input type="email" name="correo" placeholder="ejemplo@sena.edu.co" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-1 focus:ring-btn-green outline-none" required>
                             </div>
 
                             <div class="col-span-2 mt-2">
