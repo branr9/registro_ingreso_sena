@@ -91,7 +91,7 @@ $query_externos = "
     SELECT 
         documento, 
         nombre as nombre_completo,
-        tipo_documento as tipo,
+        'Externo' as tipo,
         IFNULL(empresa, '-') as empresa,
         '-' as email,
         '' as username,
