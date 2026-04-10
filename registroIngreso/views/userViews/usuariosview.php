@@ -181,7 +181,7 @@ if ($resultado && mysqli_num_rows($resultado) > 0) {
         <nav class="w-[230px] flex-shrink-0 bg-gradient-to-b from-[#6b4db8] to-[#5a3d9e] flex flex-col shadow-[2px_0_5px_rgba(0,0,0,0.1)] min-h-screen relative z-10">
             <div class="bg-black/10 py-[20px] px-[15px] flex items-center gap-[10px]">
                 <i class="bi bi-flower2 text-[#4ade80] text-[35px]"></i>
-                <h5 class="text-white m-0 text-[18px] font-semibold">Sistema Ingreso</h5>
+                <h5 class="text-white m-0 text-[18px] font-semibold">Sistema Ingreso as</h5>
             </div>
 
             <ul class="list-none p-0 my-[20px] flex-grow flex flex-col gap-1">
