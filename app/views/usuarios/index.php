@@ -12,7 +12,7 @@ require_once APP_PATH . '/views/layouts/header.php';
         <div class="page-header" style="margin-bottom: 2rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                 <h1 style="font-size: 1.75rem; color: var(--text-color); margin: 0;">
-                    <i class="fas fa-users"></i> Gestión de Usuarios
+                    <i class="fas fa-users"></i> 
                 </h1>
                 <?php if (Auth::hasRole('admin')): ?>
                 <div style="display: flex; gap: 1rem;">
@@ -97,11 +97,13 @@ require_once APP_PATH . '/views/layouts/header.php';
                         <option value="INACTIVO" <?= ($_GET['estado'] ?? '') === 'INACTIVO' ? 'selected' : '' ?>>Inactivo</option>
                     </select>
                 </div>
-                <div>
-                    <button type="submit" class="btn btn-primary">
+                
+                <!-- BOTONES DE BÚSQUEDA IGUALADOS -->
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <button type="submit" class="btn btn-primary" style="width: 120px; height: 38px; display: inline-flex; justify-content: center; align-items: center; gap: 0.5rem; border: none; cursor: pointer;">
                         <i class="fas fa-search"></i> Buscar
                     </button>
-                    <a href="<?= baseUrl('/usuarios') ?>" class="btn" style="background: var(--text-muted); color: white;">
+                    <a href="<?= baseUrl('/usuarios') ?>" class="btn" style="width: 120px; height: 38px; display: inline-flex; justify-content: center; align-items: center; gap: 0.5rem; background: var(--text-muted); color: white; text-decoration: none;">
                         <i class="fas fa-redo"></i> Limpiar
                     </a>
                 </div>
@@ -114,22 +116,25 @@ require_once APP_PATH . '/views/layouts/header.php';
                 <table style="width: 100%; border-collapse: collapse;">
                     <thead>
                         <tr style="background: var(--light-color); border-bottom: 2px solid var(--border-color);">
-                            <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Documento</th>
-                            <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Nombre</th>
-                            <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Tipo</th>
-                            <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Empresa</th>
-                            <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Email/Usuario</th>
-                            <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Rol</th>
-                            <th style="padding: 0.75rem; text-align: center; font-weight: 600;">Estado</th>
+                            <!-- TODOS LOS ENCABEZADOS CENTRADOS -->
+                            <th style="padding: 0.75rem; text-align: center; font-weight: 600; white-space: nowrap;">Documento</th>
+                            <th style="padding: 0.75rem; text-align: center; font-weight: 600; white-space: nowrap;">Nombre</th>
+                            <th style="padding: 0.75rem; text-align: center; font-weight: 600; white-space: nowrap;">Empresa</th>
+                            <th style="padding: 0.75rem; text-align: center; font-weight: 600; white-space: nowrap;">Email/Usuario</th>
+                            <!-- ENCABEZADO ROL CENTRADO -->
+                            <th style="padding: 0.75rem; text-align: center; font-weight: 600; white-space: nowrap;">Rol</th>
+                            <th style="padding: 0.75rem; text-align: center; font-weight: 600; white-space: nowrap;">Estado</th>
                             <?php if (Auth::hasRole('admin')): ?>
-                            <th style="padding: 0.75rem; text-align: center; font-weight: 600;">Acciones</th>
+                            <!-- ENCABEZADO ACCIONES CENTRADO -->
+                            <th style="padding: 0.75rem; text-align: center; font-weight: 600; white-space: nowrap;">Acciones</th>
                             <?php endif; ?>
                         </tr>
                     </thead>
                     <tbody>
                         <?php if (empty($usuarios)): ?>
                         <tr>
-                            <td colspan="8" style="padding: 2rem; text-align: center; color: var(--text-muted);">
+                            <!-- Ajustado a 7 columnas por haber quitado el Tipo -->
+                            <td colspan="7" style="padding: 2rem; text-align: center; color: var(--text-muted);">
                                 <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
                                 No se encontraron usuarios
                             </td>
@@ -137,22 +142,24 @@ require_once APP_PATH . '/views/layouts/header.php';
                         <?php else: ?>
                         <?php foreach ($usuarios as $usuario): ?>
                         <tr style="border-bottom: 1px solid var(--border-color);">
-                            <td style="padding: 0.75rem; font-weight: 500;"><?= e($usuario['documento']) ?></td>
-                            <td style="padding: 0.75rem;">
+                            
+                            <!-- TODAS LAS CELDAS CENTRADAS VERTICAL Y HORIZONTALMENTE -->
+                            <td style="padding: 0.75rem; font-weight: 500; text-align: center; vertical-align: middle;"><?= e($usuario['documento']) ?></td>
+                            
+                            <td style="padding: 0.75rem; text-align: center; vertical-align: middle;">
                                 <?= e(trim($usuario['nombres'] . ' ' . ($usuario['apellidos'] ?? ''))) ?>
                             </td>
-                            <td style="padding: 0.75rem;">
-                                <span class="badge" style="background: var(--primary-light); color: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem;">
-                                    <?= e($usuario['tipo_persona_nombre'] ?? ucfirst($usuario['tipo_persona'])) ?>
-                                </span>
-                            </td>
-                            <td style="padding: 0.75rem; color: var(--text-muted);"><?= e($usuario['empresa'] ?? '-') ?></td>
-                            <td style="padding: 0.75rem; font-size: 0.875rem;">
+                            
+                            <td style="padding: 0.75rem; color: var(--text-muted); text-align: center; vertical-align: middle;"><?= e($usuario['empresa'] ?? '-') ?></td>
+                            
+                            <td style="padding: 0.75rem; font-size: 0.875rem; text-align: center; vertical-align: middle;">
                                 <?= $usuario['email'] ? e($usuario['email']) : '' ?>
                                 <?= $usuario['username'] ? '<br><small style="color: var(--text-muted);">@' . e($usuario['username']) . '</small>' : '' ?>
                                 <?= !$usuario['email'] && !$usuario['username'] ? '<span style="color: var(--text-muted);">-</span>' : '' ?>
                             </td>
-                            <td style="padding: 0.75rem;">
+                            
+                            <!-- CELDA ROL: CENTRADA Y ADAPTABLE -->
+                            <td style="padding: 0.75rem; text-align: center; vertical-align: middle;">
                                 <?php
                                 $badgeColors = [
                                     'admin' => 'var(--primary-color)',
@@ -163,49 +170,59 @@ require_once APP_PATH . '/views/layouts/header.php';
                                 $rol = $usuario['rol'] ?? 'persona';
                                 $bgColor = $badgeColors[$rol] ?? 'var(--text-muted)';
                                 ?>
-                                <span class="badge" style="background: <?= $bgColor ?>; color: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem;">
+                                <span class="badge" style="background: <?= $bgColor ?>; color: white; padding: 0.35rem 0.75rem; border-radius: 0.25rem; font-size: 0.75rem; white-space: nowrap; display: inline-block;">
                                     <?= e($usuario['rol_nombre'] ?? ucfirst($rol)) ?>
                                 </span>
                             </td>
-                            <td style="padding: 0.75rem; text-align: center;">
+                            
+                            <td style="padding: 0.75rem; text-align: center; vertical-align: middle;">
                                 <?php if (strtoupper($usuario['estado']) === 'ACTIVO'): ?>
-                                <span style="color: var(--primary-color); font-weight: 600;">
+                                <span style="color: var(--primary-color); font-weight: 600; white-space: nowrap;">
                                     <i class="fas fa-check-circle"></i> Activo
                                 </span>
                                 <?php else: ?>
-                                <span style="color: var(--text-muted); font-weight: 600;">
+                                <span style="color: var(--text-muted); font-weight: 600; white-space: nowrap;">
                                     <i class="fas fa-times-circle"></i> Inactivo
                                 </span>
                                 <?php endif; ?>
                             </td>
+                            
                             <?php if (Auth::hasRole('admin')): ?>
-                            <td style="padding: 0.75rem; text-align: center;">
-                                <div style="display: flex; gap: 0.5rem; justify-content: center;">
+                            <!-- CELDA ACCIONES: CENTRADAS, CUADRADAS Y DEL MISMO TAMAÑO -->
+                            <td style="padding: 0.75rem; text-align: center; vertical-align: middle;">
+                                <div style="display: flex; gap: 0.5rem; justify-content: center; align-items: center;">
+                                    
+                                    <!-- Botón Editar -->
                                     <a href="<?= baseUrl('/usuarios/edit/' . $usuario['id']) ?>" 
-                                       class="btn" style="padding: 0.5rem 0.75rem; background: var(--info-color); color: white; font-size: 0.875rem;" 
+                                       class="btn" style="width: 36px; height: 36px; display: inline-flex; justify-content: center; align-items: center; padding: 0; background: var(--info-color); color: white; font-size: 0.875rem; border-radius: 0.25rem; text-decoration: none;" 
                                        title="Editar">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form method="POST" action="<?= baseUrl('/usuarios/toggle/' . $usuario['id']) ?>" style="display: inline;">
+                                    
+                                    <!-- Botón Estado -->
+                                    <form method="POST" action="<?= baseUrl('/usuarios/toggle/' . $usuario['id']) ?>" style="display: inline-block; margin: 0;">
                                         <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
                                         <button type="submit" class="btn" 
-                                                style="padding: 0.5rem 0.75rem; background: var(--warning-color); color: white; font-size: 0.875rem; border: none; cursor: pointer;" 
+                                                style="width: 36px; height: 36px; display: inline-flex; justify-content: center; align-items: center; padding: 0; background: var(--warning-color); color: white; font-size: 0.875rem; border: none; cursor: pointer; border-radius: 0.25rem;" 
                                                 title="<?= strtoupper($usuario['estado']) === 'ACTIVO' ? 'Desactivar' : 'Activar' ?>"
                                                 onclick="return confirm('¿Cambiar estado del usuario?')">
                                             <i class="fas fa-<?= strtoupper($usuario['estado']) === 'ACTIVO' ? 'ban' : 'check' ?>"></i>
                                         </button>
                                     </form>
+                                    
+                                    <!-- Botón Eliminar -->
                                     <?php if ($usuario['id'] !== Auth::user()['id']): ?>
-                                    <form method="POST" action="<?= baseUrl('/usuarios/delete/' . $usuario['id']) ?>" style="display: inline;">
+                                    <form method="POST" action="<?= baseUrl('/usuarios/delete/' . $usuario['id']) ?>" style="display: inline-block; margin: 0;">
                                         <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
                                         <button type="submit" class="btn" 
-                                                style="padding: 0.5rem 0.75rem; background: var(--danger-color); color: white; font-size: 0.875rem; border: none; cursor: pointer;" 
+                                                style="width: 36px; height: 36px; display: inline-flex; justify-content: center; align-items: center; padding: 0; background: var(--danger-color); color: white; font-size: 0.875rem; border: none; cursor: pointer; border-radius: 0.25rem;" 
                                                 title="Eliminar"
                                                 onclick="return confirm('¿Está seguro de eliminar este usuario?')">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
                                     <?php endif; ?>
+                                    
                                 </div>
                             </td>
                             <?php endif; ?>
@@ -227,7 +244,7 @@ require_once APP_PATH . '/views/layouts/header.php';
                 
                 <?php if ($currentPage > 1): ?>
                 <a href="<?= baseUrl('/usuarios?' . http_build_query(array_merge($queryParams, ['page' => $currentPage - 1]))) ?>" 
-                   class="btn" style="padding: 0.5rem 1rem; background: var(--light-color); color: var(--text-color);">
+                   class="btn" style="padding: 0.5rem 1rem; background: var(--light-color); color: var(--text-color); text-decoration: none;">
                     <i class="fas fa-chevron-left"></i> Anterior
                 </a>
                 <?php endif; ?>
@@ -238,7 +255,7 @@ require_once APP_PATH . '/views/layouts/header.php';
                 
                 <?php if ($currentPage < $lastPage): ?>
                 <a href="<?= baseUrl('/usuarios?' . http_build_query(array_merge($queryParams, ['page' => $currentPage + 1]))) ?>" 
-                   class="btn" style="padding: 0.5rem 1rem; background: var(--light-color); color: var(--text-color);">
+                   class="btn" style="padding: 0.5rem 1rem; background: var(--light-color); color: var(--text-color); text-decoration: none;">
                     Siguiente <i class="fas fa-chevron-right"></i>
                 </a>
                 <?php endif; ?>
