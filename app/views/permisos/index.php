@@ -2,7 +2,7 @@
 
 <div class="main-content">
     <div class="content-header">
-        <h1><i class="fas fa-file-signature"></i> Permisos de Salida</h1>
+        <h1><i class="fas fa-file-signature"></i></h1>
         <div class="header-actions">
             <?php if (Auth::hasRole('admin') || Auth::hasRole('instructor')): ?>
             <a href="<?= baseUrl('/permisos/create') ?>" class="btn btn-primary">
