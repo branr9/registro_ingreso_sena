@@ -1,0 +1,21 @@
+documento,nombre,tipo_persona,empresa,email,username
+1234567890,Juan Carlos Pérez González,aprendiz,SENA,juan.perez@misena.edu.co,
+1234567891,María Fernanda López Ruiz,aprendiz,SENA,maria.lopez@misena.edu.co,
+1234567892,Carlos Andrés Rodríguez,aprendiz,SENA,carlos.rodriguez@misena.edu.co,
+9876543210,Ana María García Torres,instructor,SENA,ana.garcia@sena.edu.co,agarcia
+9876543211,Pedro Luis Martínez Silva,instructor,SENA,pedro.martinez@sena.edu.co,pmartinez
+9876543212,Laura Patricia Sánchez,instructor,SENA,laura.sanchez@sena.edu.co,lsanchez
+CC10203040,José Miguel Ramírez,vigilante,Seguridad Total,jose.ramirez@seguridadtotal.com,jramirez
+CC20304050,Diana Carolina Flores,vigilante,Seguridad Total,diana.flores@seguridadtotal.com,dflores
+NIT800123456,Roberto Gómez Pérez,contratista,Empresa TechSolutions,roberto.gomez@techsolutions.com,
+NIT900234567,Claudia Hernández,contratista,Consultoría ABC,claudia.hernandez@consultoriaabc.com,
+PASAPORTE123,Michael Johnson,visitante,Embassy USA,michael.johnson@embassy.us,
+CC30405060,Sofía Alejandra Torres,visitante,Ministerio de Educación,sofia.torres@mineducacion.gov.co,
+NIT700111222,Fernando Castro Ruiz,proveedor,Proveedores Unidos,fernando.castro@proveedoresunidos.com,
+NIT700222333,Patricia Morales,proveedor,Suministros Oficina,patricia.morales@suministros.com,
+1234567893,Andrés Felipe Gómez,aprendiz,SENA,andres.gomez@misena.edu.co,
+1234567894,Valentina Quintero Mesa,aprendiz,SENA,valentina.quintero@misena.edu.co,
+1234567895,Santiago Vargas Pérez,aprendiz,SENA,santiago.vargas@misena.edu.co,
+1234567896,Camila Andrea Ruiz,aprendiz,SENA,camila.ruiz@misena.edu.co,
+1234567897,Daniel Esteban López,aprendiz,SENA,daniel.lopez@misena.edu.co,
+1234567898,Isabella Rodríguez,aprendiz,SENA,isabella.rodriguez@misena.edu.co,
