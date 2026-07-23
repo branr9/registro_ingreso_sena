@@ -1,68 +1,180 @@
 <?php
-// ==============================================================================
-// 1. CONEXIÓN A LA BASE DE DATOS
-// ==============================================================================
-require_once '../../models/conexion.php';
+$id = $_GET['id'] ?? '';
+$usuario = null;
+$error = '';
 
-// ==============================================================================
-// 2. PROCESAR ACTUALIZACIÓN (Si se envió el formulario)
-// ==============================================================================
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $documento = mysqli_real_escape_string($conexion, $_POST['id_usuario']);
-    $nombre_completo = mysqli_real_escape_string($conexion, trim($_POST['nombre']));
-    $email = mysqli_real_escape_string($conexion, trim($_POST['email']));
-    
-    // Separar el nombre completo en Nombre y Apellido para la base de datos
-    $partes = explode(' ', $nombre_completo, 2);
-    $nombre = $partes[0];
-    $apellido = $partes[1] ?? '';
-
-    // Actualizar en la base de datos
-    // Nota: tipo_persona, empresa y usuario no se actualizan porque no existen en la BD actual
-    $query_update = "UPDATE usuarios SET nombre = '$nombre', apellido = '$apellido', correo = '$email' WHERE Dni = '$documento'";
-    
-    if (mysqli_query($conexion, $query_update)) {
-        // Redirigir a la vista de usuarios tras actualizar correctamente
-        header("Location: usuariosview.php");
-        exit;
+if (!empty($id)) {
+    $id_esc = mysqli_real_escape_string($conexion, $id);
+    $res = mysqli_query($conexion, "SELECT * FROM usuarios WHERE Dni='$id_esc'");
+    if ($res && mysqli_num_rows($res) > 0) {
+        $usuario = mysqli_fetch_assoc($res);
     } else {
-        $error_msg = "Error al actualizar: " . mysqli_error($conexion);
+        $error = 'Usuario no encontrado';
     }
 }
+?>
 
+<div style="padding: 20px; max-width: 500px;">
+    <h1 style="margin: 0 0 20px 0; font-size: 20px;">Editar Usuario</h1>
+
+    <?php if (!empty($error)): ?>
+        <div style="background: #fee2e2; color: #991b1b; padding: 10px; border-radius: 4px; margin-bottom: 15px; border-left: 3px solid #ef4444; font-size: 13px;">
+            <?= htmlspecialchars($error) ?>
+        </div>
+    <?php elseif ($usuario): ?>
+
+        <form method="POST" action="" style="background: white; padding: 20px; border-radius: 4px; border: 1px solid #ddd;">
+            <input type="hidden" name="accion" value="actualizar-usuario">
+            <input type="hidden" name="user_id" value="<?= htmlspecialchars($usuario['Dni']) ?>">
+
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-size: 12px; font-weight: 600; color: #333; margin-bottom: 4px;">Documento</label>
+                <input type="text" value="<?= htmlspecialchars($usuario['Dni']) ?>" disabled style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px; font-size: 12px; background: #f5f5f5; box-sizing: border-box;">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-size: 12px; font-weight: 600; color: #333; margin-bottom: 4px;">Nombre</label>
+                <input type="text" name="nombre" value="<?= htmlspecialchars($usuario['nombre']) ?>" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px; font-size: 12px; box-sizing: border-box;">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-size: 12px; font-weight: 600; color: #333; margin-bottom: 4px;">Apellido</label>
+                <input type="text" name="apellido" value="<?= htmlspecialchars($usuario['apellido']) ?>" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px; font-size: 12px; box-sizing: border-box;">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-size: 12px; font-weight: 600; color: #333; margin-bottom: 4px;">Correo</label>
+                <input type="email" name="correo" value="<?= htmlspecialchars($usuario['correo']) ?>" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px; font-size: 12px; box-sizing: border-box;">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-size: 12px; font-weight: 600; color: #333; margin-bottom: 4px;">Estado</label>
+                <div>
+                    <label style="display: inline-block; margin-right: 15px;">
+                        <input type="radio" name="estado" value="Activo" <?= $usuario['estado'] === 'Activo' ? 'checked' : '' ?>> Activo
+                    </label>
+                    <label style="display: inline-block;">
+                        <input type="radio" name="estado" value="Inactivo" <?= $usuario['estado'] === 'Inactivo' ? 'checked' : '' ?>> Inactivo
+                    </label>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <a href="?seccion=usuarios" style="flex: 1; background: #666; color: white; padding: 8px; border-radius: 3px; text-decoration: none; text-align: center; font-weight: 600; font-size: 12px;">Cancelar</a>
+                <button type="submit" style="flex: 1; background: #3b82f6; color: white; padding: 8px; border: none; border-radius: 3px; cursor: pointer; font-weight: 600; font-size: 12px;">Guardar Cambios</button>
+            </div>
+        </form>
+
+    <?php endif; ?>
+</div>
+<?php
+$id = $_GET['id'] ?? '';
+$usuario = null;
+$error_msg = '';
+
+if (!empty($id)) {
+    $id_esc = mysqli_real_escape_string($conexion, $id);
+    $resultado = mysqli_query($conexion, "SELECT * FROM usuarios WHERE Dni = '$id_esc'");
+    if ($resultado && mysqli_num_rows($resultado) > 0) {
+        $usuario = mysqli_fetch_assoc($resultado);
+    } else {
+        $error_msg = "Usuario no encontrado.";
+    }
+}
+?>
+
+<div style="padding: 30px; max-width: 900px;">
+    <!-- Encabezado -->
+    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 30px;">
+        <a href="?seccion=usuarios" style="background: #666; color: white; padding: 10px 16px; border-radius: 6px; text-decoration: none; font-weight: 600;">← Volver</a>
+        <h2 style="margin: 0; font-size: 24px; font-weight: bold;">Editar Usuario</h2>
+    </div>
+
+    <?php if (!empty($error_msg)): ?>
+        <div style="background: #fee2e2; color: #991b1b; padding: 15px; border-radius: 6px; margin-bottom: 20px; border-left: 4px solid #ef4444;">
+            <?= htmlspecialchars($error_msg) ?>
+        </div>
+    <?php elseif ($usuario): ?>
+
+        <!-- Formulario -->
+        <form method="POST" action="" style="background: white; padding: 30px; border-radius: 8px; border: 1px solid #ddd;">
+            <input type="hidden" name="accion" value="actualizar-usuario">
+            <input type="hidden" name="user_id" value="<?= htmlspecialchars($usuario['Dni']) ?>">
+
+            <!-- Sección Datos Personales -->
+            <h3 style="font-size: 16px; font-weight: 600; color: #3b82f6; border-bottom: 2px solid #3b82f6; padding-bottom: 10px; margin-bottom: 20px;">📋 Datos Personales</h3>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                <div>
+                    <label style="display: block; font-size: 12px; font-weight: 600; color: #333; margin-bottom: 6px;">Documento (DNI)</label>
+                    <input type="text" value="<?= htmlspecialchars($usuario['Dni']) ?>" disabled style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; background: #f5f5f5; box-sizing: border-box;">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 12px; font-weight: 600; color: #333; margin-bottom: 6px;">Nombre Completo <span style="color: #ef4444;">*</span></label>
+                    <input type="text" name="nombre" value="<?= htmlspecialchars($usuario['nombre']) ?>" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; box-sizing: border-box;">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 12px; font-weight: 600; color: #333; margin-bottom: 6px;">Apellido <span style="color: #ef4444;">*</span></label>
+                    <input type="text" name="apellido" value="<?= htmlspecialchars($usuario['apellido']) ?>" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; box-sizing: border-box;">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 12px; font-weight: 600; color: #333; margin-bottom: 6px;">Correo Electrónico <span style="color: #ef4444;">*</span></label>
+                    <input type="email" name="correo" value="<?= htmlspecialchars($usuario['correo']) ?>" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; box-sizing: border-box;">
+                </div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 12px; font-weight: 600; color: #333; margin-bottom: 6px;">Estado <span style="color: #ef4444;">*</span></label>
+                <div style="display: flex; gap: 20px;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="radio" name="estado" value="Activo" <?= $usuario['estado'] === 'Activo' ? 'checked' : '' ?> required>
+                        <span style="font-size: 13px;">Activo</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="radio" name="estado" value="Inactivo" <?= $usuario['estado'] === 'Inactivo' ? 'checked' : '' ?> required>
+                        <span style="font-size: 13px;">Inactivo</span>
+                    </label>
+                </div>
+            </div>
+
+            <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+
+            <!-- Botones -->
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <a href="?seccion=usuarios" style="background: #666; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600;">Cancelar</a>
+                <button type="submit" style="background: #3b82f6; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">✓ Guardar Cambios</button>
+            </div>
+        </form>
+
+    <?php endif; ?>
+</div>
+<?php
 // ==============================================================================
-// 3. OBTENER DATOS DEL USUARIO (Al cargar la página)
+// OBTENER DATOS DEL USUARIO Y MOSTRAR FORMULARIO
 // ==============================================================================
 $id_usuario = $_GET['id'] ?? null;
 $usuario_actual = null;
+$error_msg = $_POST['error_msg'] ?? '';
 
 if ($id_usuario) {
     $id_seguro = mysqli_real_escape_string($conexion, $id_usuario);
     $resultado = mysqli_query($conexion, "SELECT * FROM usuarios WHERE Dni = '$id_seguro'");
     
     if ($row = mysqli_fetch_assoc($resultado)) {
-        // Adaptamos los datos de la BD a lo que pide el formulario
         $usuario_actual = [
             'documento' => $row['Dni'],
             'nombre' => trim($row['nombre'] . ' ' . $row['apellido']),
-            'tipo_persona' => 'Persona', // Valor por defecto
-            'empresa' => '-', // Valor por defecto
-            'usuario' => '', // Valor por defecto
+            'tipo_persona' => 'Persona',
+            'empresa' => '-',
+            'usuario' => '',
             'email' => $row['correo']
         ];
     }
 }
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Usuario - Sistema Ingreso</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/heroicons@^2/24/outline.js" defer></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<!-- Formulario de Edición de Usuario -->
+<div class="p-10 max-w-5xl">
 
     <script>
         tailwind.config = {
@@ -82,36 +194,12 @@ if ($id_usuario) {
         }
     </script>
 </head>
-<body class="bg-gray-50 font-sans antialiased text-gray-800">
-    <div class="min-h-screen flex">
 
-        <nav class="w-[230px] flex-shrink-0 bg-gradient-to-b from-[#6b4db8] to-[#5a3d9e] flex flex-col shadow-[2px_0_5px_rgba(0,0,0,0.1)] min-h-screen relative z-10">
-            <div class="bg-black/10 py-[20px] px-[15px] flex items-center gap-[10px]">
-                <i class="bi bi-flower2 text-[#4ade80] text-[35px]"></i>
-                <h5 class="text-white m-0 text-[18px] font-semibold">Sistema Ingreso</h5>
-            </div>
-            
-            <ul class="list-none p-0 my-[20px] flex-grow flex flex-col gap-1">
-                <li><a href="../../index.php" class="flex items-center px-[20px] py-[15px] text-white/90 gap-[12px] text-[15px] hover:bg-white/10"><i class="bi bi-house-door text-[20px] w-[25px]"></i><span>Dashboard</span></a></li>
-                <li><a href="usuariosview.php" class="flex items-center px-[20px] py-[15px] bg-[#4ade80] text-white font-semibold gap-[12px] text-[15px]"><i class="bi bi-people text-[20px] w-[25px]"></i><span>Usuarios</span></a></li>
-                </ul>
-        </nav>
-
-        <main class="flex-grow">
-            <header class="bg-white p-5 flex items-center justify-between border-b border-gray-200 shadow-sm">
-                <h2 class="text-2xl font-bold text-gray-800">Editar Usuario</h2>
-                <div class="flex items-center gap-3">
-                    <p class="text-sm font-medium">Administrador Sistema</p>
-                    <div class="bg-[#4ade80] rounded-full w-9 h-9 flex items-center justify-center font-bold text-lg text-white">
-                        <i class="bi bi-person-fill"></i>
-                    </div>
-                </div>
-            </header>
-
-            <div class="p-10 max-w-5xl">
+<!-- Formulario de Edición de Usuario -->
+<div class="p-10 max-w-5xl">
                 
                 <div class="mb-8 flex items-center gap-4">
-                    <a href="usuariosview.php" class="bg-gray-500 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 hover:bg-gray-600 transition">
+                    <a href="?seccion=usuarios" class="bg-gray-500 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 hover:bg-gray-600 transition">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" /></svg>
                         Volver
                     </a>
@@ -133,7 +221,7 @@ if ($id_usuario) {
                     </p>
 
                     <form action="" method="POST" class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-                        
+                        <input type="hidden" name="accion" value="actualizar-usuario">
                         <input type="hidden" name="id_usuario" value="<?= htmlspecialchars($usuario_actual['documento']) ?>">
 
                         <div class="mb-10">
@@ -197,7 +285,7 @@ if ($id_usuario) {
                         </div>
                         <h3 class="text-2xl font-bold text-gray-700">No se encontró el usuario</h3>
                         <p class="text-gray-500 mt-2 max-w-md">El documento no existe en la base de datos.</p>
-                        <a href="usuariosview.php" class="mt-8 bg-btn-green text-white font-medium py-2.5 px-6 rounded-lg shadow-md hover:bg-green-600 transition flex items-center gap-2">
+                        <a href="?seccion=usuarios" class="mt-8 bg-btn-green text-white font-medium py-2.5 px-6 rounded-lg shadow-md hover:bg-green-600 transition flex items-center gap-2">
                             <i class="bi bi-arrow-left"></i>
                             Regresar a la lista
                         </a>
@@ -205,7 +293,3 @@ if ($id_usuario) {
                 <?php endif; ?>
 
             </div>
-        </main>
-    </div>
-</body>
-</html>

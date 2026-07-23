@@ -1,130 +1,147 @@
 <?php
-// ==============================================================================
-// 1. CONEXIÓN A LA BASE DE DATOS
-// ==============================================================================
-require_once '../../models/conexion.php';
-
-$error_msg = '';
-
-// ==============================================================================
-// 2. PROCESAR EL FORMULARIO
-// ==============================================================================
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Capturar y limpiar los datos
-    $documento = mysqli_real_escape_string($conexion, trim($_POST['documento']));
-    $nombre_completo = mysqli_real_escape_string($conexion, trim($_POST['nombre']));
-    $correo = mysqli_real_escape_string($conexion, trim($_POST['correo']));
-    $estado = mysqli_real_escape_string($conexion, $_POST['estado'] ?? 'Activo');
-    
-    // Separar nombre y apellido para la base de datos
-    $partes = explode(' ', $nombre_completo, 2);
-    $nombre = $partes[0];
-    $apellido = $partes[1] ?? ''; // Si no pone apellido, queda en blanco
-    $fecha_actual = date('Y-m-d'); // La base de datos pide una fecha obligatoria
-
-    // Verificar si el documento o correo ya existen para evitar errores fatales
-    $check_query = "SELECT Dni FROM usuarios WHERE Dni = '$documento' OR correo = '$correo'";
-    $check_result = mysqli_query($conexion, $check_query);
-
-    if (mysqli_num_rows($check_result) > 0) {
-        $error_msg = "Error: El documento o el correo electrónico ya están registrados en el sistema.";
-    } else {
-        // Insertar el nuevo usuario en la base de datos
-        $query_insert = "INSERT INTO usuarios (nombre, apellido, fecha, Dni, correo, estado) 
-                         VALUES ('$nombre', '$apellido', '$fecha_actual', '$documento', '$correo', '$estado')";
-        
-        if (mysqli_query($conexion, $query_insert)) {
-            // Éxito: Redirigir a la lista de usuarios
-            header("Location: usuariosview.php");
-            exit;
-        } else {
-            $error_msg = "Error al guardar el usuario: " . mysqli_error($conexion);
-        }
-    }
-}
+$success = isset($_GET['success']);
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Nuevo Usuario - Sistema Ingreso</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/heroicons@^2/24/outline.js" defer></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'sidebar-bg': '#5c4cd4',
-                        'sidebar-hover': '#7165de',
-                        'active-menu': '#4caf50',
-                        'card-bg': '#ffffff',
-                        'btn-green': '#4caf50',
-                        'btn-blue': '#1fb6ff',
-                        'btn-gray': '#78909c',
-                    }
-                }
-            }
-        }
-    </script>
-</head>
-<body class="bg-gray-50 font-sans antialiased text-gray-800">
-    <div class="min-h-screen flex">
 
-        <nav class="w-[230px] flex-shrink-0 bg-gradient-to-b from-[#6b4db8] to-[#5a3d9e] flex flex-col shadow-[2px_0_5px_rgba(0,0,0,0.1)] min-h-screen relative z-10">
-            <div class="bg-black/10 py-[20px] px-[15px] flex items-center gap-[10px]">
-                <i class="bi bi-flower2 text-[#4ade80] text-[35px]"></i>
-                <h5 class="text-white m-0 text-[18px] font-semibold">Sistema Ingreso</h5>
+<div style="padding: 20px; max-width: 500px;">
+    <h1 style="margin: 0 0 20px 0; font-size: 20px;">Crear Usuario</h1>
+
+    <?php if ($success): ?>
+        <div style="background: #dcfce7; color: #166534; padding: 10px; border-radius: 4px; margin-bottom: 15px; border-left: 3px solid #22c55e; font-size: 13px;">
+            ✓ Usuario creado exitosamente
+        </div>
+    <?php endif; ?>
+
+    <form method="POST" action="" style="background: white; padding: 20px; border-radius: 4px; border: 1px solid #ddd;">
+        <input type="hidden" name="accion" value="crear-usuario">
+
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; font-size: 12px; font-weight: 600; color: #333; margin-bottom: 4px;">Documento <span style="color: #ef4444;">*</span></label>
+            <input type="text" name="documento" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px; font-size: 12px; box-sizing: border-box;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; font-size: 12px; font-weight: 600; color: #333; margin-bottom: 4px;">Nombre <span style="color: #ef4444;">*</span></label>
+            <input type="text" name="nombre" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px; font-size: 12px; box-sizing: border-box;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; font-size: 12px; font-weight: 600; color: #333; margin-bottom: 4px;">Apellido</label>
+            <input type="text" name="apellido" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px; font-size: 12px; box-sizing: border-box;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; font-size: 12px; font-weight: 600; color: #333; margin-bottom: 4px;">Correo <span style="color: #ef4444;">*</span></label>
+            <input type="email" name="correo" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px; font-size: 12px; box-sizing: border-box;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; font-size: 12px; font-weight: 600; color: #333; margin-bottom: 4px;">Estado</label>
+            <div>
+                <label style="display: inline-block; margin-right: 15px;">
+                    <input type="radio" name="estado" value="Activo" checked> Activo
+                </label>
+                <label style="display: inline-block;">
+                    <input type="radio" name="estado" value="Inactivo"> Inactivo
+                </label>
             </div>
+        </div>
 
-            <ul class="list-none p-0 my-[20px] flex-grow flex flex-col gap-1">
-                <li><a href="../../index.php" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10"><i class="bi bi-house-door text-[20px] w-[25px]"></i><span>Dashboard</span></a></li>
-                <li><a href="usuariosview.php" class="flex items-center px-[20px] py-[15px] bg-[#4ade80] text-white font-semibold no-underline transition-all duration-300 gap-[12px] text-[15px]"><i class="bi bi-people text-[20px] w-[25px]"></i><span>Usuarios</span></a></li>
-                <li><a href="#" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10"><i class="bi bi-grid text-[20px] w-[25px]"></i><span>Control de Ingreso</span></a></li>
-                <li><a href="#" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10"><i class="bi bi-key text-[20px] w-[25px]"></i><span>Control de Llaves</span></a></li>
-                <li><a href="#" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10"><i class="bi bi-door-open text-[20px] w-[25px]"></i><span>Permisos de Salida</span></a></li>
-                <li><a href="#" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10"><i class="bi bi-bar-chart text-[20px] w-[25px]"></i><span>Reportes</span></a></li>
-                <li><a href="#" class="flex items-center px-[20px] py-[15px] text-white/90 no-underline transition-all duration-300 gap-[12px] text-[15px] hover:bg-white/10"><i class="bi bi-person-badge text-[20px] w-[25px]"></i><span>Personal Externo</span></a></li>
-            </ul>
+        <div style="display: flex; gap: 10px;">
+            <a href="?seccion=usuarios" style="flex: 1; background: #666; color: white; padding: 8px; border-radius: 3px; text-decoration: none; text-align: center; font-weight: 600; font-size: 12px;">Cancelar</a>
+            <button type="submit" style="flex: 1; background: #22c55e; color: white; padding: 8px; border: none; border-radius: 3px; cursor: pointer; font-weight: 600; font-size: 12px;">Guardar</button>
+        </div>
+    </form>
+</div>
+<?php
+$error_msg = $_GET['error'] ?? '';
+$success = isset($_GET['success']);
+?>
 
-            <div class="mt-auto pt-6 pb-4 border-t border-white/20">
-                <div class="flex items-center gap-3 px-5 mb-4">
-                    <div class="bg-blue-400 rounded-full w-10 h-10 flex items-center justify-center font-bold text-[22px] text-white">
-                        <i class="bi bi-person-circle"></i>
-                    </div>
-                    <div>
-                        <p class="text-white font-semibold text-sm m-0">Administrador Sistema</p>
-                        <p class="text-xs text-white/70 m-0">ADMIN</p>
-                    </div>
-                </div>
-                <div class="px-3">
-                    <button class="flex w-full items-center gap-[12px] px-[15px] py-[10px] rounded-lg text-red-300 hover:bg-white/10 transition-all duration-300">
-                        <i class="bi bi-box-arrow-left text-[20px] w-[25px]"></i>
-                        <span class="text-[15px] font-medium">Salir</span>
-                    </button>
-                </div>
+<div style="padding: 30px; max-width: 900px;">
+    <!-- Encabezado -->
+    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 30px;">
+        <a href="?seccion=usuarios" style="background: #666; color: white; padding: 10px 16px; border-radius: 6px; text-decoration: none; font-weight: 600;">← Volver</a>
+        <h2 style="margin: 0; font-size: 24px; font-weight: bold;">Crear Nuevo Usuario</h2>
+    </div>
+
+    <?php if (!empty($error_msg)): ?>
+        <div style="background: #fee2e2; color: #991b1b; padding: 15px; border-radius: 6px; margin-bottom: 20px; border-left: 4px solid #ef4444;">
+            <?= htmlspecialchars($error_msg) ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($success): ?>
+        <div style="background: #dcfce7; color: #166534; padding: 15px; border-radius: 6px; margin-bottom: 20px; border-left: 4px solid #22c55e;">
+            ✓ Usuario creado exitosamente
+        </div>
+    <?php endif; ?>
+
+    <!-- Formulario -->
+    <form method="POST" action="" style="background: white; padding: 30px; border-radius: 8px; border: 1px solid #ddd;">
+        <input type="hidden" name="accion" value="crear-usuario">
+
+        <!-- Sección Datos Personales -->
+        <h3 style="font-size: 16px; font-weight: 600; color: #22c55e; border-bottom: 2px solid #22c55e; padding-bottom: 10px; margin-bottom: 20px;">📋 Datos Personales</h3>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+            <div>
+                <label style="display: block; font-size: 12px; font-weight: 600; color: #333; margin-bottom: 6px;">Documento (DNI) <span style="color: #ef4444;">*</span></label>
+                <input type="text" name="documento" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; box-sizing: border-box;">
             </div>
-        </nav>
+            <div>
+                <label style="display: block; font-size: 12px; font-weight: 600; color: #333; margin-bottom: 6px;">Nombre Completo <span style="color: #ef4444;">*</span></label>
+                <input type="text" name="nombre" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; box-sizing: border-box;">
+            </div>
+            <div>
+                <label style="display: block; font-size: 12px; font-weight: 600; color: #333; margin-bottom: 6px;">Correo Electrónico <span style="color: #ef4444;">*</span></label>
+                <input type="email" name="correo" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; box-sizing: border-box;">
+            </div>
+            <div>
+                <label style="display: block; font-size: 12px; font-weight: 600; color: #333; margin-bottom: 6px;">Tipo de Persona</label>
+                <select name="tipo_persona" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; box-sizing: border-box;">
+                    <option value="">Seleccione...</option>
+                    <option value="Vigilante">Vigilante</option>
+                    <option value="Contratista">Contratista</option>
+                    <option value="Persona">Persona</option>
+                </select>
+            </div>
+        </div>
 
-        <main class="flex-grow">
-            <header class="bg-white p-5 flex items-center justify-between border-b border-gray-200 shadow-sm">
-                <h2 class="text-2xl font-bold text-gray-800">Gestión de Usuarios</h2>
-                <div class="flex items-center gap-3">
-                    <p class="text-sm font-medium">Administrador Sistema</p>
-                    <div class="bg-[#4ade80] rounded-full w-9 h-9 flex items-center justify-center font-bold text-lg text-white">
-                        <i class="bi bi-person-fill"></i>
-                    </div>
-                </div>
-            </header>
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; font-size: 12px; font-weight: 600; color: #333; margin-bottom: 6px;">Estado <span style="color: #ef4444;">*</span></label>
+            <div style="display: flex; gap: 20px;">
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="radio" name="estado" value="Activo" checked required>
+                    <span style="font-size: 13px;">Activo</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="radio" name="estado" value="Inactivo" required>
+                    <span style="font-size: 13px;">Inactivo</span>
+                </label>
+            </div>
+        </div>
 
-            <div class="p-10 max-w-5xl">
+        <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+
+        <!-- Botones -->
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+            <a href="?seccion=usuarios" style="background: #666; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600;">Cancelar</a>
+            <button type="submit" style="background: #22c55e; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">✓ Guardar Usuario</button>
+        </div>
+    </form>
+</div>
+<?php
+// ==============================================================================
+// LA LÓGICA DE CREAR USUARIO SE PROCESA EN index.php
+// ==============================================================================
+$error_msg = $_POST['error_msg'] ?? '';
+?>
+
+<!-- Creador de Usuarios -->
+<div class="p-10 max-w-5xl">
                 
                 <div class="mb-8 flex items-center gap-4">
-                    <a href="usuariosview.php" class="bg-btn-gray text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 hover:opacity-90 transition">
+                    <a href="?seccion=usuarios" class="bg-btn-gray text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 hover:opacity-90 transition">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" /></svg>
                         Volver
                     </a>
@@ -143,6 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <?php endif; ?>
 
                 <form method="POST" action="" class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                    <input type="hidden" name="accion" value="crear-usuario">
                     
                     <div class="mb-8">
                         <div class="flex items-center gap-2 text-btn-green border-b-2 border-btn-green pb-2 mb-6">
@@ -200,7 +218,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <hr class="border-gray-200 mb-6">
 
                     <div class="flex justify-end gap-3">
-                        <a href="usuariosview.php" class="bg-btn-gray text-white font-medium py-2.5 px-6 rounded-lg flex items-center gap-2 hover:opacity-90 transition">
+                        <a href="?seccion=usuarios" class="bg-btn-gray text-white font-medium py-2.5 px-6 rounded-lg flex items-center gap-2 hover:opacity-90 transition">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                             Cancelar
                         </a>
@@ -214,7 +232,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 </form>
             </div>
-        </main>
-    </div>
-</body>
-</html>

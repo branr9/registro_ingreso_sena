@@ -9,6 +9,80 @@ if (!isset($_SESSION['usuario'])) {
 
 require_once __DIR__ . "/models/conexion.php";
 
+// Instanciar conexión a la base de datos
+$conexion = (new Conexion())->conectar();
+
+// ==============================================================================
+// MANEJAR POST REQUESTS ANTES DE DETERMINAR LA VISTA
+// ==============================================================================
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $accion = $_POST['accion'] ?? $_POST['action'] ?? '';
+    
+    // Procesar creación de usuario
+    if ($accion === 'crear-usuario') {
+        $documento = mysqli_real_escape_string($conexion, trim($_POST['documento']));
+        $nombre_completo = mysqli_real_escape_string($conexion, trim($_POST['nombre']));
+        $correo = mysqli_real_escape_string($conexion, trim($_POST['correo']));
+        $estado = mysqli_real_escape_string($conexion, $_POST['estado'] ?? 'Activo');
+        
+        $partes = explode(' ', $nombre_completo, 2);
+        $nombre = $partes[0];
+        $apellido = $partes[1] ?? '';
+        $fecha_actual = date('Y-m-d');
+
+        $check_query = "SELECT Dni FROM usuarios WHERE Dni = '$documento' OR correo = '$correo'";
+        $check_result = mysqli_query($conexion, $check_query);
+
+        if (mysqli_num_rows($check_result) > 0) {
+            $_POST['error_msg'] = "Error: El documento o el correo electrónico ya están registrados en el sistema.";
+        } else {
+            $query_insert = "INSERT INTO usuarios (nombre, apellido, fecha, Dni, correo, estado) 
+                             VALUES ('$nombre', '$apellido', '$fecha_actual', '$documento', '$correo', '$estado')";
+            
+            if (mysqli_query($conexion, $query_insert)) {
+                header("Location: ?seccion=usuarios&success=1");
+                exit;
+            } else {
+                $_POST['error_msg'] = "Error al guardar el usuario: " . mysqli_error($conexion);
+            }
+        }
+    }
+    // Procesar eliminación de usuario
+    elseif ($accion === 'eliminar-usuario') {
+        $dni_eliminar = mysqli_real_escape_string($conexion, $_POST['delete_dni']);
+        $origen = mysqli_real_escape_string($conexion, $_POST['origen'] ?? 'usuario');
+        
+        if ($origen === 'usuario') {
+            $query_delete = "DELETE FROM usuarios WHERE Dni = '$dni_eliminar'";
+        } else if ($origen === 'externo') {
+            $query_delete = "DELETE FROM personal_externo WHERE documento = '$dni_eliminar'";
+        }
+        
+        mysqli_query($conexion, $query_delete);
+        header("Location: ?seccion=usuarios");
+        exit;
+    }
+    // Procesar actualización de usuario
+    elseif ($accion === 'actualizar-usuario') {
+        $documento = mysqli_real_escape_string($conexion, $_POST['id_usuario']);
+        $nombre_completo = mysqli_real_escape_string($conexion, trim($_POST['nombre']));
+        $email = mysqli_real_escape_string($conexion, trim($_POST['email']));
+        
+        $partes = explode(' ', $nombre_completo, 2);
+        $nombre = $partes[0];
+        $apellido = $partes[1] ?? '';
+
+        $query_update = "UPDATE usuarios SET nombre = '$nombre', apellido = '$apellido', correo = '$email' WHERE Dni = '$documento'";
+        
+        if (mysqli_query($conexion, $query_update)) {
+            header("Location: ?seccion=usuarios");
+            exit;
+        } else {
+            $_POST['error_msg'] = "Error al actualizar: " . mysqli_error($conexion);
+        }
+    }
+}
+
 // Determinar qué sección mostrar (default: dashboard)
 $seccion = $_GET['seccion'] ?? 'dashboard';
 $titulo_seccion = 'Dashboard';
@@ -17,6 +91,8 @@ $titulo_seccion = 'Dashboard';
 $titulos = [
     'dashboard' => 'Dashboard',
     'usuarios' => 'Gestión de Usuarios',
+    'crear-usuario' => 'Crear Nuevo Usuario',
+    'usuarios-editar' => 'Editar Usuario',
     'control-ingreso' => 'Control de Ingreso',
     'prestamo-devolucion' => 'Préstamo de Llaves',
     'permisos-salida' => 'Permisos de Salida',
@@ -148,6 +224,44 @@ $titulo_seccion = $titulos[$seccion] ?? 'Dashboard';
         .content-area {
             padding: 30px;
         }
+        /* Clases de colores personalizadas para vistas */
+        .bg-btn-green {
+            background-color: #4caf50;
+        }
+        .bg-btn-gray {
+            background-color: #78909c;
+        }
+        .bg-btn-blue {
+            background-color: #1fb6ff;
+        }
+        .text-btn-green {
+            color: #4caf50;
+        }
+        .text-btn-gray {
+            color: #78909c;
+        }
+        .text-btn-blue {
+            color: #1fb6ff;
+        }
+        .focus\:ring-btn-green:focus {
+            --tw-ring-color: #4caf50;
+        }
+        .focus\:ring-btn-blue:focus {
+            --tw-ring-color: #1fb6ff;
+        }
+        /* Estilos de propiedades para los componentes*/
+        .card-bg {
+            background-color: #ffffff;
+        }
+        .btn-green {
+            background-color: #4caf50;
+        }
+        .btn-blue {
+            background-color: #1fb6ff;
+        }
+        .btn-gray {
+            background-color: #78909c;
+        }
     </style>
 </head>
 <body>
@@ -219,23 +333,20 @@ $titulo_seccion = $titulos[$seccion] ?? 'Dashboard';
         <!-- Content Area - Cargar componentes dinámicamente -->
         <div class="content-area">
             <?php
-                // Lógica especial para préstamo-devolucion con tabs
-                if ($seccion === 'prestamo-devolucion' && isset($_GET['tab'])) {
-                    $archivo_vista = __DIR__ . '/views/keyviews/prestamo_devolucion.php';
-                } else {
-                    // Mapear secciones a archivos de vistas
-                    $vistas = [
-                        'dashboard' => 'views/controldeIngreso/dashboardview.php',
-                        'usuarios' => 'views/userViews/usuariosview.php',
-                        'control-ingreso' => 'views/controldeIngreso/controldeIngresoview.php',
-                        'prestamo-devolucion' => 'views/keyviews/keyviews.php',
-                        'permisos-salida' => 'views/Permisos/permisosview.php',
-                        'reportes' => 'views/reportes/reportesview.php',
-                        'personal-externo' => 'views/personalExterno/personalExternoview.php'
-                    ];
+                // Mapear secciones a archivos de vistas
+                $vistas = [
+                    'dashboard' => 'views/controldeIngreso/dashboardview.php',
+                    'usuarios' => 'views/userViews/usuariosview.php',
+                    'crear-usuario' => 'views/userViews/crear_usuario.php',
+                    'usuarios-editar' => 'views/userViews/usuarios_editar.php',
+                    'control-ingreso' => 'views/controldeIngreso/controldeIngresoview.php',
+                    'prestamo-devolucion' => 'views/keyviews/prestamo_devolucion.php',
+                    'permisos-salida' => 'views/Permisos/permisosview.php',
+                    'reportes' => 'views/reportes/reportesview.php',
+                    'personal-externo' => 'views/personalExterno/personalExternoview.php'
+                ];
 
-                    $archivo_vista = isset($vistas[$seccion]) ? __DIR__ . '/' . $vistas[$seccion] : null;
-                }
+                $archivo_vista = isset($vistas[$seccion]) ? __DIR__ . '/' . $vistas[$seccion] : null;
 
                 if ($archivo_vista && file_exists($archivo_vista)) {
                     include $archivo_vista;

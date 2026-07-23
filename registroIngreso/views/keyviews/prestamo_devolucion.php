@@ -710,9 +710,9 @@
     // Construir URL del API de forma robusta
     // El archivo está en: /views/keyviews/prestamo_devolucion.php
     // El API está en: /api/keyAPI.php
-    // Necesitamos subir 2 niveles: ../../api/keyAPI.php
+    // Las rutas relativas se resuelven desde registroIngreso/ (donde está index.php)
     
-    const API_URL = '../../api/keyAPI.php';
+    const API_URL = 'api/keyAPI.php';
     
     console.log('API URL:', API_URL);
     console.log('Ubicación:', window.location.href);
