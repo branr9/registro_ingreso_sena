@@ -10,9 +10,7 @@ require_once APP_PATH . '/views/layouts/header.php';
         
         <div style="margin-bottom: 2rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
-                <h1 style="font-size: 1.75rem; color: var(--text-color); margin: 0;">
-                    <i class="fas fa-users"></i> Registro de Personal Externo
-                </h1>
+                <p style="color: var(--text-muted);">Control de entrada y salida de personal sin carnet (visitantes, contratistas, proveedores)</p>
                 <div style="display: flex; gap: 1rem;">
                     <a href="<?= baseUrl('/acceso-externo/personas-dentro') ?>" class="btn" style="background: var(--info-color); color: white;">
                         <i class="fas fa-door-open"></i> Personas Dentro
@@ -22,7 +20,6 @@ require_once APP_PATH . '/views/layouts/header.php';
                     </a>
                 </div>
             </div>
-            <p style="color: var(--text-muted);">Control de entrada y salida de personal sin carnet (visitantes, contratistas, proveedores)</p>
         </div>
 
         <!-- Filtros de búsqueda -->
@@ -183,5 +180,64 @@ require_once APP_PATH . '/views/layouts/header.php';
 
     </div>
 </div>
+<style>
+/* Tabla más amplia y legible */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
 
+.table thead th {
+    text-align: left;
+    padding: 0.9rem 1rem;
+    background: rgba(0,0,0,0.03);
+    font-weight: 700;
+    border-bottom: 2px solid rgba(0,0,0,0.08);
+    white-space: nowrap;
+}
+
+.table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+.table tbody tr:hover {
+    background: rgba(0,0,0,0.02);
+}
+
+/* Iconos de acciones más consistentes */
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 6px;
+    background: var(--text-muted);
+    color: #fff;
+    text-decoration: none;
+    border: none;
+}
+
+.btn-icon:hover {
+    opacity: 0.85;
+}
+
+/* Paginación alineada */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    flex-wrap: wrap;
+}
+/* Que el contenido use más ancho de pantalla en esta vista */
+.main-content .container {
+    max-width: 1400px;
+    width: 100%;
+    padding: 0 2rem;
+}
+</style>
 <?php require_once APP_PATH . '/views/layouts/footer.php'; ?>

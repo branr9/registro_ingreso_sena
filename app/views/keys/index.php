@@ -1,8 +1,6 @@
 <?php require_once APP_PATH . '/views/layouts/header.php'; ?>
 
 <div class="page-header">
-    <h1><i class="fas fa-key"></i> Control de Llaves</h1>
-    <p>Gestión de aulas y préstamos de llaves</p>
 </div>
 
 <!-- Estadísticas -->
@@ -207,8 +205,8 @@
     background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
     color: white;
     font-weight: 600;
-    padding: 0.75rem 1.5rem;
-    font-size: 1.05rem;
+    padding: 0.65rem 1.25rem;   /* igual que los demás botones */
+    font-size: 1rem;             /* igual que los demás botones */
     border: none;
     box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
     transition: all 0.3s ease;
@@ -256,6 +254,96 @@
     50% {
         transform: scale(1.15);
     }
+}
+
+/* Alineación pareja de los botones de acciones */
+.card-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.card-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.card-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.25rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    white-space: nowrap;
+    line-height: 1;
+}
+
+/* Refuerzo del botón secundario (Historial) para que se vea como botón real */
+.card-actions .btn-secondary {
+    background: #6c757d;
+    color: #fff;
+    border: none;
+}
+
+.card-actions .btn-secondary:hover {
+    background: #5a6268;
+    color: #fff;
+}
+
+/* Responsive: en pantallas pequeñas que se apilen bien */
+@media (max-width: 576px) {
+    .card-actions {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .card-actions .btn {
+        justify-content: center;
+    }
+}
+
+/* Tabla más amplia y legible */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table thead th {
+    text-align: left;
+    padding: 0.9rem 1rem;
+    background: #f8f9fa;
+    font-weight: 700;
+    border-bottom: 2px solid #dee2e6;
+    white-space: nowrap;
+}
+
+.table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #eee;
+}
+
+.table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+/* Asegura que la tarjeta contenedora use todo el ancho */
+.card {
+    width: 100%;
+}
+
+.card-body {
+    padding: 1.5rem;
 }
 </style>
 

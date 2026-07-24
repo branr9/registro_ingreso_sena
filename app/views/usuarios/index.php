@@ -11,9 +11,6 @@ require_once APP_PATH . '/views/layouts/header.php';
         <!-- Header con estadísticas -->
         <div class="page-header" style="margin-bottom: 2rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <h1 style="font-size: 1.75rem; color: var(--text-color); margin: 0;">
-                    <i class="fas fa-users"></i> 
-                </h1>
                 <?php if (Auth::hasRole('admin')): ?>
                 <div style="display: flex; gap: 1rem;">
                     <a href="<?= baseUrl('/usuarios/import') ?>" class="btn" style="background: var(--info-color); color: white;">

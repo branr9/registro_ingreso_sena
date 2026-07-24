@@ -1,7 +1,6 @@
 <?php require_once APP_PATH . '/views/layouts/header.php'; ?>
 
 <div class="page-header">
-    <h1><i class="fas fa-chart-bar"></i> Reportes de Acceso</h1>
     <p>Consulta y exporta los registros de entrada y salida</p>
 </div>
 
@@ -106,6 +105,22 @@
 </div>
 
 <style>
+
+.card-header {
+    padding-bottom: 1rem;
+}
+
+.card-actions {
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+    gap: 0.75rem;
+}
+
+.tabs {
+    margin-top: 1.5rem;
+    gap: 1rem;
+}
+
 .page-header {
     margin-bottom: 2rem;
 }
@@ -222,6 +237,12 @@
 .tab-content.active {
     display: block;
 }
+
+.main-content {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
 </style>
 
 <script>
