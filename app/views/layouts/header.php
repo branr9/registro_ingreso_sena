@@ -6,7 +6,9 @@
     <meta name="description" content="Sistema de Control de Ingreso SENA">
     <title><?= e($pageTitle ?? 'Sistema de Ingreso') ?> - SENA</title>
     <link rel="stylesheet" href="<?= asset('css/style-v2.css') ?>?v=<?= time() ?>">
+    <link rel="stylesheet" href="<?= asset('css/dark-mode.css') ?>?v=<?= time() ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="<?= asset('js/theme.js') ?>?v=<?= time() ?>"></script>
 </head>
 <body>
     <?php if (isAuthenticated()): ?>

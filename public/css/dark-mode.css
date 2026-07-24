@@ -1,0 +1,331 @@
+/* Tema oscuro opcional. Solo se activa con data-theme="dark". */
+:root {
+    color-scheme: light;
+}
+
+html[data-theme="dark"] {
+    color-scheme: dark;
+    --theme-bg: #0b1220;
+    --theme-surface: #172033;
+    --theme-surface-alt: #111827;
+    --theme-hover: #202c42;
+    --theme-border: #334155;
+    --theme-text: #f1f5f9;
+    --theme-muted: #a8b3c4;
+    --theme-primary: #39a900;
+    --theme-input: #0f172a;
+    /* Variables usadas por las vistas antiguas y por estilos en línea. */
+    --background-color: #0b1220;
+    --bg-color: #0b1220;
+    --light-color: #111827;
+    --white-color: #172033;
+    --card-background: #172033;
+    --surface-color: #172033;
+    --text-color: #f1f5f9;
+    --text-muted: #a8b3c4;
+    --border-color: #334155;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body,
+html[data-theme="dark"] .main-wrapper,
+html[data-theme="dark"] .main-content,
+html[data-theme="dark"] .content-wrapper,
+html[data-theme="dark"] .dashboard-container,
+html[data-theme="dark"] .page-container,
+html[data-theme="dark"] .kiosk-container,
+html[data-theme="dark"] .login-page,
+html[data-theme="dark"] .landing-page,
+html[data-theme="dark"] .auth-page,
+html[data-theme="dark"] .features-section {
+    background: var(--theme-bg) !important;
+    color: var(--theme-text) !important;
+}
+
+html[data-theme="dark"] .top-header,
+html[data-theme="dark"] .main-footer,
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .stat-card,
+html[data-theme="dark"] .stats-card,
+html[data-theme="dark"] .dashboard-card,
+html[data-theme="dark"] .content-card,
+html[data-theme="dark"] .form-card,
+html[data-theme="dark"] .table-card,
+html[data-theme="dark"] .table-container,
+html[data-theme="dark"] .table-responsive,
+html[data-theme="dark"] .data-table-container,
+html[data-theme="dark"] .modal-content,
+html[data-theme="dark"] .dropdown-menu,
+html[data-theme="dark"] .login-card,
+html[data-theme="dark"] .login-container,
+html[data-theme="dark"] .filter-section,
+html[data-theme="dark"] .filters-section,
+html[data-theme="dark"] .search-section,
+html[data-theme="dark"] .details-card,
+html[data-theme="dark"] .detail-card,
+html[data-theme="dark"] .info-card,
+html[data-theme="dark"] .action-card,
+html[data-theme="dark"] .kiosk-card,
+html[data-theme="dark"] .panel,
+html[data-theme="dark"] .feature-card,
+html[data-theme="dark"] .quick-action-card,
+html[data-theme="dark"] .recent-activity,
+html[data-theme="dark"] .empty-state {
+    background: var(--theme-surface) !important;
+    color: var(--theme-text) !important;
+    border-color: var(--theme-border) !important;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, .28) !important;
+}
+
+/* Contenedores propios de Dashboard y Gestión de Usuarios. */
+html[data-theme="dark"] .dashboard-stats,
+html[data-theme="dark"] .dashboard-modules,
+html[data-theme="dark"] .dashboard-info,
+html[data-theme="dark"] .modules-grid,
+html[data-theme="dark"] .module-card,
+html[data-theme="dark"] .info-grid,
+html[data-theme="dark"] .info-item,
+html[data-theme="dark"] .page-header,
+html[data-theme="dark"] .container {
+    background-color: var(--theme-surface) !important;
+    color: var(--theme-text) !important;
+    border-color: var(--theme-border) !important;
+}
+
+html[data-theme="dark"] .dashboard-stats,
+html[data-theme="dark"] .modules-grid,
+html[data-theme="dark"] .info-grid,
+html[data-theme="dark"] .page-header,
+html[data-theme="dark"] .container {
+    /* Estos elementos son de distribución: conservan separación sin crear cajas. */
+    background-color: transparent !important;
+}
+
+html[data-theme="dark"] .dashboard-modules,
+html[data-theme="dark"] .dashboard-info,
+html[data-theme="dark"] .module-card,
+html[data-theme="dark"] .info-item {
+    box-shadow: 0 10px 28px rgba(0, 0, 0, .22) !important;
+}
+
+html[data-theme="dark"] .module-card:hover {
+    background-color: var(--theme-hover) !important;
+}
+
+html[data-theme="dark"] .module-card-link,
+html[data-theme="dark"] .module-card-link:hover {
+    color: var(--theme-text) !important;
+}
+
+html[data-theme="dark"] .stat-content,
+html[data-theme="dark"] .stat-content h3,
+html[data-theme="dark"] .stat-content p,
+html[data-theme="dark"] .module-card h4,
+html[data-theme="dark"] .module-card p,
+html[data-theme="dark"] .info-item div,
+html[data-theme="dark"] .info-item p {
+    background-color: transparent !important;
+}
+
+html[data-theme="dark"] .sidebar,
+html[data-theme="dark"] .sidebar-header,
+html[data-theme="dark"] .sidebar-footer {
+    background: #07101e !important;
+    border-color: var(--theme-border) !important;
+}
+
+html[data-theme="dark"] .nav-link { color: #dbe5f2 !important; }
+html[data-theme="dark"] .nav-link:hover,
+html[data-theme="dark"] .nav-link.active {
+    background: rgba(57, 169, 0, .2) !important;
+    color: #fff !important;
+}
+
+html[data-theme="dark"] h1,
+html[data-theme="dark"] h2,
+html[data-theme="dark"] h3,
+html[data-theme="dark"] h4,
+html[data-theme="dark"] h5,
+html[data-theme="dark"] h6,
+html[data-theme="dark"] .page-title,
+html[data-theme="dark"] .card-title,
+html[data-theme="dark"] .section-title,
+html[data-theme="dark"] .header-user-name,
+html[data-theme="dark"] label,
+html[data-theme="dark"] legend,
+html[data-theme="dark"] strong {
+    color: var(--theme-text) !important;
+}
+
+html[data-theme="dark"] p,
+html[data-theme="dark"] .text-muted,
+html[data-theme="dark"] .form-text,
+html[data-theme="dark"] .help-text,
+html[data-theme="dark"] .card-subtitle,
+html[data-theme="dark"] .description,
+html[data-theme="dark"] small {
+    color: var(--theme-muted) !important;
+}
+
+html[data-theme="dark"] a { color: #72d83f; }
+html[data-theme="dark"] a:hover { color: #9aea74; }
+
+html[data-theme="dark"] input,
+html[data-theme="dark"] select,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] .form-control,
+html[data-theme="dark"] .form-select,
+html[data-theme="dark"] .search-input,
+html[data-theme="dark"] .input-group-text {
+    background: var(--theme-input) !important;
+    color: var(--theme-text) !important;
+    border-color: var(--theme-border) !important;
+}
+
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder {
+    color: #7f8da3 !important;
+    opacity: 1;
+}
+
+html[data-theme="dark"] input:focus,
+html[data-theme="dark"] select:focus,
+html[data-theme="dark"] textarea:focus {
+    border-color: var(--theme-primary) !important;
+    box-shadow: 0 0 0 .2rem rgba(57, 169, 0, .18) !important;
+}
+
+html[data-theme="dark"] select option {
+    background: var(--theme-input);
+    color: var(--theme-text);
+}
+
+/* Tablas de todos los módulos, incluidas las que fuerzan blanco localmente. */
+html[data-theme="dark"] table,
+html[data-theme="dark"] .table,
+html[data-theme="dark"] .data-table,
+html[data-theme="dark"] table.table {
+    background: var(--theme-surface) !important;
+    color: var(--theme-text) !important;
+    border-color: var(--theme-border) !important;
+}
+
+html[data-theme="dark"] table thead,
+html[data-theme="dark"] table thead tr,
+html[data-theme="dark"] table th,
+html[data-theme="dark"] .table thead,
+html[data-theme="dark"] .table th {
+    background: var(--theme-surface-alt) !important;
+    color: var(--theme-text) !important;
+    border-color: var(--theme-border) !important;
+}
+
+html[data-theme="dark"] table tbody,
+html[data-theme="dark"] table tbody tr,
+html[data-theme="dark"] table tbody td,
+html[data-theme="dark"] .table tbody,
+html[data-theme="dark"] .table tbody tr,
+html[data-theme="dark"] .table tbody td {
+    background: var(--theme-surface) !important;
+    color: var(--theme-text) !important;
+    border-color: var(--theme-border) !important;
+}
+
+html[data-theme="dark"] table tbody tr:nth-child(even),
+html[data-theme="dark"] .table-striped tbody tr:nth-of-type(odd) {
+    background: var(--theme-surface-alt) !important;
+}
+
+html[data-theme="dark"] table tbody tr:hover,
+html[data-theme="dark"] table tbody tr:hover td {
+    background: var(--theme-hover) !important;
+}
+
+html[data-theme="dark"] hr,
+html[data-theme="dark"] .divider { border-color: var(--theme-border) !important; }
+
+html[data-theme="dark"] .modal-header,
+html[data-theme="dark"] .modal-footer,
+html[data-theme="dark"] .card-header,
+html[data-theme="dark"] .card-footer {
+    background: var(--theme-surface-alt) !important;
+    border-color: var(--theme-border) !important;
+}
+
+html[data-theme="dark"] .btn-secondary,
+html[data-theme="dark"] .btn-outline-secondary {
+    background: #334155 !important;
+    border-color: #475569 !important;
+    color: #fff !important;
+}
+
+html[data-theme="dark"] .pagination a,
+html[data-theme="dark"] .page-link {
+    background: var(--theme-surface) !important;
+    border-color: var(--theme-border) !important;
+    color: var(--theme-text) !important;
+}
+
+html[data-theme="dark"] .pagination .active,
+html[data-theme="dark"] .page-item.active .page-link {
+    background: var(--theme-primary) !important;
+    border-color: var(--theme-primary) !important;
+}
+
+html[data-theme="dark"] .badge,
+html[data-theme="dark"] .status-badge,
+html[data-theme="dark"] .role-badge,
+html[data-theme="dark"] .alert,
+html[data-theme="dark"] .flash-message { color: #fff !important; }
+
+html[data-theme="dark"] .bg-white,
+html[data-theme="dark"] .bg-light { background: var(--theme-surface) !important; }
+html[data-theme="dark"] .text-dark,
+html[data-theme="dark"] .text-black { color: var(--theme-text) !important; }
+
+.theme-toggle {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    z-index: 10050;
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(255, 255, 255, .25);
+    border-radius: 50%;
+    background: #172033;
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .3);
+    cursor: pointer;
+    transition: transform .2s ease, background-color .2s ease;
+}
+
+.theme-toggle:hover {
+    transform: translateY(-2px);
+    background: #39a900;
+}
+
+.theme-toggle:focus-visible {
+    outline: 3px solid rgba(57, 169, 0, .4);
+    outline-offset: 3px;
+}
+
+html:not([data-theme="dark"]) .theme-toggle {
+    background: #fff;
+    border-color: #d1d5db;
+    color: #172033;
+}
+
+@media (max-width: 640px) {
+    .theme-toggle {
+        right: 14px;
+        bottom: 14px;
+        width: 44px;
+        height: 44px;
+    }
+}
+
+@media print {
+    .theme-toggle { display: none !important; }
+}
