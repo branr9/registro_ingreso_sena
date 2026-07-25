@@ -8,9 +8,73 @@ require_once APP_PATH . '/views/layouts/header.php';
 <div class="main-content">
     <div class="container">
         
+        <!-- Estilos específicos para mejorar la tabla en esta vista -->
+        <style>
+            .table-nexus {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 1rem;
+            }
+            .table-nexus th {
+                background-color: #f8f9fa;
+                color: #495057;
+                font-weight: 600;
+                padding: 15px;
+                text-align: left;
+                border-bottom: 2px solid #dee2e6;
+                white-space: nowrap; /* Evita que los títulos se rompan en dos líneas */
+            }
+            .table-nexus td {
+                padding: 15px;
+                vertical-align: middle; /* Centra el contenido verticalmente */
+                border-bottom: 1px solid #eff2f5;
+                color: #2c3e50;
+            }
+            .table-nexus tbody tr:hover {
+                background-color: #fdfdfd;
+                transition: background-color 0.2s ease;
+            }
+            /* Diseño de Badges con gradientes pastel */
+            .badge-pastel-dentro {
+                background: linear-gradient(135deg, #d4f0df 0%, #b2e2c6 100%);
+                color: #1e5631;
+                padding: 6px 14px;
+                border-radius: 20px;
+                font-size: 0.85rem;
+                font-weight: 600;
+                display: inline-block;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            }
+            .badge-pastel-salio {
+                background: linear-gradient(135deg, #ffe5e5 0%, #ffcaca 100%);
+                color: #8a2b2b;
+                padding: 6px 14px;
+                border-radius: 20px;
+                font-size: 0.85rem;
+                font-weight: 600;
+                display: inline-block;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            }
+            /* Ajuste de textos secundarios */
+            .text-muted-custom {
+                color: #8898aa;
+                font-size: 0.85em;
+                display: block;
+                margin-top: 3px;
+            }
+            /* Contenedor de acciones */
+            .actions-container {
+                display: flex; 
+                gap: 0.5rem; 
+                align-items: center;
+            }
+        </style>
+
         <div style="margin-bottom: 2rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
-                <p style="color: var(--text-muted);">Control de entrada y salida de personal sin carnet (visitantes, contratistas, proveedores)</p>
+                <h1 style="font-size: 1.75rem; color: var(--text-color); margin: 0;">
+                    <i class="fas fa-users"></i> Registro de Personal Externo
+                </h1>
                 <div style="display: flex; gap: 1rem;">
                     <a href="<?= baseUrl('/acceso-externo/personas-dentro') ?>" class="btn" style="background: var(--info-color); color: white;">
                         <i class="fas fa-door-open"></i> Personas Dentro
@@ -69,7 +133,7 @@ require_once APP_PATH . '/views/layouts/header.php';
         <!-- Tabla de registros -->
         <div class="dashboard-modules">
             <div style="overflow-x: auto;">
-                <table class="table">
+                <table class="table-nexus">
                     <thead>
                         <tr>
                             <th>Fecha/Hora Entrada</th>
@@ -78,15 +142,15 @@ require_once APP_PATH . '/views/layouts/header.php';
                             <th>Empresa</th>
                             <th>Motivo</th>
                             <th>Estado</th>
-                            <th>Tiempo Permanencia</th>
+                            <th>Permanencia</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php if (empty($result['data'])): ?>
                         <tr>
-                            <td colspan="8" style="text-align: center; padding: 2rem; color: var(--text-muted);">
-                                <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                            <td colspan="8" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                                <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 1rem; display: block; color: #ced4da;"></i>
                                 No hay registros para mostrar
                             </td>
                         </tr>
@@ -94,33 +158,33 @@ require_once APP_PATH . '/views/layouts/header.php';
                             <?php foreach ($result['data'] as $registro): ?>
                             <tr>
                                 <td>
-                                    <strong><?= date('d/m/Y', strtotime($registro['fecha_entrada'])) ?></strong><br>
-                                    <small style="color: var(--text-muted);"><?= date('h:i A', strtotime($registro['fecha_entrada'])) ?></small>
+                                    <strong><?= date('d/m/Y', strtotime($registro['fecha_entrada'])) ?></strong>
+                                    <span class="text-muted-custom"><?= date('h:i A', strtotime($registro['fecha_entrada'])) ?></span>
                                 </td>
                                 <td>
-                                    <strong><?= e($registro['documento']) ?></strong><br>
-                                    <small style="color: var(--text-muted);"><?= e($registro['tipo_documento']) ?></small>
+                                    <strong><?= e($registro['documento']) ?></strong>
+                                    <span class="text-muted-custom"><?= e($registro['tipo_documento']) ?></span>
                                 </td>
                                 <td>
                                     <strong><?= e($registro['nombre_completo']) ?></strong>
                                     <?php if ($registro['telefono']): ?>
-                                    <br><small style="color: var(--text-muted);"><i class="fas fa-phone"></i> <?= e($registro['telefono']) ?></small>
+                                        <span class="text-muted-custom"><i class="fas fa-phone fa-sm"></i> <?= e($registro['telefono']) ?></span>
                                     <?php endif; ?>
                                 </td>
                                 <td><?= e($registro['empresa'] ?? '-') ?></td>
-                                <td>
+                                <td style="max-width: 200px; white-space: normal; line-height: 1.4;">
                                     <small><?= e(substr($registro['motivo_visita'], 0, 50)) ?><?= strlen($registro['motivo_visita']) > 50 ? '...' : '' ?></small>
                                 </td>
                                 <td>
                                     <?php if ($registro['estado'] === 'DENTRO'): ?>
-                                        <span class="badge badge-active">Dentro</span>
+                                        <span class="badge-pastel-dentro">Dentro</span>
                                     <?php else: ?>
-                                        <span class="badge badge-inactive">Salió</span>
+                                        <span class="badge-pastel-salio">Salió</span>
                                     <?php endif; ?>
                                 </td>
                                 <td>
                                     <?php if ($registro['estado'] === 'DENTRO'): ?>
-                                        <span style="color: var(--info-color);">
+                                        <span style="color: var(--info-color); font-weight: 500;">
                                             <?= floor($registro['minutos_transcurridos'] / 60) ?>h <?= $registro['minutos_transcurridos'] % 60 ?>m
                                         </span>
                                     <?php elseif ($registro['tiempo_permanencia']): ?>
@@ -130,18 +194,18 @@ require_once APP_PATH . '/views/layouts/header.php';
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <div style="display: flex; gap: 0.5rem;">
+                                    <div class="actions-container">
                                         <a href="<?= baseUrl('/acceso-externo/detalle/' . $registro['id']) ?>" 
-                                           class="btn-icon" title="Ver detalle">
+                                           class="btn-icon" title="Ver detalle" style="color: #6c757d; border: 1px solid #dee2e6; padding: 6px 10px; border-radius: 6px;">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                         
                                         <?php if ($registro['estado'] === 'DENTRO'): ?>
                                         <form method="POST" action="<?= baseUrl('/acceso-externo/registrar-salida/' . $registro['id']) ?>" 
-                                              style="display: inline;" 
+                                              style="display: inline; margin: 0;" 
                                               onsubmit="return confirm('¿Confirmar salida de <?= e($registro['nombre_completo']) ?>?')">
                                             <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
-                                            <button type="submit" class="btn-icon" style="background: var(--success-color);" title="Registrar salida">
+                                            <button type="submit" class="btn-icon" style="background: var(--success-color); color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer;" title="Registrar salida">
                                                 <i class="fas fa-sign-out-alt"></i>
                                             </button>
                                         </form>
@@ -157,16 +221,16 @@ require_once APP_PATH . '/views/layouts/header.php';
 
             <!-- Paginación -->
             <?php if ($result['last_page'] > 1): ?>
-            <div class="pagination">
+            <div class="pagination" style="margin-top: 1.5rem; padding: 1rem; border-top: 1px solid #eff2f5;">
                 <?php if ($result['page'] > 1): ?>
                     <a href="<?= baseUrl('/acceso-externo?page=' . ($result['page'] - 1) . '&' . http_build_query($_GET)) ?>" class="btn">
                         <i class="fas fa-chevron-left"></i> Anterior
                     </a>
                 <?php endif; ?>
 
-                <span style="padding: 0.5rem 1rem;">
+                <span style="padding: 0.5rem 1rem; font-weight: 500; color: #495057;">
                     Página <?= $result['page'] ?> de <?= $result['last_page'] ?> 
-                    (<?= $result['total'] ?> registros)
+                    <span style="color: #8898aa; font-weight: normal;">(<?= $result['total'] ?> registros)</span>
                 </span>
 
                 <?php if ($result['page'] < $result['last_page']): ?>

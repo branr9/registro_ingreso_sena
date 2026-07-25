@@ -61,7 +61,7 @@ class ExternalAccessModel
         $total = $this->db->fetchOne($sqlCount, $params)['total'] ?? 0;
 
         // Obtener registros
-        $sql = "SELECT * FROM vista_acceso_externo WHERE {$whereClause} LIMIT {$perPage} OFFSET {$offset}";
+        $sql = "SELECT * FROM vista_acceso_externo AS rae WHERE {$whereClause} LIMIT {$perPage} OFFSET {$offset}";
         $data = $this->db->fetchAll($sql, $params);
 
         return [
