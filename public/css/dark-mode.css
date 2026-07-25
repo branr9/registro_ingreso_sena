@@ -127,6 +127,80 @@ html[data-theme="dark"] .info-item p {
     background-color: transparent !important;
 }
 
+/* Préstamo de llaves: la vista contiene estilos blancos propios al final. */
+html[data-theme="dark"] .aulas-grid .aula-card {
+    background: var(--theme-surface) !important;
+    color: var(--theme-text) !important;
+    border-color: var(--theme-border) !important;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, .24) !important;
+}
+
+html[data-theme="dark"] .aulas-grid .aula-card:hover {
+    background: var(--theme-hover) !important;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, .34) !important;
+}
+
+html[data-theme="dark"] .aulas-grid .aula-card.disabled {
+    background: var(--theme-surface-alt) !important;
+    border-color: #475569 !important;
+    opacity: .72;
+}
+
+html[data-theme="dark"] .aula-card .aula-header {
+    background: transparent !important;
+    border-bottom-color: var(--theme-border) !important;
+}
+
+html[data-theme="dark"] .aula-card .aula-header h3,
+html[data-theme="dark"] .aula-card .aula-info,
+html[data-theme="dark"] .aula-card .aula-info span {
+    color: var(--theme-text) !important;
+}
+
+html[data-theme="dark"] .aula-card .info-item {
+    background: transparent !important;
+    color: var(--theme-text) !important;
+    box-shadow: none !important;
+}
+
+html[data-theme="dark"] .aula-card .prestamos-activos {
+    background: var(--theme-surface-alt) !important;
+    color: var(--theme-text) !important;
+    border: 1px solid var(--theme-border) !important;
+}
+
+html[data-theme="dark"] .aula-card .prestamos-activos h4 {
+    color: var(--theme-text) !important;
+}
+
+html[data-theme="dark"] .aula-card .prestamo-item {
+    background: var(--theme-surface) !important;
+    color: var(--theme-text) !important;
+    border: 1px solid var(--theme-border) !important;
+}
+
+html[data-theme="dark"] .aula-card .prestamo-info strong {
+    color: var(--theme-text) !important;
+}
+
+html[data-theme="dark"] .aula-card .prestamo-info small {
+    color: var(--theme-muted) !important;
+}
+
+html[data-theme="dark"] .modal .modal-content,
+html[data-theme="dark"] .modal .modal-body {
+    background: var(--theme-surface) !important;
+    color: var(--theme-text) !important;
+}
+
+html[data-theme="dark"] .modal .close {
+    color: var(--theme-muted) !important;
+}
+
+html[data-theme="dark"] .modal .close:hover {
+    color: #fff !important;
+}
+
 html[data-theme="dark"] .sidebar,
 html[data-theme="dark"] .sidebar-header,
 html[data-theme="dark"] .sidebar-footer {
