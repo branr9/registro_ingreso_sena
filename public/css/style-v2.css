@@ -914,3 +914,73 @@ body {
 .sidebar .nav-link-white span {
     color: #FFFFFF !important;
 }
+/* Listado de permisos: aprovecha todo el espacio disponible del contenido. */
+.permissions-page {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+}
+
+.permissions-list-card {
+    width: 100%;
+    max-width: none;
+}
+
+.permissions-list-card .card-body {
+    width: 100%;
+    padding: 0;
+}
+
+.permissions-table-wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.permissions-table {
+    width: 100%;
+    min-width: 1050px;
+    border-collapse: collapse;
+    table-layout: auto;
+}
+
+.permissions-table th,
+.permissions-table td {
+    padding: 0.9rem 1rem;
+    vertical-align: middle;
+}
+
+.permissions-table th {
+    white-space: nowrap;
+    font-weight: 600;
+    text-align: left;
+}
+
+.permissions-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.permissions-table th:last-child,
+.permissions-table td:last-child {
+    width: 110px;
+    text-align: center;
+}
+
+.permissions-table .action-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .permissions-table {
+        min-width: 900px;
+    }
+
+    .permissions-table th,
+    .permissions-table td {
+        padding: 0.75rem;
+    }
+}

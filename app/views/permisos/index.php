@@ -1,6 +1,6 @@
 <?php require_once APP_PATH . '/views/layouts/header.php'; ?>
 
-<div class="main-content">
+<div class="permissions-page">
     <div class="content-header">
         <div class="header-actions">
             <?php if (Auth::hasRole('admin') || Auth::hasRole('instructor')): ?>
@@ -110,7 +110,7 @@
     </div>
 
     <!-- Tabla de permisos -->
-    <div class="card">
+    <div class="card permissions-list-card">
         <div class="card-header">
             <h3><i class="fas fa-list"></i> Listado de Permisos</h3>
         </div>
@@ -121,8 +121,8 @@
                     <p>No se encontraron permisos</p>
                 </div>
             <?php else: ?>
-                <div class="table-responsive">
-                    <table class="table">
+                <div class="table-responsive permissions-table-wrapper">
+                    <table class="table permissions-table">
                         <thead>
                             <tr>
                                 <th>Fecha</th>
