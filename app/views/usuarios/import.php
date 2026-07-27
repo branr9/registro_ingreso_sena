@@ -45,7 +45,7 @@ require_once APP_PATH . '/views/layouts/header.php';
                 <i class="fas fa-exclamation-triangle text-amber-500 mt-1"></i>
                 <div>
                     <strong class="block text-sm text-gray-800">Importante:</strong>
-                    <p class="text-sm text-gray-500">El sistema validará cada fila antes de importar. Podrás revisar una vista previa con errores detectados.</p>
+                    <p class="text-sm text-gray-500">El sistema validará cada fila antes de importar. Podrás revisar una vista previa con errores detectados. Digita únicamente los números del documento (sin CC ni puntos).</p>
                 </div>
             </div>
         </div>
@@ -58,9 +58,9 @@ require_once APP_PATH . '/views/layouts/header.php';
             <pre class="text-xs font-mono m-0">documento,nombre,tipo_persona,empresa,email,username
 1234567890,Juan Pérez González,aprendiz,SENA,juan.perez@example.com,
 9876543210,María López Ruiz,instructor,SENA,maria.lopez@sena.edu.co,mlopez
-CC987654,Carlos Rodríguez,vigilante,Seguridad Total,carlos@example.com,crodriguez
+98765432,Carlos Rodríguez,vigilante,Seguridad Total,carlos@example.com,crodriguez
 1122334455,Ana García,contratista,Empresa XYZ,ana@xyz.com,
-CC112233,Pedro Martínez,visitante,Gobierno,,</pre>
+11223344,Pedro Martínez,visitante,Gobierno,,</pre>
         </div>
         <div class="mt-4">
             <button onclick="descargarEjemplo()"
@@ -132,9 +132,9 @@ function descargarEjemplo() {
     const csv = `documento,nombre,tipo_persona,empresa,email,username
 1234567890,Juan Pérez González,aprendiz,SENA,juan.perez@example.com,
 9876543210,María López Ruiz,instructor,SENA,maria.lopez@sena.edu.co,mlopez
-CC987654,Carlos Rodríguez,vigilante,Seguridad Total,carlos@example.com,crodriguez
+98765432,Carlos Rodríguez,vigilante,Seguridad Total,carlos@example.com,crodriguez
 1122334455,Ana García,contratista,Empresa XYZ,ana@xyz.com,
-CC112233,Pedro Martínez,visitante,Gobierno,,`;
+11223344,Pedro Martínez,visitante,Gobierno,,`;
 
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');

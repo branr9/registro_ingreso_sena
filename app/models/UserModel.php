@@ -1,7 +1,7 @@
 ﻿<?php
 /**
  * Modelo UserModel - CRUD completo de usuarios
- * Extiende funcionalidad de User.php (autenticaciÃ³n)
+ * Extiende funcionalidad de User.php (autenticación)
  */
 
 class UserModel
@@ -16,12 +16,7 @@ class UserModel
     }
 
     /**
-     * Listar usuarios con filtros y paginaciÃ³n
-     * 
-     * @param array $filters ['search' => '', 'tipo_persona' => '', 'estado' => '', 'rol' => '']
-     * @param int $page
-     * @param int $perPage
-     * @return array
+     * Listar usuarios con filtros y paginación
      */
     public function paginate(array $filters = [], int $page = 1, int $perPage = 20): array
     {
@@ -29,7 +24,6 @@ class UserModel
         $where = ['p.deleted_at IS NULL'];
         $params = [];
 
-        // Filtro de bÃºsqueda general
         if (!empty($filters['search'])) {
             $searchValue = '%' . $filters['search'] . '%';
             $where[] = '(p.documento LIKE :search1 OR p.nombres LIKE :search2 OR COALESCE(p.apellidos, "") LIKE :search3 OR COALESCE(p.email, "") LIKE :search4 OR COALESCE(us.username, "") LIKE :search5)';
@@ -40,19 +34,16 @@ class UserModel
             $params['search5'] = $searchValue;
         }
 
-        // Filtro por tipo de persona
         if (!empty($filters['tipo_persona'])) {
             $where[] = 'cpt.codigo = :tipo_persona';
             $params['tipo_persona'] = $filters['tipo_persona'];
         }
 
-        // Filtro por estado
         if (!empty($filters['estado'])) {
             $where[] = 'p.estado = :estado';
             $params['estado'] = $filters['estado'];
         }
 
-        // Filtro por rol (solo si tiene cuenta de sistema)
         if (!empty($filters['rol'])) {
             $where[] = 'crs.codigo = :rol';
             $params['rol'] = $filters['rol'];
@@ -60,7 +51,6 @@ class UserModel
 
         $whereClause = implode(' AND ', $where);
 
-        // Contar total
         $sqlCount = "SELECT COUNT(*) as total 
                      FROM personas p
                      INNER JOIN cat_persona_tipo cpt ON p.tipo_persona_id = cpt.id
@@ -69,7 +59,6 @@ class UserModel
                      WHERE {$whereClause}";
         $total = $this->db->fetchOne($sqlCount, $params)['total'] ?? 0;
 
-        // Obtener registros
         $sql = "SELECT p.*, 
                        cpt.codigo as tipo_persona, 
                        cpt.nombre as tipo_persona_nombre,
@@ -98,8 +87,9 @@ class UserModel
     /**
      * Obtener usuario por ID
      */
-    public function findById(int $id): ?array
+    public function findById(int $id, bool $includeDeleted = false): ?array
     {
+        $deletedCondition = $includeDeleted ? '' : ' AND p.deleted_at IS NULL';
         $sql = "SELECT p.*, 
                        CONCAT(p.nombres, ' ', COALESCE(p.apellidos, '')) as nombre,
                        LOWER(cpt.codigo) as tipo_persona, 
@@ -113,7 +103,7 @@ class UserModel
                 JOIN cat_persona_tipo cpt ON p.tipo_persona_id = cpt.id
                 LEFT JOIN usuarios_sistema us ON us.persona_id = p.id
                 LEFT JOIN cat_roles crs ON us.rol_id = crs.id
-                WHERE p.id = :id AND p.deleted_at IS NULL 
+                WHERE p.id = :id{$deletedCondition}
                 LIMIT 1";
         return $this->db->fetchOne($sql, ['id' => $id]);
     }
@@ -121,8 +111,9 @@ class UserModel
     /**
      * Obtener usuario por documento
      */
-    public function findByDocument(string $documento): ?array
+    public function findByDocument(string $documento, bool $includeDeleted = false): ?array
     {
+        $deletedCondition = $includeDeleted ? '' : ' AND p.deleted_at IS NULL';
         $sql = "SELECT p.*, 
                        cpt.codigo as tipo_persona, 
                        us.id as usuario_sistema_id,
@@ -132,31 +123,25 @@ class UserModel
                 JOIN cat_persona_tipo cpt ON p.tipo_persona_id = cpt.id
                 LEFT JOIN usuarios_sistema us ON us.persona_id = p.id
                 LEFT JOIN cat_roles crs ON us.rol_id = crs.id
-                WHERE p.documento = :documento AND p.deleted_at IS NULL 
+                WHERE p.documento = :documento{$deletedCondition}
                 LIMIT 1";
         return $this->db->fetchOne($sql, ['documento' => $documento]);
     }
 
     /**
      * Crear nuevo usuario
-     * 
-     * @param array $data
-     * @param int $createdBy ID del usuario que crea
-     * @return int|false ID del usuario creado o false
      */
     public function create(array $data, int $createdBy): int|false
     {
         try {
             $this->connection->beginTransaction();
 
-            // Insertar en personas
             $sqlPersona = "INSERT INTO personas (
                 documento, tipo_documento, nombres, apellidos, tipo_persona_id, empresa, telefono, email, estado, created_at
             ) VALUES (
                 :documento, :tipo_documento, :nombres, :apellidos, :tipo_persona_id, :empresa, :telefono, :email, :estado, NOW()
             )";
 
-            // Dividir nombre completo en nombres y apellidos
             $partes = $this->dividirNombreCompleto($data['nombre']);
 
             $paramsPersona = [
@@ -164,7 +149,7 @@ class UserModel
                 'tipo_documento' => $data['tipo_documento'] ?? 'CC',
                 'nombres' => $partes['nombres'],
                 'apellidos' => $partes['apellidos'],
-                'tipo_persona_id' => $data['tipo_persona'], // Ya viene convertido del controlador
+                'tipo_persona_id' => $data['tipo_persona'], 
                 'empresa' => !empty($data['empresa']) ? trim($data['empresa']) : null,
                 'telefono' => !empty($data['telefono']) ? trim($data['telefono']) : null,
                 'email' => !empty($data['email']) ? strtolower(trim($data['email'])) : null,
@@ -175,51 +160,53 @@ class UserModel
             $stmt->execute($paramsPersona);
             $personaId = (int)$this->connection->lastInsertId();
 
-            // Si tiene rol de sistema (admin, instructor, vigilante), crear usuario_sistema
-            if (!empty($data['rol']) && in_array($data['rol'], ['admin', 'instructor', 'vigilante'])) {
-                // Obtener rol_id del catÃ¡logo
+            $rolLower = strtolower($data['rol'] ?? '');
+            if (!empty($rolLower) && in_array($rolLower, ['admin', 'administrador', 'instructor', 'vigilante'])) {
+                
+                $rolBuscado = ($rolLower === 'administrador') ? 'ADMIN' : strtoupper($rolLower);
                 $sqlRol = "SELECT id FROM cat_roles WHERE codigo = :codigo";
                 $stmtRol = $this->connection->prepare($sqlRol);
-                $stmtRol->execute(['codigo' => strtoupper($data['rol'])]);
+                $stmtRol->execute(['codigo' => $rolBuscado]);
                 $rolId = $stmtRol->fetchColumn();
 
                 if (!$rolId) {
-                    throw new Exception("Rol no encontrado: {$data['rol']}");
+                    $stmtRol->execute(['codigo' => 'PERSONA']);
+                    $rolId = $stmtRol->fetchColumn();
                 }
 
-                // Hash de password
-                $passwordHash = null;
-                if (!empty($data['password'])) {
-                    $passwordHash = password_hash($data['password'], PASSWORD_BCRYPT);
-                } else {
-                    throw new Exception("Password requerido para usuarios del sistema");
+                if ($rolId) {
+                    $passwordHash = null;
+                    if (!empty($data['password'])) {
+                        $passwordHash = password_hash($data['password'], PASSWORD_BCRYPT);
+                    } elseif (!empty($data['documento'])) {
+                        $passwordHash = password_hash(trim($data['documento']), PASSWORD_BCRYPT);
+                    } else {
+                        $passwordHash = password_hash('12345678', PASSWORD_BCRYPT);
+                    }
+
+                    $sqlUsuario = "INSERT INTO usuarios_sistema (
+                        persona_id, rol_id, username, email, password_hash, estado, created_at
+                    ) VALUES (
+                        :persona_id, :rol_id, :username, :email, :password_hash, :estado, NOW()
+                    )";
+
+                    $email = !empty($data['email']) ? strtolower(trim($data['email'])) : strtolower(trim($data['username'] ?? $data['documento'])) . '@sena.edu.co';
+
+                    $paramsUsuario = [
+                        'persona_id' => $personaId,
+                        'rol_id' => $rolId,
+                        'username' => strtolower(trim($data['username'] ?? $data['documento'])),
+                        'email' => $email,
+                        'password_hash' => $passwordHash,
+                        'estado' => strtoupper($data['estado'] ?? 'ACTIVO')
+                    ];
+
+                    $stmt = $this->connection->prepare($sqlUsuario);
+                    $stmt->execute($paramsUsuario);
                 }
-
-                $sqlUsuario = "INSERT INTO usuarios_sistema (
-                    persona_id, rol_id, username, email, password_hash, estado, created_at
-                ) VALUES (
-                    :persona_id, :rol_id, :username, :email, :password_hash, :estado, NOW()
-                )";
-
-                // Si no hay email, generar uno basado en el username
-                $email = !empty($data['email']) ? strtolower(trim($data['email'])) : strtolower(trim($data['username'])) . '@sena.edu.co';
-
-                $paramsUsuario = [
-                    'persona_id' => $personaId,
-                    'rol_id' => $rolId,
-                    'username' => strtolower(trim($data['username'])),
-                    'email' => $email,
-                    'password_hash' => $passwordHash,
-                    'estado' => strtoupper($data['estado'] ?? 'ACTIVO')
-                ];
-
-                $stmt = $this->connection->prepare($sqlUsuario);
-                $stmt->execute($paramsUsuario);
             }
 
-            // AuditorÃ­a
             $this->logAudit($personaId, 'crear', $createdBy, null, $data);
-
             $this->connection->commit();
             return $personaId;
 
@@ -232,25 +219,20 @@ class UserModel
 
     /**
      * Actualizar usuario existente
-     * 
-     * @param int $id
-     * @param array $data
-     * @param int $updatedBy
-     * @return bool
      */
-    public function update(int $id, array $data, int $updatedBy): bool
+    public function update(int $id, array $data, int $updatedBy, bool $restoreDeleted = false): bool
     {
         try {
             $this->connection->beginTransaction();
 
-            // Obtener datos anteriores para auditorÃ­a
-            $oldData = $this->findById($id);
+            $oldData = $this->findById($id, $restoreDeleted);
             if (!$oldData) {
                 $this->connection->rollBack();
                 return false;
             }
 
-            // Actualizar personas
+            $restoreField = $restoreDeleted ? "deleted_at = NULL," : '';
+            $restoreCondition = $restoreDeleted ? '' : ' AND deleted_at IS NULL';
             $sqlPersona = "UPDATE personas SET 
                 documento = :documento,
                 nombres = :nombres,
@@ -260,10 +242,10 @@ class UserModel
                 telefono = :telefono,
                 email = :email,
                 estado = :estado,
+                {$restoreField}
                 updated_at = NOW()
-                WHERE id = :id AND deleted_at IS NULL";
+                WHERE id = :id{$restoreCondition}";
 
-            // Dividir nombre completo en nombres y apellidos
             $partes = $this->dividirNombreCompleto($data['nombre']);
 
             $paramsPersona = [
@@ -281,89 +263,89 @@ class UserModel
             $stmt = $this->connection->prepare($sqlPersona);
             $stmt->execute($paramsPersona);
 
-            // Si tiene rol de sistema, actualizar o crear usuarios_sistema
-            if (!empty($data['rol']) && in_array($data['rol'], ['admin', 'instructor', 'vigilante'])) {
-                // Obtener rol_id del catÃ¡logo
+            $rolLower = strtolower($data['rol'] ?? '');
+            if (!empty($rolLower) && in_array($rolLower, ['admin', 'administrador', 'instructor', 'vigilante'])) {
+                
+                $rolBuscado = ($rolLower === 'administrador') ? 'ADMIN' : strtoupper($rolLower);
                 $sqlRol = "SELECT id FROM cat_roles WHERE codigo = :codigo";
                 $stmtRol = $this->connection->prepare($sqlRol);
-                $stmtRol->execute(['codigo' => strtoupper($data['rol'])]);
+                $stmtRol->execute(['codigo' => $rolBuscado]);
                 $rolId = $stmtRol->fetchColumn();
 
                 if (!$rolId) {
-                    throw new Exception("Rol no encontrado: {$data['rol']}");
+                    $stmtRol->execute(['codigo' => 'PERSONA']);
+                    $rolId = $stmtRol->fetchColumn();
                 }
 
-                // Verificar si existe usuario_sistema
-                $sqlCheck = "SELECT id FROM usuarios_sistema WHERE persona_id = :persona_id";
-                $stmtCheck = $this->connection->prepare($sqlCheck);
-                $stmtCheck->execute(['persona_id' => $id]);
-                $usuarioSistemaId = $stmtCheck->fetchColumn();
+                if ($rolId) {
+                    $sqlCheck = "SELECT id FROM usuarios_sistema WHERE persona_id = :persona_id";
+                    $stmtCheck = $this->connection->prepare($sqlCheck);
+                    $stmtCheck->execute(['persona_id' => $id]);
+                    $usuarioSistemaId = $stmtCheck->fetchColumn();
 
-                if ($usuarioSistemaId) {
-                    // Actualizar usuario_sistema existente
-                    $sqlUsuario = "UPDATE usuarios_sistema SET 
-                        rol_id = :rol_id,
-                        username = :username,
-                        email = :email,
-                        estado = :estado,
-                        updated_at = NOW()
-                        WHERE persona_id = :persona_id";
-
-                    $paramsUsuario = [
-                        'persona_id' => $id,
-                        'rol_id' => $rolId,
-                        'username' => strtolower(trim($data['username'])),
-                        'email' => !empty($data['email']) ? strtolower(trim($data['email'])) : null,
-                        'estado' => strtoupper($data['estado'] ?? 'ACTIVO')
-                    ];
-
-                    // Actualizar password solo si se proporciona
-                    if (!empty($data['password'])) {
+                    if ($usuarioSistemaId) {
                         $sqlUsuario = "UPDATE usuarios_sistema SET 
                             rol_id = :rol_id,
                             username = :username,
                             email = :email,
-                            password_hash = :password_hash,
                             estado = :estado,
                             updated_at = NOW()
                             WHERE persona_id = :persona_id";
-                        $paramsUsuario['password_hash'] = password_hash($data['password'], PASSWORD_BCRYPT);
-                    }
 
-                    $stmt = $this->connection->prepare($sqlUsuario);
-                    $stmt->execute($paramsUsuario);
-                } else {
-                    // Crear nuevo usuario_sistema
-                    $passwordHash = null;
-                    if (!empty($data['password'])) {
-                        $passwordHash = password_hash($data['password'], PASSWORD_BCRYPT);
+                        $paramsUsuario = [
+                            'persona_id' => $id,
+                            'rol_id' => $rolId,
+                            'username' => strtolower(trim($data['username'] ?? $data['documento'])),
+                            'email' => !empty($data['email']) ? strtolower(trim($data['email'])) : null,
+                            'estado' => strtoupper($data['estado'] ?? 'ACTIVO')
+                        ];
+
+                        if (!empty($data['password'])) {
+                            $sqlUsuario = "UPDATE usuarios_sistema SET 
+                                rol_id = :rol_id,
+                                username = :username,
+                                email = :email,
+                                password_hash = :password_hash,
+                                estado = :estado,
+                                updated_at = NOW()
+                                WHERE persona_id = :persona_id";
+                            $paramsUsuario['password_hash'] = password_hash($data['password'], PASSWORD_BCRYPT);
+                        }
+
+                        $stmt = $this->connection->prepare($sqlUsuario);
+                        $stmt->execute($paramsUsuario);
                     } else {
-                        throw new Exception("Password requerido para crear usuario del sistema");
+                        $passwordHash = null;
+                        if (!empty($data['password'])) {
+                            $passwordHash = password_hash($data['password'], PASSWORD_BCRYPT);
+                        } elseif (!empty($data['documento'])) {
+                            $passwordHash = password_hash(trim($data['documento']), PASSWORD_BCRYPT);
+                        } else {
+                            $passwordHash = password_hash('12345678', PASSWORD_BCRYPT);
+                        }
+
+                        $sqlUsuario = "INSERT INTO usuarios_sistema (
+                            persona_id, rol_id, username, email, password_hash, estado, created_at
+                        ) VALUES (
+                            :persona_id, :rol_id, :username, :email, :password_hash, :estado, NOW()
+                        )";
+
+                        $paramsUsuario = [
+                            'persona_id' => $id,
+                            'rol_id' => $rolId,
+                            'username' => strtolower(trim($data['username'] ?? $data['documento'])),
+                            'email' => !empty($data['email']) ? strtolower(trim($data['email'])) : null,
+                            'password_hash' => $passwordHash,
+                            'estado' => strtoupper($data['estado'] ?? 'ACTIVO')
+                        ];
+
+                        $stmt = $this->connection->prepare($sqlUsuario);
+                        $stmt->execute($paramsUsuario);
                     }
-
-                    $sqlUsuario = "INSERT INTO usuarios_sistema (
-                        persona_id, rol_id, username, email, password_hash, estado, created_at
-                    ) VALUES (
-                        :persona_id, :rol_id, :username, :email, :password_hash, :estado, NOW()
-                    )";
-
-                    $paramsUsuario = [
-                        'persona_id' => $id,
-                        'rol_id' => $rolId,
-                        'username' => strtolower(trim($data['username'])),
-                        'email' => !empty($data['email']) ? strtolower(trim($data['email'])) : null,
-                        'password_hash' => $passwordHash,
-                        'estado' => strtoupper($data['estado'] ?? 'ACTIVO')
-                    ];
-
-                    $stmt = $this->connection->prepare($sqlUsuario);
-                    $stmt->execute($paramsUsuario);
                 }
             }
 
-            // AuditorÃ­a
             $this->logAudit($id, 'editar', $updatedBy, $oldData, $data);
-
             $this->connection->commit();
             return true;
 
@@ -390,31 +372,21 @@ class UserModel
 
             $this->connection->beginTransaction();
 
-            // Actualizar personas
             $sql = "UPDATE personas SET estado = :estado, updated_at = NOW() 
                     WHERE id = :id AND deleted_at IS NULL";
-
             $stmt = $this->connection->prepare($sql);
-            $result = $stmt->execute([
-                'estado' => $newStatus,
-                'id' => $id
-            ]);
+            $result = $stmt->execute(['estado' => $newStatus, 'id' => $id]);
 
-            // TambiÃ©n actualizar usuarios_sistema si existe
             $sqlUsuario = "UPDATE usuarios_sistema SET estado = :estado, updated_at = NOW() 
                           WHERE persona_id = :persona_id";
             $stmtUsuario = $this->connection->prepare($sqlUsuario);
-            $stmtUsuario->execute([
-                'estado' => $newStatus,
-                'persona_id' => $id
-            ]);
+            $stmtUsuario->execute(['estado' => $newStatus, 'persona_id' => $id]);
 
             if ($result) {
                 $this->logAudit($id, $action, $updatedBy, ['estado' => $user['estado']], ['estado' => $newStatus]);
             }
 
             $this->connection->commit();
-
             return $result;
 
         } catch (Exception $e) {
@@ -424,7 +396,7 @@ class UserModel
     }
 
     /**
-     * Eliminar usuario (borrado lÃ³gico)
+     * Eliminar usuario (borrado lógico)
      */
     public function delete(int $id, int $deletedBy): bool
     {
@@ -439,11 +411,8 @@ class UserModel
 
             $sql = "UPDATE personas SET deleted_at = NOW() 
                     WHERE id = :id AND deleted_at IS NULL";
-
             $stmt = $this->connection->prepare($sql);
-            $result = $stmt->execute([
-                'id' => $id
-            ]);
+            $result = $stmt->execute(['id' => $id]);
 
             if ($result) {
                 $this->logAudit($id, 'eliminar', $deletedBy, $user, null);
@@ -459,10 +428,6 @@ class UserModel
         }
     }
 
-    /**
-     * Dividir nombre completo en nombres y apellidos
-     * Ejemplo: "Ana Sofia López Montes" -> nombres: "Ana Sofia", apellidos: "López Montes"
-     */
     private function dividirNombreCompleto(string $nombreCompleto): array
     {
         $nombreCompleto = trim($nombreCompleto);
@@ -470,19 +435,10 @@ class UserModel
         $cantidadPartes = count($partes);
 
         if ($cantidadPartes <= 1) {
-            // Solo un nombre
-            return [
-                'nombres' => $nombreCompleto,
-                'apellidos' => null
-            ];
+            return ['nombres' => $nombreCompleto, 'apellidos' => null];
         } elseif ($cantidadPartes == 2) {
-            // Un nombre y un apellido
-            return [
-                'nombres' => $partes[0],
-                'apellidos' => $partes[1]
-            ];
+            return ['nombres' => $partes[0], 'apellidos' => $partes[1]];
         } else {
-            // Múltiples partes: últimas 2 son apellidos, resto son nombres
             $apellidos = array_slice($partes, -2);
             $nombres = array_slice($partes, 0, -2);
             return [
@@ -492,39 +448,21 @@ class UserModel
         }
     }
 
-    /**
-     * Registrar auditoría de cambios (opcional - tabla auditoria no existe aún)
-     */
     private function logAudit(int $userId, string $action, int $executorId, ?array $oldData, ?array $newData): void
     {
-        // TODO: Implementar cuando la tabla auditoria esté creada
-        // Por ahora solo registramos en el log de PHP
         try {
-            error_log(sprintf(
-                "AUDIT: Usuario %d ejecutó '%s' en usuario %d",
-                $executorId,
-                $action,
-                $userId
-            ));
+            error_log(sprintf("AUDIT: Usuario %d ejecutó '%s' en usuario %d", $executorId, $action, $userId));
         } catch (Exception $e) {
-            // Silenciar errores de auditoría para no bloquear operaciones
             error_log("Error en auditoría: " . $e->getMessage());
         }
     }
 
-    /**
-     * Obtener estadÃ­sticas de usuarios
-     */
     public function getStats(): array
     {
         $stats = [
-            'total' => 0,
-            'activos' => 0,
-            'inactivos' => 0,
-            'por_tipo' => []
+            'total' => 0, 'activos' => 0, 'inactivos' => 0, 'por_tipo' => []
         ];
 
-        // Total y por estado
         $sql = "SELECT p.estado, COUNT(*) as count 
                 FROM personas p 
                 WHERE p.deleted_at IS NULL 
@@ -540,7 +478,6 @@ class UserModel
             }
         }
 
-        // Por tipo de persona
         $sql = "SELECT cpt.codigo, cpt.nombre, COUNT(*) as count 
                 FROM personas p
                 JOIN cat_persona_tipo cpt ON p.tipo_persona_id = cpt.id
@@ -556,16 +493,9 @@ class UserModel
     }
 
     // ========================================
-    // IMPORTACIÃ“N MASIVA
+    // IMPORTACIÓN MASIVA MEJORADA
     // ========================================
 
-    /**
-     * Procesar archivo CSV y retornar vista previa
-     * 
-     * @param string $filePath Ruta temporal del archivo
-     * @param array $options ['has_header' => true, 'delimiter' => ',', 'mode' => 'insert|upsert']
-     * @return array ['preview' => [...], 'errors' => [...], 'total' => int, 'valid' => int]
-     */
     public function previewImport(string $filePath, array $options = []): array
     {
         $hasHeader = $options['has_header'] ?? true;
@@ -586,38 +516,42 @@ class UserModel
             return ['error' => 'No se pudo abrir el archivo', 'preview' => [], 'errors' => [], 'total' => 0, 'valid' => 0];
         }
 
-        // Leer header
         $headers = [];
         if ($hasHeader) {
             $headers = fgetcsv($handle, 1000, $delimiter);
+            $headers = $this->normalizeImportHeaders($headers ?: []);
             $lineNumber++;
         } else {
-            // Headers por defecto
             $headers = ['documento', 'nombre', 'tipo_persona', 'empresa', 'email', 'username'];
         }
 
-        // Validar headers mÃ­nimos
         $requiredHeaders = ['documento', 'nombre', 'tipo_persona'];
         $missingHeaders = array_diff($requiredHeaders, $headers);
         if (!empty($missingHeaders)) {
             fclose($handle);
             return [
                 'error' => 'Faltan columnas requeridas: ' . implode(', ', $missingHeaders),
-                'preview' => [],
-                'errors' => [],
-                'total' => 0,
-                'valid' => 0
+                'preview' => [], 'errors' => [], 'total' => 0, 'valid' => 0
             ];
         }
 
-        // Leer hasta 100 filas para preview (mostrar solo 20 en vista)
-        while (($data = fgetcsv($handle, 1000, $delimiter)) !== false && $lineNumber < 100) {
+        $isFirstDataRow = true;
+        $previewRowsRead = 0;
+        while ($previewRowsRead < 100 && ($data = fgetcsv($handle, 1000, $delimiter)) !== false) {
             $lineNumber++;
+            $previewRowsRead++;
 
-            // Combinar headers con datos
+            // Ignorar filas vacías, frecuentes al guardar archivos CSV desde Excel.
+            if ($this->isEmptyImportRow($data)) {
+                continue;
+            }
+            
+            if ($isFirstDataRow && !$hasHeader) {
+                 $data[0] = preg_replace('/^\xEF\xBB\xBF/', '', $data[0] ?? ''); // Limpiar BOM
+            }
+            $isFirstDataRow = false;
+
             $row = array_combine($headers, array_pad($data, count($headers), ''));
-
-            // Validar fila
             $rowErrors = $this->validateImportRow($row, $mode);
 
             if (empty($rowErrors)) {
@@ -625,96 +559,73 @@ class UserModel
                 $row['_status'] = 'valid';
             } else {
                 $row['_status'] = 'error';
-                $errors[] = [
-                    'line' => $lineNumber,
-                    'errors' => $rowErrors,
-                    'data' => $row
-                ];
+                $errors[] = ['line' => $lineNumber, 'errors' => $rowErrors, 'data' => $row];
             }
-
             $preview[] = $row;
         }
 
-        // Contar total de filas restantes
         $totalRows = $lineNumber;
         while (fgets($handle) !== false) {
             $totalRows++;
         }
-
         fclose($handle);
 
         return [
-            'preview' => array_slice($preview, 0, 20), // Solo 20 para mostrar en UI
-            'errors' => array_slice($errors, 0, 50), // Solo 50 primeros errores
+            'preview' => array_slice($preview, 0, 20),
+            'errors' => array_slice($errors, 0, 50),
             'total' => $totalRows - ($hasHeader ? 1 : 0),
             'valid' => $validRows,
             'headers' => $headers
         ];
     }
 
-    /**
-     * Validar fila de importaciÃ³n
-     */
-    private function validateImportRow(array $row, string $mode): array
+    private function validateImportRow(array &$row, string $mode): array
     {
         $errors = [];
 
-        // Documento requerido y Ãºnico
+        // Limpiar BOM y espacios
+        $row['documento'] = preg_replace('/^\xEF\xBB\xBF/', '', trim($row['documento'] ?? ''));
+
         if (empty($row['documento'])) {
             $errors[] = 'Documento es obligatorio';
-        } elseif (!preg_match('/^[A-Z0-9]{6,20}$/i', $row['documento'])) {
-            $errors[] = 'Documento invÃ¡lido (6-20 caracteres alfanumÃ©ricos)';
+        } elseif (!preg_match('/^[A-Z0-9]{5,20}$/i', $row['documento'])) {
+            $errors[] = 'Documento inválido (5-20 caracteres)';
         } else {
-            // Verificar si existe
-            $existing = $this->findByDocument(strtoupper(trim($row['documento'])));
+            $existing = $this->findByDocument(strtoupper($row['documento']), true);
             if ($existing && $mode === 'insert') {
                 $errors[] = 'Documento ya existe (modo: solo insertar)';
             }
         }
 
-        // Nombre requerido
         if (empty($row['nombre'])) {
             $errors[] = 'Nombre es obligatorio';
-        } elseif (strlen($row['nombre']) < 3 || strlen($row['nombre']) > 100) {
+        } elseif (strlen(trim($row['nombre'])) < 3 || strlen(trim($row['nombre'])) > 100) {
             $errors[] = 'Nombre debe tener entre 3 y 100 caracteres';
         }
 
-        // Tipo persona requerido
-        $tiposValidos = ['admin', 'instructor', 'vigilante', 'aprendiz', 'contratista', 'visitante', 'proveedor'];
-        if (empty($row['tipo_persona'])) {
+        $tiposValidos = ['admin', 'administrador', 'instructor', 'vigilante', 'aprendiz', 'contratista', 'visitante', 'proveedor', 'persona'];
+        $tipoStr = strtolower(trim($row['tipo_persona'] ?? ''));
+        
+        if (empty($tipoStr)) {
             $errors[] = 'Tipo de persona es obligatorio';
-        } elseif (!in_array($row['tipo_persona'], $tiposValidos)) {
-            $errors[] = 'Tipo de persona invÃ¡lido: ' . implode(', ', $tiposValidos);
+        } elseif (!in_array($tipoStr, $tiposValidos)) {
+            $errors[] = 'Tipo de persona inválido: ' . implode(', ', $tiposValidos);
         }
 
-        // Email opcional pero debe ser vÃ¡lido
-        if (!empty($row['email']) && !filter_var($row['email'], FILTER_VALIDATE_EMAIL)) {
-            $errors[] = 'Email invÃ¡lido';
+        if (!empty($row['email']) && !filter_var(trim($row['email']), FILTER_VALIDATE_EMAIL)) {
+            $errors[] = 'Email inválido';
         }
 
         return $errors;
     }
 
-    /**
-     * Ejecutar importaciÃ³n confirmada
-     * 
-     * @param string $filePath
-     * @param array $options
-     * @param int $userId Usuario que ejecuta
-     * @return array ['insertados' => int, 'actualizados' => int, 'omitidos' => int, 'errores' => array]
-     */
     public function executeImport(string $filePath, array $options, int $userId): array
     {
         $hasHeader = $options['has_header'] ?? true;
         $delimiter = $options['delimiter'] ?? ',';
         $mode = $options['mode'] ?? 'upsert';
 
-        $stats = [
-            'insertados' => 0,
-            'actualizados' => 0,
-            'omitidos' => 0,
-            'errores' => []
-        ];
+        $stats = ['insertados' => 0, 'actualizados' => 0, 'omitidos' => 0, 'errores' => []];
 
         if (!file_exists($filePath)) {
             $stats['errores'][] = ['line' => 0, 'error' => 'Archivo no encontrado'];
@@ -727,65 +638,106 @@ class UserModel
             return $stats;
         }
 
+        // Cargar mapeo flexible
+        $tiposMapeo = [];
+        try {
+            $sqlTipos = "SELECT id, LOWER(codigo) as codigo, LOWER(nombre) as nombre
+                         FROM cat_persona_tipo
+                         WHERE activo = 1";
+            $tiposDb = $this->db->fetchAll($sqlTipos);
+            foreach ($tiposDb as $t) {
+                $tiposMapeo[$t['codigo']] = $t['id'];
+                $tiposMapeo[$t['nombre']] = $t['id'];
+            }
+        } catch (Exception $e) {
+            // Ignorar para no frenar proceso
+        }
+
         $lineNumber = 0;
         $headers = [];
 
-        // Leer header
         if ($hasHeader) {
             $headers = fgetcsv($handle, 1000, $delimiter);
+            $headers = $this->normalizeImportHeaders($headers ?: []);
             $lineNumber++;
         } else {
             $headers = ['documento', 'nombre', 'tipo_persona', 'empresa', 'email', 'username'];
         }
 
-        // Procesar filas
+        $isFirstDataRow = true;
         while (($data = fgetcsv($handle, 1000, $delimiter)) !== false) {
             $lineNumber++;
 
-            try {
-                $row = array_combine($headers, array_pad($data, count($headers), ''));
+            if ($this->isEmptyImportRow($data)) {
+                continue;
+            }
 
-                // Validar
+            if ($isFirstDataRow && !$hasHeader) {
+                 $data[0] = preg_replace('/^\xEF\xBB\xBF/', '', $data[0] ?? '');
+            }
+            $isFirstDataRow = false;
+
+            try {
+                $row = array_combine($headers, array_slice(array_pad($data, count($headers), ''), 0, count($headers)));
+
                 $rowErrors = $this->validateImportRow($row, $mode);
                 if (!empty($rowErrors)) {
                     $stats['omitidos']++;
+                    $stats['errores'][] = ['line' => $lineNumber, 'errors' => $rowErrors, 'data' => $row];
+                    continue;
+                }
+
+                // El código de la plantilla debe existir en el catálogo. No se
+                // asigna un tipo arbitrario: eso dejaba, por ejemplo, visitantes
+                // registrados como administradores cuando faltaba el catálogo.
+                $tipoString = strtolower(trim($row['tipo_persona']));
+                $tipoPersonaId = $tiposMapeo[$tipoString] ?? null;
+
+                if (!$tipoPersonaId) {
+                    foreach ($tiposMapeo as $key => $id) {
+                        if (strpos($key, $tipoString) !== false || strpos($tipoString, $key) !== false) {
+                            $tipoPersonaId = $id; break;
+                        }
+                    }
+                }
+                
+                if (!$tipoPersonaId) {
+                    $stats['omitidos']++;
                     $stats['errores'][] = [
                         'line' => $lineNumber,
-                        'errors' => $rowErrors,
-                        'data' => $row
+                        'error' => "El tipo de persona '{$row['tipo_persona']}' no está configurado en la base de datos"
                     ];
                     continue;
                 }
 
-                // Preparar datos
                 $userData = [
                     'documento' => strtoupper(trim($row['documento'])),
                     'nombre' => trim($row['nombre']),
-                    'tipo_persona' => $row['tipo_persona'],
+                    'tipo_persona' => $tipoPersonaId, 
                     'empresa' => !empty($row['empresa']) ? trim($row['empresa']) : null,
                     'email' => !empty($row['email']) ? strtolower(trim($row['email'])) : null,
                     'username' => !empty($row['username']) ? strtolower(trim($row['username'])) : null,
-                    'rol' => in_array($row['tipo_persona'], ['admin', 'instructor', 'vigilante']) ? $row['tipo_persona'] : 'persona',
-                    'estado' => 'activo'
+                    'rol' => in_array($tipoString, ['admin', 'administrador', 'instructor', 'vigilante']) ? $tipoString : 'persona',
+                    'estado' => 'activo',
+                    'password' => trim($row['documento']) 
                 ];
 
-                // Verificar si existe
-                $existing = $this->findByDocument($userData['documento']);
+                // Incluir eliminados lógicos: con UPSERT se restauran para no
+                // chocar con la restricción única de documento.
+                $existing = $this->findByDocument($userData['documento'], true);
 
                 if ($existing) {
                     if ($mode === 'upsert') {
-                        // Actualizar
-                        if ($this->update($existing['id'], $userData, $userId)) {
+                        unset($userData['password']); 
+                        if ($this->update($existing['id'], $userData, $userId, !empty($existing['deleted_at']))) {
                             $stats['actualizados']++;
                         } else {
                             $stats['errores'][] = ['line' => $lineNumber, 'error' => 'Error al actualizar'];
                         }
                     } else {
-                        // Modo insert: omitir duplicados
                         $stats['omitidos']++;
                     }
                 } else {
-                    // Insertar
                     if ($this->create($userData, $userId)) {
                         $stats['insertados']++;
                     } else {
@@ -794,27 +746,20 @@ class UserModel
                 }
 
             } catch (Exception $e) {
-                $stats['errores'][] = [
-                    'line' => $lineNumber,
-                    'error' => $e->getMessage()
-                ];
+                $stats['errores'][] = ['line' => $lineNumber, 'error' => $e->getMessage()];
             }
         }
 
         fclose($handle);
-
-        // Registrar importaciÃ³n
         $this->logImport($userId, basename($filePath), $stats);
 
         return $stats;
     }
 
-    /**
-     * Registrar importaciÃ³n en historial
-     */
     private function logImport(int $userId, string $filename, array $stats): void
     {
         try {
+            $this->ensureImportLogTable();
             $total = $stats['insertados'] + $stats['actualizados'] + $stats['omitidos'];
             $errores = count($stats['errores']);
 
@@ -834,6 +779,54 @@ class UserModel
         } catch (Exception $e) {
             error_log("Error al registrar importación: " . $e->getMessage());
         }
+    } 
+
+    /** Normaliza encabezados de CSV (BOM, espacios y mayúsculas). */
+    private function normalizeImportHeaders(array $headers): array
+    {
+        return array_map(
+            static fn ($header) => strtolower(trim(preg_replace('/^\xEF\xBB\xBF/', '', (string)$header))),
+            $headers
+        );
+    }
+
+    /** Determina si una fila no contiene ningún dato útil. */
+    private function isEmptyImportRow(array $data): bool
+    {
+        foreach ($data as $value) {
+            if (trim((string)$value) !== '') {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Algunas instalaciones existentes no tenían la tabla de auditoría de
+     * importaciones. La crea de forma compatible para que el registro no
+     * provoque un error después de importar correctamente los usuarios.
+     */
+    private function ensureImportLogTable(): void
+    {
+        $sql = "CREATE TABLE IF NOT EXISTS importaciones (
+                    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    archivo_nombre VARCHAR(255) NOT NULL,
+                    tipo VARCHAR(30) NOT NULL,
+                    usuario_id BIGINT UNSIGNED NOT NULL,
+                    total_filas INT UNSIGNED NOT NULL DEFAULT 0,
+                    insertados INT UNSIGNED NOT NULL DEFAULT 0,
+                    actualizados INT UNSIGNED NOT NULL DEFAULT 0,
+                    omitidos INT UNSIGNED NOT NULL DEFAULT 0,
+                    errores INT UNSIGNED NOT NULL DEFAULT 0,
+                    estado VARCHAR(20) NOT NULL DEFAULT 'pendiente',
+                    log_errores LONGTEXT NULL,
+                    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    completed_at DATETIME NULL,
+                    INDEX idx_importaciones_usuario (usuario_id),
+                    INDEX idx_importaciones_fecha (created_at)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+
+        $this->db->query($sql);
     }
 }
-
