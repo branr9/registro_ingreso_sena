@@ -8,7 +8,7 @@ $old = $_SESSION['old'] ?? [];
 unset($_SESSION['errors'], $_SESSION['old']);
 ?>
 
-<div class="max-w-4xl">
+<div class="w-full max-w-5xl mx-auto">
     <div class="flex items-center gap-4 mb-8">
         <a href="<?= baseUrl('/usuarios') ?>"
            class="inline-flex items-center gap-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition text-gray-700 font-semibold px-4 py-2 text-sm">

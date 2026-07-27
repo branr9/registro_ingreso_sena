@@ -36,9 +36,37 @@ html.dark {
 .dark .stat-card,
 .dark .module-card,
 .dark .dashboard-modules,
-.dark .auth-card {
+.dark .auth-card,
+.dark .card {
     background-color: #1c1830 !important;
     color: #f1eefa !important;
+}
+
+.dark .card-header {
+    border-color: #2c2645 !important;
+}
+
+.dark .card-header h3 {
+    color: #b79aeb !important;
+}
+
+.dark .alert-info {
+    background-color: rgba(0, 188, 212, 0.12) !important;
+    border-color: rgba(0, 188, 212, 0.35) !important;
+    color: #79e2ef !important;
+}
+
+.dark .alert-success {
+    background-color: rgba(16, 185, 129, 0.12) !important;
+    border-color: rgba(16, 185, 129, 0.35) !important;
+    color: #6ee7b7 !important;
+}
+
+.dark .alert-error,
+.dark .alert-danger {
+    background-color: rgba(239, 68, 68, 0.12) !important;
+    border-color: rgba(239, 68, 68, 0.35) !important;
+    color: #fca5a5 !important;
 }
 
 .dark .bg-gray-50 { background-color: #171426 !important; }
