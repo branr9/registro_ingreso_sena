@@ -1,350 +1,170 @@
 <?php require_once APP_PATH . '/views/layouts/header.php'; ?>
 
-<div class="page-header">
-</div>
-
-<!-- Estadísticas -->
-<div class="dashboard-stats">
-    <div class="stat-card">
-        <div class="stat-icon">
-            <i class="fas fa-door-open"></i>
-        </div>
-        <div class="stat-content">
-            <h3><?= $stats['total_aulas'] ?? 0 ?></h3>
-            <p>Aulas Activas</p>
-        </div>
+<div>
+    <!-- Header -->
+    <div class="flex items-center justify-between flex-wrap gap-4 mb-8">
+        <h1 class="text-2xl font-extrabold text-primary-700 flex items-center gap-2">
+            <i class="fas fa-key"></i> Control de Llaves
+        </h1>
+        <p class="text-sm text-gray-500 w-full -mt-4">Gestión de aulas y préstamos de llaves</p>
     </div>
 
-    <div class="stat-card">
-        <div class="stat-icon">
-            <i class="fas fa-key"></i>
-        </div>
-        <div class="stat-content">
-            <h3><?= $stats['total_llaves'] ?? 0 ?></h3>
-            <p>Total Llaves</p>
-        </div>
-    </div>
-
-    <div class="stat-card">
-        <div class="stat-icon" style="background: #dc3545;">
-            <i class="fas fa-hand-holding"></i>
-        </div>
-        <div class="stat-content">
-            <h3><?= $stats['llaves_prestadas'] ?? 0 ?></h3>
-            <p>Llaves Prestadas</p>
-        </div>
-    </div>
-
-    <div class="stat-card">
-        <div class="stat-icon" style="background: #28a745;">
-            <i class="fas fa-clock"></i>
-        </div>
-        <div class="stat-content">
-            <h3><?= $stats['prestamos_hoy'] ?? 0 ?></h3>
-            <p>Préstamos Hoy</p>
-        </div>
-    </div>
-</div>
-
-<!-- Acciones -->
-<div class="card">
-    <div class="card-header">
-        <h3><i class="fas fa-door-open"></i> Gestión de Aulas</h3>
-        <div class="card-actions">
-            <?php if (Auth::hasRole('admin')): ?>
-            <a href="<?= baseUrl('/control-llaves/create') ?>" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Nueva Aula
-            </a>
-            <?php endif; ?>
-            <a href="<?= baseUrl('/control-llaves/prestamo') ?>" class="btn btn-success">
-                <i class="fas fa-hand-holding"></i> Tomar/Devolver Llave
-            </a>
-            <a href="<?= baseUrl('/control-llaves/historial') ?>" class="btn btn-secondary">
-                <i class="fas fa-history"></i> Historial
-            </a>
-        </div>
-    </div>
-    <div class="card-body">
-        <?php if (empty($aulas)): ?>
-            <div class="empty-state">
+    <!-- Estadísticas -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white rounded-3xl shadow-md border border-primary-100 p-5 flex items-center gap-4 hover:shadow-lg transition">
+            <div class="w-14 h-14 rounded-2xl bg-primary-100 text-primary-700 flex items-center justify-center text-2xl flex-shrink-0">
                 <i class="fas fa-door-open"></i>
-                <p>No hay aulas registradas</p>
+            </div>
+            <div>
+                <h3 class="text-3xl font-extrabold text-gray-800"><?= $stats['total_aulas'] ?? 0 ?></h3>
+                <p class="text-sm text-gray-500">Aulas Activas</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-md border border-primary-100 p-5 flex items-center gap-4 hover:shadow-lg transition">
+            <div class="w-14 h-14 rounded-2xl bg-accent-100 text-accent-700 flex items-center justify-center text-2xl flex-shrink-0">
+                <i class="fas fa-key"></i>
+            </div>
+            <div>
+                <h3 class="text-3xl font-extrabold text-gray-800"><?= $stats['total_llaves'] ?? 0 ?></h3>
+                <p class="text-sm text-gray-500">Total Llaves</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-md border border-primary-100 p-5 flex items-center gap-4 hover:shadow-lg transition">
+            <div class="w-14 h-14 rounded-2xl bg-red-100 text-red-700 flex items-center justify-center text-2xl flex-shrink-0">
+                <i class="fas fa-hand-holding"></i>
+            </div>
+            <div>
+                <h3 class="text-3xl font-extrabold text-red-700"><?= $stats['llaves_prestadas'] ?? 0 ?></h3>
+                <p class="text-sm text-gray-500">Llaves Prestadas</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-md border border-primary-100 p-5 flex items-center gap-4 hover:shadow-lg transition">
+            <div class="w-14 h-14 rounded-2xl bg-green-100 text-green-700 flex items-center justify-center text-2xl flex-shrink-0">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div>
+                <h3 class="text-3xl font-extrabold text-green-700"><?= $stats['prestamos_hoy'] ?? 0 ?></h3>
+                <p class="text-sm text-gray-500">Préstamos Hoy</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Acciones y tabla de aulas -->
+    <div class="bg-white/85 backdrop-blur-md border border-primary-100 rounded-3xl shadow-xl overflow-hidden">
+        <div class="px-6 py-4 border-b border-primary-100 bg-gradient-to-r from-white to-primary-50 dark:from-[#1c1830] dark:to-[#241a42] flex items-center justify-between flex-wrap gap-3">
+            <h3 class="text-lg font-bold text-primary-700"><i class="fas fa-door-open"></i> Gestión de Aulas</h3>
+            <div class="flex items-center gap-2 flex-wrap">
                 <?php if (Auth::hasRole('admin')): ?>
-                <a href="<?= baseUrl('/control-llaves/create') ?>" class="btn btn-primary">
-                    Crear Primera Aula
+                <a href="<?= baseUrl('/control-llaves/create') ?>"
+                   class="inline-flex items-center gap-2 rounded-xl bg-primary-700 hover:bg-primary-800 transition text-white font-semibold px-4 py-2 text-sm">
+                    <i class="fas fa-plus"></i> Nueva Aula
                 </a>
                 <?php endif; ?>
+                <a href="<?= baseUrl('/control-llaves/prestamo') ?>"
+                   class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-700 hover:to-emerald-600 transition text-white font-bold px-5 py-2 text-sm shadow-md">
+                    <i class="fas fa-hand-holding animate-pulse"></i> Tomar/Devolver Llave
+                </a>
+                <a href="<?= baseUrl('/control-llaves/historial') ?>"
+                   class="inline-flex items-center gap-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition text-gray-700 font-semibold px-4 py-2 text-sm">
+                    <i class="fas fa-history"></i> Historial
+                </a>
             </div>
-        <?php else: ?>
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Aula</th>
-                            <th>Capacidad</th>
-                            <th>Total Llaves</th>
-                            <th>Disponibles</th>
-                            <th>Prestadas</th>
-                            <th>Estado</th>
-                            <?php if (Auth::hasRole('admin')): ?>
-                            <th>Acciones</th>
-                            <?php endif; ?>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($aulas as $aula): ?>
-                        <tr>
-                            <td>
-                                <strong><?= e($aula['nombre']) ?></strong>
-                                <?php if ($aula['observaciones']): ?>
-                                <br><small class="text-muted"><?= e($aula['observaciones']) ?></small>
+        </div>
+
+        <div class="p-6">
+            <?php if (empty($aulas)): ?>
+                <div class="text-center py-16 text-gray-400">
+                    <i class="fas fa-door-open text-5xl mb-4 block"></i>
+                    <p class="mb-4">No hay aulas registradas</p>
+                    <?php if (Auth::hasRole('admin')): ?>
+                    <a href="<?= baseUrl('/control-llaves/create') ?>"
+                       class="inline-flex items-center gap-2 rounded-xl bg-primary-700 hover:bg-primary-800 transition text-white font-semibold px-5 py-2.5 text-sm">
+                        Crear Primera Aula
+                    </a>
+                    <?php endif; ?>
+                </div>
+            <?php else: ?>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-sm">
+                        <thead>
+                            <tr class="bg-primary-50 text-primary-800 text-xs uppercase">
+                                <th class="px-4 py-3 text-left font-bold">Aula</th>
+                                <th class="px-4 py-3 text-left font-bold">Capacidad</th>
+                                <th class="px-4 py-3 text-left font-bold">Total Llaves</th>
+                                <th class="px-4 py-3 text-left font-bold">Disponibles</th>
+                                <th class="px-4 py-3 text-left font-bold">Prestadas</th>
+                                <th class="px-4 py-3 text-left font-bold">Estado</th>
+                                <?php if (Auth::hasRole('admin')): ?>
+                                <th class="px-4 py-3 text-center font-bold">Acciones</th>
                                 <?php endif; ?>
-                            </td>
-                            <td><?= e($aula['capacidad']) ?> personas</td>
-                            <td><?= e($aula['cantidad_llaves']) ?></td>
-                            <td>
-                                <span class="badge" style="background: #28a745; color: white;">
-                                    <?= $aula['cantidad_llaves'] - $aula['llaves_prestadas'] ?>
-                                </span>
-                            </td>
-                            <td>
-                                <?php if ($aula['llaves_prestadas'] > 0): ?>
-                                <span class="badge" style="background: #dc3545; color: white;">
-                                    <?= $aula['llaves_prestadas'] ?>
-                                </span>
-                                <?php else: ?>
-                                <span class="text-muted">0</span>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <?php foreach ($aulas as $aula): ?>
+                            <tr class="hover:bg-primary-50/50 transition">
+                                <td class="px-4 py-3">
+                                    <strong class="text-gray-800"><?= e($aula['nombre']) ?></strong>
+                                    <?php if ($aula['observaciones']): ?>
+                                    <br><small class="text-gray-400"><?= e($aula['observaciones']) ?></small>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="px-4 py-3 text-gray-600"><?= e($aula['capacidad']) ?> personas</td>
+                                <td class="px-4 py-3 text-gray-600"><?= e($aula['cantidad_llaves']) ?></td>
+                                <td class="px-4 py-3">
+                                    <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-xl text-xs font-semibold">
+                                        <?= $aula['cantidad_llaves'] - $aula['llaves_prestadas'] ?>
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <?php if ($aula['llaves_prestadas'] > 0): ?>
+                                    <span class="bg-red-100 text-red-700 px-2 py-0.5 rounded-xl text-xs font-semibold">
+                                        <?= $aula['llaves_prestadas'] ?>
+                                    </span>
+                                    <?php else: ?>
+                                    <span class="text-gray-400">0</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="px-2 py-0.5 rounded-xl text-xs font-semibold <?= $aula['estado'] === 'ACTIVO' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600' ?>">
+                                        <?= e($aula['estado']) ?>
+                                    </span>
+                                </td>
+                                <?php if (Auth::hasRole('admin')): ?>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center justify-center gap-2">
+                                        <a href="<?= baseUrl('/control-llaves/edit/' . $aula['id']) ?>"
+                                           class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center hover:bg-blue-200 transition" title="Editar">
+                                            <i class="fas fa-edit text-xs"></i>
+                                        </a>
+                                        <form method="POST" action="<?= baseUrl('/control-llaves/toggle/' . $aula['id']) ?>" class="inline">
+                                            <button type="submit"
+                                                    class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center hover:bg-amber-200 transition"
+                                                    title="Cambiar Estado">
+                                                <i class="fas fa-toggle-on text-xs"></i>
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="<?= baseUrl('/control-llaves/delete/' . $aula['id']) ?>" class="inline"
+                                              onsubmit="return confirm('¿Eliminar esta aula?');">
+                                            <button type="submit"
+                                                    class="w-8 h-8 rounded-lg bg-red-100 text-red-700 flex items-center justify-center hover:bg-red-200 transition"
+                                                    title="Eliminar">
+                                                <i class="fas fa-trash text-xs"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
                                 <?php endif; ?>
-                            </td>
-                            <td>
-                                <span class="badge badge-<?= $aula['estado'] === 'ACTIVO' ? 'success' : 'secondary' ?>">
-                                    <?= e($aula['estado']) ?>
-                                </span>
-                            </td>
-                            <?php if (Auth::hasRole('admin')): ?>
-                            <td>
-                                <div class="btn-group">
-                                    <a href="<?= baseUrl('/control-llaves/edit/' . $aula['id']) ?>" 
-                                       class="btn btn-sm btn-primary" title="Editar">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <form method="POST" 
-                                          action="<?= baseUrl('/control-llaves/toggle/' . $aula['id']) ?>" 
-                                          style="display: inline;">
-                                        <button type="submit" 
-                                                class="btn btn-sm btn-warning" 
-                                                title="Cambiar Estado">
-                                            <i class="fas fa-toggle-on"></i>
-                                        </button>
-                                    </form>
-                                    <form method="POST" 
-                                          action="<?= baseUrl('/control-llaves/delete/' . $aula['id']) ?>" 
-                                          style="display: inline;"
-                                          onsubmit="return confirm('¿Eliminar esta aula?');">
-                                        <button type="submit" 
-                                                class="btn btn-sm btn-danger" 
-                                                title="Eliminar">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                            <?php endif; ?>
-                        </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        <?php endif; ?>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php endif; ?>
+        </div>
     </div>
 </div>
-
-<style>
-.page-header {
-    margin-bottom: 2rem;
-}
-
-.btn-group {
-    display: flex;
-    gap: 0.25rem;
-}
-
-.btn-sm {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
-}
-
-.empty-state {
-    text-align: center;
-    padding: 3rem 1rem;
-    color: #666;
-}
-
-.empty-state i {
-    font-size: 4rem;
-    color: #ddd;
-    margin-bottom: 1rem;
-}
-
-.text-muted {
-    color: #6c757d;
-}
-
-.badge-success {
-    background-color: #28a745;
-    color: white;
-}
-
-.badge-secondary {
-    background-color: #6c757d;
-    color: white;
-}
-
-/* Botón Tomar/Devolver Llave destacado */
-.card-actions .btn-success {
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-    color: white;
-    font-weight: 600;
-    padding: 0.65rem 1.25rem;   /* igual que los demás botones */
-    font-size: 1rem;             /* igual que los demás botones */
-    border: none;
-    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-.card-actions .btn-success::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
-}
-
-.card-actions .btn-success:hover::before {
-    width: 300px;
-    height: 300px;
-}
-
-.card-actions .btn-success:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.6);
-}
-
-.card-actions .btn-success:active {
-    transform: translateY(0);
-}
-
-.card-actions .btn-success i {
-    font-size: 1.2rem;
-    margin-right: 0.5rem;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.15);
-    }
-}
-
-/* Alineación pareja de los botones de acciones */
-.card-header {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
-}
-
-.card-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-}
-
-.card-actions .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.65rem 1.25rem;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
-    white-space: nowrap;
-    line-height: 1;
-}
-
-/* Refuerzo del botón secundario (Historial) para que se vea como botón real */
-.card-actions .btn-secondary {
-    background: #6c757d;
-    color: #fff;
-    border: none;
-}
-
-.card-actions .btn-secondary:hover {
-    background: #5a6268;
-    color: #fff;
-}
-
-/* Responsive: en pantallas pequeñas que se apilen bien */
-@media (max-width: 576px) {
-    .card-actions {
-        width: 100%;
-        flex-direction: column;
-        align-items: stretch;
-    }
-    .card-actions .btn {
-        justify-content: center;
-    }
-}
-
-/* Tabla más amplia y legible */
-.table-responsive {
-    width: 100%;
-    overflow-x: auto;
-}
-
-.table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.table thead th {
-    text-align: left;
-    padding: 0.9rem 1rem;
-    background: #f8f9fa;
-    font-weight: 700;
-    border-bottom: 2px solid #dee2e6;
-    white-space: nowrap;
-}
-
-.table tbody td {
-    padding: 1rem;
-    vertical-align: middle;
-    border-bottom: 1px solid #eee;
-}
-
-.table tbody tr:hover {
-    background: #f8f9fa;
-}
-
-/* Asegura que la tarjeta contenedora use todo el ancho */
-.card {
-    width: 100%;
-}
-
-.card-body {
-    padding: 1.5rem;
-}
-</style>
 
 <?php require_once APP_PATH . '/views/layouts/footer.php'; ?>

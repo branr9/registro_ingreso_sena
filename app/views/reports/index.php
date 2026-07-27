@@ -1,249 +1,115 @@
 <?php require_once APP_PATH . '/views/layouts/header.php'; ?>
 
-<div class="page-header">
-    <p>Consulta y exporta los registros de entrada y salida</p>
-</div>
+<div>
+    <h1 class="text-2xl font-extrabold text-primary-700 flex items-center gap-2 mb-1">
+        <i class="fas fa-chart-bar"></i> Reportes de Acceso
+    </h1>
+    <p class="text-sm text-gray-500 mb-6">Consulta y exporta los registros de entrada y salida</p>
 
-<div class="card">
-    <div class="card-header">
-        <h3><i class="fas fa-filter"></i> Filtros de Búsqueda</h3>
-    </div>
-    <div class="card-body">
-        <form id="reportForm" method="GET">
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="fecha_inicio">
+    <!-- Filtros -->
+    <div class="bg-white/85 backdrop-blur-md border border-primary-100 rounded-3xl shadow-xl overflow-hidden mb-8">
+        <div class="px-6 py-4 border-b border-primary-100 bg-gradient-to-r from-white to-primary-50 dark:from-[#1c1830] dark:to-[#241a42]">
+            <h3 class="text-lg font-bold text-primary-700"><i class="fas fa-filter"></i> Filtros de Búsqueda</h3>
+        </div>
+        <div class="p-6">
+            <form id="reportForm" method="GET" class="flex flex-wrap items-end gap-4">
+                <div class="min-w-[180px]">
+                    <label for="fecha_inicio" class="block text-xs font-semibold text-gray-600 mb-1">
                         <i class="fas fa-calendar-alt"></i> Fecha Inicio
                     </label>
-                    <input type="date" 
-                           id="fecha_inicio" 
-                           name="fecha_inicio" 
-                           class="form-control"
+                    <input type="date"
+                           id="fecha_inicio"
+                           name="fecha_inicio"
+                           class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
                            value="<?= $_GET['fecha_inicio'] ?? date('Y-m-d', strtotime('-30 days')) ?>"
                            required>
                 </div>
 
-                <div class="form-group">
-                    <label for="fecha_fin">
+                <div class="min-w-[180px]">
+                    <label for="fecha_fin" class="block text-xs font-semibold text-gray-600 mb-1">
                         <i class="fas fa-calendar-alt"></i> Fecha Fin
                     </label>
-                    <input type="date" 
-                           id="fecha_fin" 
-                           name="fecha_fin" 
-                           class="form-control"
+                    <input type="date"
+                           id="fecha_fin"
+                           name="fecha_fin"
+                           class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
                            value="<?= $_GET['fecha_fin'] ?? date('Y-m-d') ?>"
                            required>
                 </div>
 
-                <div class="form-group">
-                    <label for="documento">
+                <div class="flex-1 min-w-[200px]">
+                    <label for="documento" class="block text-xs font-semibold text-gray-600 mb-1">
                         <i class="fas fa-id-card"></i> Documento (Opcional)
                     </label>
-                    <input type="text" 
-                           id="documento" 
-                           name="documento" 
-                           class="form-control"
+                    <input type="text"
+                           id="documento"
+                           name="documento"
+                           class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
                            placeholder="Buscar por documento"
                            value="<?= $_GET['documento'] ?? '' ?>">
                 </div>
 
-                <div class="form-group">
-                    <label>&nbsp;</label>
-                    <button type="button" onclick="loadReport()" class="btn btn-primary">
+                <div>
+                    <button type="button" onclick="loadReport()"
+                            class="inline-flex items-center gap-2 rounded-xl bg-primary-700 hover:bg-primary-800 transition text-white font-semibold px-5 py-2 text-sm">
                         <i class="fas fa-search"></i> Consultar
                     </button>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
 
-<div class="card">
-    <div class="card-header">
-        <h3><i class="fas fa-list"></i> Resultados</h3>
-        <div class="card-actions">
-            <button onclick="exportExcel()" class="btn btn-success">
-                <i class="fas fa-file-excel"></i> Exportar Excel
-            </button>
-            <button onclick="exportPdf()" class="btn btn-danger">
-                <i class="fas fa-file-pdf"></i> Exportar PDF
-            </button>
+    <!-- Resultados -->
+    <div class="bg-white/85 backdrop-blur-md border border-primary-100 rounded-3xl shadow-xl overflow-hidden">
+        <div class="px-6 py-4 border-b border-primary-100 bg-gradient-to-r from-white to-primary-50 dark:from-[#1c1830] dark:to-[#241a42] flex items-center justify-between flex-wrap gap-3">
+            <h3 class="text-lg font-bold text-primary-700"><i class="fas fa-list"></i> Resultados</h3>
+            <div class="flex items-center gap-2">
+                <button onclick="exportExcel()"
+                        class="inline-flex items-center gap-2 rounded-xl bg-green-600 hover:bg-green-700 transition text-white font-semibold px-4 py-2 text-sm">
+                    <i class="fas fa-file-excel"></i> Exportar Excel
+                </button>
+                <button onclick="exportPdf()"
+                        class="inline-flex items-center gap-2 rounded-xl bg-red-600 hover:bg-red-700 transition text-white font-semibold px-4 py-2 text-sm">
+                    <i class="fas fa-file-pdf"></i> Exportar PDF
+                </button>
+            </div>
         </div>
-    </div>
-    <div class="card-body">
-        <div class="tabs">
-            <button class="tab-button active" onclick="showTab('accesos')">
-                <i class="fas fa-door-open"></i> Accesos
-            </button>
-            <button class="tab-button" onclick="showTab('llaves')">
-                <i class="fas fa-key"></i> Préstamos de Llaves
-            </button>
-        </div>
-        
-        <div id="tab-accesos" class="tab-content active">
-            <div id="reportResults">
-                <div class="text-center" style="padding: 40px;">
-                    <i class="fas fa-chart-line" style="font-size: 48px; color: #ccc;"></i>
-                    <p style="color: #666; margin-top: 20px;">
-                        Seleccione un rango de fechas y haga clic en Consultar
-                    </p>
+
+        <div class="p-6">
+            <!-- Tabs -->
+            <div class="flex items-center gap-2 border-b border-gray-200 mb-6">
+                <button id="tabBtn-accesos" class="tab-button px-5 py-3 font-semibold text-sm border-b-2 border-primary-700 text-primary-700" onclick="showTab('accesos')">
+                    <i class="fas fa-door-open"></i> Accesos
+                </button>
+                <button id="tabBtn-llaves" class="tab-button px-5 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-500 hover:text-primary-700" onclick="showTab('llaves')">
+                    <i class="fas fa-key"></i> Préstamos de Llaves
+                </button>
+            </div>
+
+            <div id="tab-accesos" class="tab-content">
+                <div id="reportResults">
+                    <div class="text-center py-16">
+                        <i class="fas fa-chart-line text-5xl text-gray-300"></i>
+                        <p class="text-gray-500 mt-5">
+                            Seleccione un rango de fechas y haga clic en Consultar
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-llaves" class="tab-content hidden">
+                <div id="prestamosResults">
+                    <div class="text-center py-16">
+                        <i class="fas fa-chart-line text-5xl text-gray-300"></i>
+                        <p class="text-gray-500 mt-5">
+                            Seleccione un rango de fechas y haga clic en Consultar
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
-        
-        <div id="tab-llaves" class="tab-content">
-            <div id="prestamosResults">
-                <div class="text-center" style="padding: 40px;">
-                    <i class="fas fa-chart-line" style="font-size: 48px; color: #ccc;"></i>
-                    <p style="color: #666; margin-top: 20px;">
-                        Seleccione un rango de fechas y haga clic en Consultar
-                    </p>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
-
-<style>
-
-.card-header {
-    padding-bottom: 1rem;
-}
-
-.card-actions {
-    margin-top: 1rem;
-    margin-bottom: 1.5rem;
-    gap: 0.75rem;
-}
-
-.tabs {
-    margin-top: 1.5rem;
-    gap: 1rem;
-}
-
-.page-header {
-    margin-bottom: 2rem;
-}
-
-.page-header h1 {
-    color: var(--text-primary);
-    font-size: 2rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-}
-
-.page-header p {
-    color: var(--text-secondary);
-    font-size: 1rem;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    align-items: end;
-}
-
-.card-actions {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.table-responsive {
-    overflow-x: auto;
-}
-
-.report-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.report-table th,
-.report-table td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.report-table th {
-    background-color: #f8f9fa;
-    font-weight: 600;
-    color: var(--text-primary);
-}
-
-.report-table tbody tr:hover {
-    background-color: #f8f9fa;
-}
-
-.badge-entrada {
-    background-color: #28a745;
-    color: white;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    font-size: 0.875rem;
-}
-
-.badge-salida {
-    background-color: #dc3545;
-    color: white;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    font-size: 0.875rem;
-}
-
-.badge-warning {
-    background-color: #ffc107;
-    color: #000;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    font-size: 0.875rem;
-}
-
-.text-center {
-    text-align: center;
-}
-
-.tabs {
-    display: flex;
-    border-bottom: 2px solid var(--border-color);
-    margin-bottom: 1.5rem;
-    gap: 0.5rem;
-}
-
-.tab-button {
-    padding: 0.75rem 1.5rem;
-    background: none;
-    border: none;
-    border-bottom: 3px solid transparent;
-    cursor: pointer;
-    font-weight: 500;
-    color: var(--text-secondary);
-    transition: all 0.3s;
-}
-
-.tab-button:hover {
-    color: var(--primary-color);
-}
-
-.tab-button.active {
-    color: var(--primary-color);
-    border-bottom-color: var(--primary-color);
-}
-
-.tab-content {
-    display: none;
-}
-
-.tab-content.active {
-    display: block;
-}
-
-.main-content {
-    max-width: 1400px;
-    margin: 0 auto;
-}
-
-</style>
 
 <script>
 let currentData = null;
@@ -251,16 +117,20 @@ let currentData = null;
 function showTab(tabName) {
     // Ocultar todas las pestañas
     document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.remove('active');
+        tab.classList.add('hidden');
     });
     document.querySelectorAll('.tab-button').forEach(btn => {
-        btn.classList.remove('active');
+        btn.classList.remove('border-primary-700', 'text-primary-700');
+        btn.classList.add('border-transparent', 'text-gray-500');
     });
-    
+
     // Mostrar la pestaña seleccionada
-    document.getElementById('tab-' + tabName).classList.add('active');
-    event.target.classList.add('active');
+    document.getElementById('tab-' + tabName).classList.remove('hidden');
+    const activeBtn = document.getElementById('tabBtn-' + tabName);
+    activeBtn.classList.remove('border-transparent', 'text-gray-500');
+    activeBtn.classList.add('border-primary-700', 'text-primary-700');
 }
+
 function loadReport() {
     const fechaInicio = document.getElementById('fecha_inicio').value;
     const fechaFin = document.getElementById('fecha_fin').value;
@@ -273,9 +143,9 @@ function loadReport() {
 
     // Mostrar loading
     document.getElementById('reportResults').innerHTML = `
-        <div class="text-center" style="padding: 40px;">
-            <i class="fas fa-spinner fa-spin" style="font-size: 48px; color: var(--primary-color);"></i>
-            <p style="color: #666; margin-top: 20px;">Cargando reporte...</p>
+        <div class="text-center py-16">
+            <i class="fas fa-spinner fa-spin text-5xl text-primary-600"></i>
+            <p class="text-gray-500 mt-5">Cargando reporte...</p>
         </div>
     `;
 
@@ -295,9 +165,9 @@ function loadReport() {
                 displayPrestamos(data.prestamos);
             } else {
                 document.getElementById('reportResults').innerHTML = `
-                    <div class="text-center" style="padding: 40px;">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #ffc107;"></i>
-                        <p style="color: #666; margin-top: 20px;">${data.message}</p>
+                    <div class="text-center py-16">
+                        <i class="fas fa-exclamation-triangle text-5xl text-amber-400"></i>
+                        <p class="text-gray-500 mt-5">${data.message}</p>
                     </div>
                 `;
             }
@@ -305,9 +175,9 @@ function loadReport() {
         .catch(error => {
             console.error('Error:', error);
             document.getElementById('reportResults').innerHTML = `
-                <div class="text-center" style="padding: 40px;">
-                    <i class="fas fa-times-circle" style="font-size: 48px; color: #dc3545;"></i>
-                    <p style="color: #666; margin-top: 20px;">Error al cargar el reporte</p>
+                <div class="text-center py-16">
+                    <i class="fas fa-times-circle text-5xl text-red-500"></i>
+                    <p class="text-gray-500 mt-5">Error al cargar el reporte</p>
                 </div>
             `;
         });
@@ -315,51 +185,49 @@ function loadReport() {
 
 function displayReport(marcaciones, stats) {
     let html = `
-        <div style="margin-bottom: 20px;">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-list"></i></div>
-                    <div class="stat-content">
-                        <h3>${stats.total}</h3>
-                        <p>Total Registros</p>
-                    </div>
+        <div class="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="bg-white rounded-2xl shadow-sm border border-primary-100 p-4 flex items-center gap-3">
+                <div class="w-11 h-11 rounded-xl bg-primary-100 text-primary-700 flex items-center justify-center text-lg flex-shrink-0"><i class="fas fa-list"></i></div>
+                <div>
+                    <h3 class="text-xl font-extrabold text-gray-800">${stats.total}</h3>
+                    <p class="text-xs text-gray-500">Total Registros</p>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: #28a745;"><i class="fas fa-sign-in-alt"></i></div>
-                    <div class="stat-content">
-                        <h3>${stats.entradas}</h3>
-                        <p>Entradas</p>
-                    </div>
+            </div>
+            <div class="bg-white rounded-2xl shadow-sm border border-primary-100 p-4 flex items-center gap-3">
+                <div class="w-11 h-11 rounded-xl bg-green-100 text-green-700 flex items-center justify-center text-lg flex-shrink-0"><i class="fas fa-sign-in-alt"></i></div>
+                <div>
+                    <h3 class="text-xl font-extrabold text-green-700">${stats.entradas}</h3>
+                    <p class="text-xs text-gray-500">Entradas</p>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: #dc3545;"><i class="fas fa-sign-out-alt"></i></div>
-                    <div class="stat-content">
-                        <h3>${stats.salidas}</h3>
-                        <p>Salidas</p>
-                    </div>
+            </div>
+            <div class="bg-white rounded-2xl shadow-sm border border-primary-100 p-4 flex items-center gap-3">
+                <div class="w-11 h-11 rounded-xl bg-red-100 text-red-700 flex items-center justify-center text-lg flex-shrink-0"><i class="fas fa-sign-out-alt"></i></div>
+                <div>
+                    <h3 class="text-xl font-extrabold text-red-700">${stats.salidas}</h3>
+                    <p class="text-xs text-gray-500">Salidas</p>
                 </div>
             </div>
         </div>
-        <div class="table-responsive">
-            <table class="report-table">
+        <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
                 <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Hora</th>
-                        <th>Documento</th>
-                        <th>Nombre</th>
-                        <th>Tipo Persona</th>
-                        <th>Tipo Acceso</th>
-                        <th>Método</th>
+                    <tr class="bg-primary-50 text-primary-800 text-xs uppercase">
+                        <th class="px-4 py-3 text-left font-bold">Fecha</th>
+                        <th class="px-4 py-3 text-left font-bold">Hora</th>
+                        <th class="px-4 py-3 text-left font-bold">Documento</th>
+                        <th class="px-4 py-3 text-left font-bold">Nombre</th>
+                        <th class="px-4 py-3 text-left font-bold">Tipo Persona</th>
+                        <th class="px-4 py-3 text-left font-bold">Tipo Acceso</th>
+                        <th class="px-4 py-3 text-left font-bold">Método</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-gray-100">
     `;
 
     if (marcaciones.length === 0) {
         html += `
             <tr>
-                <td colspan="7" class="text-center" style="padding: 40px;">
+                <td colspan="7" class="px-4 py-16 text-center text-gray-400">
                     No se encontraron registros para el período seleccionado
                 </td>
             </tr>
@@ -367,17 +235,17 @@ function displayReport(marcaciones, stats) {
     } else {
         marcaciones.forEach(m => {
             const fecha = new Date(m.fecha_hora);
-            const badgeClass = m.tipo_acceso === 'ENTRADA' ? 'badge-entrada' : 'badge-salida';
-            
+            const badgeClass = m.tipo_acceso === 'ENTRADA' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
+
             html += `
-                <tr>
-                    <td>${fecha.toLocaleDateString('es-CO')}</td>
-                    <td>${fecha.toLocaleTimeString('es-CO')}</td>
-                    <td>${m.documento}</td>
-                    <td>${m.nombre_completo}</td>
-                    <td>${m.tipo_persona}</td>
-                    <td><span class="${badgeClass}">${m.tipo_acceso}</span></td>
-                    <td>${m.metodo}</td>
+                <tr class="hover:bg-primary-50/50 transition">
+                    <td class="px-4 py-3 text-gray-600 whitespace-nowrap">${fecha.toLocaleDateString('es-CO')}</td>
+                    <td class="px-4 py-3 text-gray-600 whitespace-nowrap">${fecha.toLocaleTimeString('es-CO')}</td>
+                    <td class="px-4 py-3 font-medium text-gray-700">${m.documento}</td>
+                    <td class="px-4 py-3 text-gray-700">${m.nombre_completo}</td>
+                    <td class="px-4 py-3 text-gray-600">${m.tipo_persona}</td>
+                    <td class="px-4 py-3"><span class="${badgeClass} px-2 py-0.5 rounded-xl text-xs font-semibold">${m.tipo_acceso}</span></td>
+                    <td class="px-4 py-3 text-gray-600">${m.metodo}</td>
                 </tr>
             `;
         });
@@ -394,26 +262,26 @@ function displayReport(marcaciones, stats) {
 
 function displayPrestamos(prestamos) {
     let html = `
-        <div class="table-responsive">
-            <table class="report-table">
+        <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
                 <thead>
-                    <tr>
-                        <th>Fecha Préstamo</th>
-                        <th>Aula</th>
-                        <th>Documento</th>
-                        <th>Nombre</th>
-                        <th>Tipo Persona</th>
-                        <th>Fecha Devolución</th>
-                        <th>Estado</th>
+                    <tr class="bg-primary-50 text-primary-800 text-xs uppercase">
+                        <th class="px-4 py-3 text-left font-bold">Fecha Préstamo</th>
+                        <th class="px-4 py-3 text-left font-bold">Aula</th>
+                        <th class="px-4 py-3 text-left font-bold">Documento</th>
+                        <th class="px-4 py-3 text-left font-bold">Nombre</th>
+                        <th class="px-4 py-3 text-left font-bold">Tipo Persona</th>
+                        <th class="px-4 py-3 text-left font-bold">Fecha Devolución</th>
+                        <th class="px-4 py-3 text-left font-bold">Estado</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-gray-100">
     `;
 
     if (prestamos.length === 0) {
         html += `
             <tr>
-                <td colspan="7" class="text-center" style="padding: 40px;">
+                <td colspan="7" class="px-4 py-16 text-center text-gray-400">
                     No se encontraron préstamos para el período seleccionado
                 </td>
             </tr>
@@ -422,17 +290,17 @@ function displayPrestamos(prestamos) {
         prestamos.forEach(p => {
             const fechaPrestamo = new Date(p.fecha_prestamo);
             const fechaDevolucion = p.fecha_devolucion ? new Date(p.fecha_devolucion) : null;
-            const badgeClass = p.estado === 'PRESTADO' ? 'badge-warning' : p.estado === 'DEVUELTO' ? 'badge-entrada' : 'badge-salida';
-            
+            const badgeClass = p.estado === 'PRESTADO' ? 'bg-amber-100 text-amber-700' : p.estado === 'DEVUELTO' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
+
             html += `
-                <tr>
-                    <td>${fechaPrestamo.toLocaleDateString('es-CO')} ${fechaPrestamo.toLocaleTimeString('es-CO')}</td>
-                    <td><strong>${p.aula_nombre}</strong></td>
-                    <td>${p.documento}</td>
-                    <td>${p.nombre_completo}</td>
-                    <td>${p.tipo_persona}</td>
-                    <td>${fechaDevolucion ? fechaDevolucion.toLocaleDateString('es-CO') + ' ' + fechaDevolucion.toLocaleTimeString('es-CO') : '<span class="text-muted">Pendiente</span>'}</td>
-                    <td><span class="${badgeClass}">${p.estado}</span></td>
+                <tr class="hover:bg-primary-50/50 transition">
+                    <td class="px-4 py-3 text-gray-600 whitespace-nowrap">${fechaPrestamo.toLocaleDateString('es-CO')} ${fechaPrestamo.toLocaleTimeString('es-CO')}</td>
+                    <td class="px-4 py-3"><strong class="text-gray-800">${p.aula_nombre}</strong></td>
+                    <td class="px-4 py-3 font-medium text-gray-700">${p.documento}</td>
+                    <td class="px-4 py-3 text-gray-700">${p.nombre_completo}</td>
+                    <td class="px-4 py-3 text-gray-600">${p.tipo_persona}</td>
+                    <td class="px-4 py-3 text-gray-600 whitespace-nowrap">${fechaDevolucion ? fechaDevolucion.toLocaleDateString('es-CO') + ' ' + fechaDevolucion.toLocaleTimeString('es-CO') : '<span class="text-gray-400">Pendiente</span>'}</td>
+                    <td class="px-4 py-3"><span class="${badgeClass} px-2 py-0.5 rounded-xl text-xs font-semibold">${p.estado}</span></td>
                 </tr>
             `;
         });

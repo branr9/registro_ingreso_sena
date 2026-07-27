@@ -4,171 +4,172 @@
  */
 require_once APP_PATH . '/views/layouts/header.php';
 $errors = $_SESSION['errors'] ?? [];
-$old = $_SESSION['old'] ?? $usuario; // Usar datos antiguos o actuales
+$old = $_SESSION['old'] ?? $usuario;
 unset($_SESSION['errors'], $_SESSION['old']);
 ?>
 
-<div class="main-content">
-    <div class="container" style="max-width: 900px;">
-        
-        <div style="margin-bottom: 2rem;">
-            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-                <a href="<?= baseUrl('/usuarios') ?>" class="btn" style="background: var(--text-muted); color: white; padding: 0.5rem 1rem;">
-                    <i class="fas fa-arrow-left"></i> Volver
-                </a>
-                <h1 style="font-size: 1.75rem; color: var(--text-color); margin: 0;">
-                    <i class="fas fa-user-edit"></i> Editar Usuario
-                </h1>
-            </div>
-            <p style="color: var(--text-muted);">Editando: <strong><?= e($usuario['nombre']) ?></strong> (<?= e($usuario['documento']) ?>)</p>
+<div class="max-w-4xl">
+    <div class="mb-8">
+        <div class="flex items-center gap-4 mb-2">
+            <a href="<?= baseUrl('/usuarios') ?>"
+               class="inline-flex items-center gap-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition text-gray-700 font-semibold px-4 py-2 text-sm">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+            <h1 class="text-2xl font-extrabold text-primary-700 flex items-center gap-2">
+                <i class="fas fa-user-edit"></i> Editar Usuario
+            </h1>
         </div>
+        <p class="text-gray-500 text-sm">Editando: <strong class="text-gray-700"><?= e($usuario['nombre']) ?></strong> (<?= e($usuario['documento']) ?>)</p>
+    </div>
 
-        <div class="dashboard-modules">
-            <form method="POST" action="<?= baseUrl('/usuarios/update/' . $usuario['id']) ?>">
-                <input type="hidden" name="csrf_token" value="<?= $csrfToken ?>">
+    <div class="bg-white/85 backdrop-blur-md border border-primary-100 rounded-3xl shadow-xl p-6 md:p-8">
+        <form method="POST" action="<?= baseUrl('/usuarios/update/' . $usuario['id']) ?>">
+            <input type="hidden" name="csrf_token" value="<?= $csrfToken ?>">
 
-                <!-- Datos Personales -->
-                <h3 style="color: var(--primary-color); margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--primary-color);">
-                    <i class="fas fa-id-card"></i> Datos Personales
+            <h3 class="text-primary-700 font-bold text-lg mb-5 pb-2 border-b-2 border-primary-700 flex items-center gap-2">
+                <i class="fas fa-id-card"></i> Datos Personales
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
+                <div>
+                    <label for="documento" class="block text-sm font-semibold text-gray-700 mb-1">Documento <span class="text-red-500">*</span></label>
+                    <input type="text" id="documento" name="documento"
+                           class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+                           value="<?= e($old['documento'] ?? '') ?>" required maxlength="20">
+                    <?php if (isset($errors['documento'])): ?>
+                    <small class="text-red-600 text-xs mt-1 block"><?= e($errors['documento']) ?></small>
+                    <?php endif; ?>
+                </div>
+
+                <div>
+                    <label for="nombre" class="block text-sm font-semibold text-gray-700 mb-1">Nombre Completo <span class="text-red-500">*</span></label>
+                    <input type="text" id="nombre" name="nombre"
+                           class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+                           value="<?= e($old['nombre'] ?? '') ?>" required maxlength="100">
+                    <?php if (isset($errors['nombre'])): ?>
+                    <small class="text-red-600 text-xs mt-1 block"><?= e($errors['nombre']) ?></small>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
+                <div>
+                    <label for="tipo_persona" class="block text-sm font-semibold text-gray-700 mb-1">Tipo de Persona <span class="text-red-500">*</span></label>
+                    <select id="tipo_persona" name="tipo_persona" required
+                            class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none">
+                        <?php
+                        $tipos = ['aprendiz', 'instructor', 'admin', 'vigilante', 'contratista', 'visitante', 'proveedor'];
+                        foreach ($tipos as $tipo):
+                        ?>
+                        <option value="<?= $tipo ?>" <?= ($old['tipo_persona'] ?? '') === $tipo ? 'selected' : '' ?>>
+                            <?= ucfirst($tipo) ?>
+                        </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="empresa" class="block text-sm font-semibold text-gray-700 mb-1">Empresa/Institución</label>
+                    <input type="text" id="empresa" name="empresa"
+                           class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+                           value="<?= e($old['empresa'] ?? '') ?>" maxlength="150">
+                </div>
+            </div>
+
+            <?php
+            $tipoPersonaActual = $old['tipo_persona'] ?? '';
+            $tieneAccesoSistema = in_array($tipoPersonaActual, ['admin', 'instructor', 'vigilante']);
+            ?>
+            <div id="datos-acceso-section" class="<?= !$tieneAccesoSistema ? 'hidden' : '' ?>">
+                <h3 class="text-primary-700 font-bold text-lg mb-5 pb-2 border-b-2 border-primary-700 flex items-center gap-2">
+                    <i class="fas fa-key"></i> Datos de Acceso al Sistema
                 </h3>
 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-                    <div class="form-group">
-                        <label for="documento">Documento <span style="color: var(--danger-color);">*</span></label>
-                        <input type="text" id="documento" name="documento" class="form-control" 
-                               value="<?= e($old['documento'] ?? '') ?>" required maxlength="20">
-                        <?php if (isset($errors['documento'])): ?>
-                        <small style="color: var(--danger-color);"><?= e($errors['documento']) ?></small>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
+                    <div>
+                        <label for="username" class="block text-sm font-semibold text-gray-700 mb-1">Usuario</label>
+                        <input type="text" id="username" name="username"
+                               class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+                               value="<?= e($old['username'] ?? '') ?>" maxlength="50">
+                        <?php if (isset($errors['username'])): ?>
+                        <small class="text-red-600 text-xs mt-1 block"><?= e($errors['username']) ?></small>
                         <?php endif; ?>
                     </div>
 
-                    <div class="form-group">
-                        <label for="nombre">Nombre Completo <span style="color: var(--danger-color);">*</span></label>
-                        <input type="text" id="nombre" name="nombre" class="form-control" 
-                               value="<?= e($old['nombre'] ?? '') ?>" required maxlength="100">
-                        <?php if (isset($errors['nombre'])): ?>
-                        <small style="color: var(--danger-color);"><?= e($errors['nombre']) ?></small>
+                    <div>
+                        <label for="email" class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
+                        <input type="email" id="email" name="email"
+                               class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+                               value="<?= e($old['email'] ?? '') ?>" maxlength="150">
+                        <?php if (isset($errors['email'])): ?>
+                        <small class="text-red-600 text-xs mt-1 block"><?= e($errors['email']) ?></small>
                         <?php endif; ?>
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-                    <div class="form-group">
-                        <label for="tipo_persona">Tipo de Persona <span style="color: var(--danger-color);">*</span></label>
-                        <select id="tipo_persona" name="tipo_persona" class="form-control" required>
-                            <?php
-                            $tipos = ['aprendiz', 'instructor', 'admin', 'vigilante', 'contratista', 'visitante', 'proveedor'];
-                            foreach ($tipos as $tipo):
-                            ?>
-                            <option value="<?= $tipo ?>" <?= ($old['tipo_persona'] ?? '') === $tipo ? 'selected' : '' ?>>
-                                <?= ucfirst($tipo) ?>
-                            </option>
-                            <?php endforeach; ?>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
+                    <div>
+                        <label for="password" class="block text-sm font-semibold text-gray-700 mb-1">Nueva Contraseña</label>
+                        <input type="password" id="password" name="password" minlength="8"
+                               class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none">
+                        <small class="text-gray-500 text-xs mt-1 block">Dejar en blanco para mantener la actual</small>
+                        <?php if (isset($errors['password'])): ?>
+                        <small class="text-red-600 text-xs mt-1 block"><?= e($errors['password']) ?></small>
+                        <?php endif; ?>
+                    </div>
+
+                    <div>
+                        <label for="rol" class="block text-sm font-semibold text-gray-700 mb-1">Rol del Sistema <span class="text-red-500">*</span></label>
+                        <select id="rol" name="rol"
+                                class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none">
+                            <option value="admin" <?= ($old['rol'] ?? '') === 'admin' ? 'selected' : '' ?>>Admin</option>
+                            <option value="instructor" <?= ($old['rol'] ?? '') === 'instructor' ? 'selected' : '' ?>>Instructor</option>
+                            <option value="vigilante" <?= ($old['rol'] ?? '') === 'vigilante' ? 'selected' : '' ?>>Vigilante</option>
                         </select>
                     </div>
-
-                    <div class="form-group">
-                        <label for="empresa">Empresa/Institución</label>
-                        <input type="text" id="empresa" name="empresa" class="form-control" 
-                               value="<?= e($old['empresa'] ?? '') ?>" maxlength="150">
-                    </div>
                 </div>
+            </div>
 
-                <!-- Datos de Acceso (solo para admin, instructor, vigilante) -->
-                <?php
-                $tipoPersonaActual = $old['tipo_persona'] ?? '';
-                $tieneAccesoSistema = in_array($tipoPersonaActual, ['admin', 'instructor', 'vigilante']);
-                ?>
-                <div id="datos-acceso-section" style="<?= !$tieneAccesoSistema ? 'display: none;' : '' ?>">
-                    <h3 style="color: var(--primary-color); margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--primary-color);">
-                        <i class="fas fa-key"></i> Datos de Acceso al Sistema
-                    </h3>
-
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-                        <div class="form-group">
-                            <label for="username">Usuario</label>
-                            <input type="text" id="username" name="username" class="form-control" 
-                                   value="<?= e($old['username'] ?? '') ?>" maxlength="50">
-                            <?php if (isset($errors['username'])): ?>
-                            <small style="color: var(--danger-color);"><?= e($errors['username']) ?></small>
-                            <?php endif; ?>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email" class="form-control" 
-                                   value="<?= e($old['email'] ?? '') ?>" maxlength="150">
-                            <?php if (isset($errors['email'])): ?>
-                            <small style="color: var(--danger-color);"><?= e($errors['email']) ?></small>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-                        <div class="form-group">
-                            <label for="password">Nueva Contraseña</label>
-                            <input type="password" id="password" name="password" class="form-control" minlength="8">
-                            <small style="color: var(--text-muted);">Dejar en blanco para mantener la actual</small>
-                            <?php if (isset($errors['password'])): ?>
-                            <small style="color: var(--danger-color);"><?= e($errors['password']) ?></small>
-                            <?php endif; ?>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="rol">Rol del Sistema <span style="color: var(--danger-color);">*</span></label>
-                            <select id="rol" name="rol" class="form-control">
-                                <option value="admin" <?= ($old['rol'] ?? '') === 'admin' ? 'selected' : '' ?>>Admin</option>
-                                <option value="instructor" <?= ($old['rol'] ?? '') === 'instructor' ? 'selected' : '' ?>>Instructor</option>
-                                <option value="vigilante" <?= ($old['rol'] ?? '') === 'vigilante' ? 'selected' : '' ?>>Vigilante</option>
-                            </select>
-                        </div>
-                    </div>
+            <div class="mb-8">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Estado <span class="text-red-500">*</span></label>
+                <div class="flex gap-6">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="estado" value="activo" <?= ($old['estado'] ?? 'activo') === 'activo' ? 'checked' : '' ?> required class="accent-primary-700">
+                        <span class="text-sm text-gray-700">Activo</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="estado" value="inactivo" <?= ($old['estado'] ?? 'activo') === 'inactivo' ? 'checked' : '' ?> class="accent-primary-700">
+                        <span class="text-sm text-gray-700">Inactivo</span>
+                    </label>
                 </div>
+            </div>
 
-                <!-- Estado -->
-                <div style="margin-bottom: 2rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Estado <span style="color: var(--danger-color);">*</span></label>
-                    <div style="display: flex; gap: 1.5rem;">
-                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                            <input type="radio" name="estado" value="activo" <?= ($old['estado'] ?? 'activo') === 'activo' ? 'checked' : '' ?> required>
-                            <span>Activo</span>
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                            <input type="radio" name="estado" value="inactivo" <?= ($old['estado'] ?? 'activo') === 'inactivo' ? 'checked' : '' ?>>
-                            <span>Inactivo</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Botones -->
-                <div style="display: flex; gap: 1rem; justify-content: flex-end; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
-                    <a href="<?= baseUrl('/usuarios') ?>" class="btn" style="background: var(--text-muted); color: white;">
-                        <i class="fas fa-times"></i> Cancelar
-                    </a>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Guardar Cambios
-                    </button>
-                </div>
-            </form>
-        </div>
-
+            <div class="flex gap-3 justify-end pt-6 border-t border-gray-100">
+                <a href="<?= baseUrl('/usuarios') ?>"
+                   class="inline-flex items-center gap-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition text-gray-700 font-semibold px-5 py-2.5">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+                <button type="submit"
+                        class="inline-flex items-center gap-2 rounded-2xl bg-primary-700 hover:bg-primary-800 transition text-white font-semibold px-5 py-2.5 shadow-md">
+                    <i class="fas fa-save"></i> Guardar Cambios
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
 <script>
-// Mostrar/ocultar sección de Datos de Acceso según tipo de persona
 document.getElementById('tipo_persona').addEventListener('change', function() {
     const tiposConAcceso = ['admin', 'instructor', 'vigilante'];
     const datosAccesoSection = document.getElementById('datos-acceso-section');
     const rolSelect = document.getElementById('rol');
-    
+
     if (tiposConAcceso.includes(this.value)) {
-        datosAccesoSection.style.display = 'block';
+        datosAccesoSection.classList.remove('hidden');
         rolSelect.required = true;
     } else {
-        datosAccesoSection.style.display = 'none';
+        datosAccesoSection.classList.add('hidden');
         rolSelect.required = false;
-        // Limpiar campos de acceso cuando no se necesitan
         document.getElementById('username').value = '';
         document.getElementById('email').value = '';
         document.getElementById('password').value = '';
