@@ -1,11 +1,11 @@
 <?php require_once APP_PATH . '/views/layouts/header.php'; ?>
 
-<div>
+<div class="w-full max-w-3xl mx-auto">
     <h1 class="text-2xl font-extrabold text-primary-700 flex items-center gap-2 mb-6">
         <i class="fas fa-edit"></i> Editar Aula
     </h1>
 
-    <div class="bg-white/85 backdrop-blur-md border border-primary-100 rounded-3xl shadow-xl p-6 md:p-8 max-w-2xl">
+    <div class="bg-white/85 backdrop-blur-md border border-primary-100 rounded-3xl shadow-xl p-6 md:p-8 w-full">
         <form method="POST" action="<?= baseUrl('/control-llaves/update/' . $aula['id']) ?>" class="space-y-5">
             <div>
                 <label for="nombre" class="block text-sm font-semibold text-gray-700 mb-1">

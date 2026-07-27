@@ -179,18 +179,6 @@
                 </div>
             </div>
 
-            <?php if (APP_DEBUG): ?>
-            <div class="mt-6 bg-white/90 dark:bg-[#1c1830]/90 backdrop-blur-md rounded-3xl shadow-xl p-6">
-                <h4 class="text-primary-700 dark:text-primary-300 font-bold mb-3 flex items-center gap-2">
-                    <i class="fas fa-code"></i> Credenciales de Prueba (Solo en desarrollo)
-                </h4>
-                <ul class="space-y-1 text-sm text-gray-700">
-                    <li><strong class="text-gray-800">Admin:</strong> admin / Admin123!</li>
-                    <li><strong class="text-gray-800">Instructor:</strong> instructor / Admin123!</li>
-                    <li><strong class="text-gray-800">Vigilante:</strong> vigilante / Admin123!</li>
-                </ul>
-            </div>
-            <?php endif; ?>
         </div>
     </div>
 

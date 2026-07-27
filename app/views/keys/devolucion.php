@@ -1,12 +1,12 @@
 <?php require_once APP_PATH . '/views/layouts/header.php'; ?>
 
-<div>
+<div class="w-full max-w-3xl mx-auto">
     <h1 class="text-2xl font-extrabold text-primary-700 flex items-center gap-2 mb-1">
         <i class="fas fa-undo"></i> Devolver Llave
     </h1>
     <p class="text-sm text-gray-500 mb-6">Registre la devolución de la llave</p>
 
-    <div class="bg-white/85 backdrop-blur-md border border-primary-100 rounded-3xl shadow-xl p-6 md:p-8 max-w-2xl">
+    <div class="bg-white/85 backdrop-blur-md border border-primary-100 rounded-3xl shadow-xl p-6 md:p-8 w-full">
         <div class="rounded-2xl bg-accent-50 border border-accent-200 text-accent-900 px-5 py-4 mb-6 text-sm leading-relaxed">
             <p class="flex items-center gap-2 font-semibold mb-1">
                 <i class="fas fa-info-circle"></i> Tiene una llave prestada:

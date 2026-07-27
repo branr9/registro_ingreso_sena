@@ -8,7 +8,7 @@ $old = $_SESSION['old'] ?? $usuario;
 unset($_SESSION['errors'], $_SESSION['old']);
 ?>
 
-<div class="max-w-4xl">
+<div class="w-full max-w-5xl mx-auto">
     <div class="mb-8">
         <div class="flex items-center gap-4 mb-2">
             <a href="<?= baseUrl('/usuarios') ?>"

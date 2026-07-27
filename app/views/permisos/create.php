@@ -1,6 +1,6 @@
 <?php require_once APP_PATH . '/views/layouts/header.php'; ?>
 
-<div class="main-content">
+<div class="main-content form-page">
     <div class="content-header">
         <h1><i class="fas fa-plus-circle"></i> Crear Permiso de Salida</h1>
         <div class="header-actions">

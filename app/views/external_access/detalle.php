@@ -5,7 +5,7 @@
 require_once APP_PATH . '/views/layouts/header.php';
 ?>
 
-<div class="max-w-4xl">
+<div class="w-full max-w-5xl mx-auto">
     <!-- Header -->
     <div class="flex items-center gap-4 flex-wrap mb-6">
         <a href="<?= baseUrl('/acceso-externo') ?>"
