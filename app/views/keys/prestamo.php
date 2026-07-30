@@ -9,10 +9,18 @@
 </style>
 
 <div>
-    <h1 class="text-2xl font-extrabold text-primary-700 flex items-center gap-2 mb-1">
-        <i class="fas fa-key"></i> Préstamo de Llaves
-    </h1>
-    <p class="text-sm text-gray-500 mb-6">Seleccione el aula para tomar o devolver la llave</p>
+    <div class="flex items-start justify-between gap-4 flex-wrap mb-6">
+        <div>
+            <h1 class="text-2xl font-extrabold text-primary-700 flex items-center gap-2 mb-1">
+                <i class="fas fa-key"></i> Préstamo de Llaves
+            </h1>
+            <p class="text-sm text-gray-500">Seleccione el aula para tomar o devolver la llave</p>
+        </div>
+        <a href="<?= baseUrl('/control-llaves') ?>"
+           class="inline-flex items-center gap-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition text-gray-700 font-semibold px-4 py-2 text-sm">
+            <i class="fas fa-times"></i> Cancelar
+        </a>
+    </div>
 
     <?php if (empty($aulas)): ?>
         <div class="rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 px-5 py-4 flex items-center gap-2">

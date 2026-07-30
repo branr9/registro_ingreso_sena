@@ -6,7 +6,12 @@
             <img src="<?= asset('images/logo.png') ?>" alt="Logo SENA" style="height: 60px; margin-right: 15px;">
             <h1><i class="fas fa-door-open"></i> Consulta de Permisos de Salida</h1>
         </div>
-        <div class="kiosk-time" id="currentTime"></div>
+        <div class="kiosk-actions">
+            <div class="kiosk-time" id="currentTime"></div>
+            <a href="<?= baseUrl('/dashboard') ?>" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
     </div>
 
     <div class="kiosk-container">
@@ -73,6 +78,14 @@
     font-size: 1.5rem;
     font-weight: bold;
     color: var(--primary-color);
+}
+
+.kiosk-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 .kiosk-container {

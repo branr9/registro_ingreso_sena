@@ -40,7 +40,7 @@
                 </button>
                 <a href="<?= baseUrl('/control-llaves') ?>"
                    class="inline-flex items-center gap-2 rounded-2xl bg-gray-100 hover:bg-gray-200 transition text-gray-700 font-semibold px-5 py-2.5">
-                    <i class="fas fa-times"></i> Cancelar
+                    <i class="fas fa-times"></i> volver
                 </a>
             </div>
         </form>

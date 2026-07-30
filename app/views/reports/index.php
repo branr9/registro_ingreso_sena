@@ -1,10 +1,18 @@
 <?php require_once APP_PATH . '/views/layouts/header.php'; ?>
 
 <div>
-    <h1 class="text-2xl font-extrabold text-primary-700 flex items-center gap-2 mb-1">
-        <i class="fas fa-chart-bar"></i> Reportes de Acceso
-    </h1>
-    <p class="text-sm text-gray-500 mb-6">Consulta y exporta los registros de entrada y salida</p>
+    <div class="flex items-start justify-between gap-4 flex-wrap mb-6">
+        <div>
+            <h1 class="text-2xl font-extrabold text-primary-700 flex items-center gap-2 mb-1">
+                <i class="fas fa-chart-bar"></i> Reportes de Acceso
+            </h1>
+            <p class="text-sm text-gray-500">Consulta y exporta los registros de entrada y salida</p>
+        </div>
+        <a href="<?= baseUrl('/dashboard') ?>"
+           class="inline-flex items-center gap-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition text-gray-700 font-semibold px-4 py-2 text-sm">
+            <i class="fas fa-arrow-left"></i> Volver
+        </a>
+    </div>
 
     <!-- Filtros -->
     <div class="bg-white/85 backdrop-blur-md border border-primary-100 rounded-3xl shadow-xl overflow-hidden mb-8">
