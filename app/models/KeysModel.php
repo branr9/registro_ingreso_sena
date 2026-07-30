@@ -135,7 +135,47 @@ class KeysModel
     }
 
     /**
-     * Obtener préstamos activos de un aula específica
+     * Obtener datos de la persona autenticada para autocompletar el prestamo.
+     */
+    public function getDatosUsuarioActual(int $userId, ?string $email = null): ?array
+    {
+        $sql = "SELECT p.id,
+                       CONCAT(p.nombres, ' ', COALESCE(p.apellidos, '')) as nombre,
+                       p.documento,
+                       p.telefono,
+                       p.email,
+                       COALESCE(p.empresa, cpt.nombre) as departamento
+                FROM personas p
+                LEFT JOIN usuarios_sistema us ON us.persona_id = p.id
+                LEFT JOIN cat_persona_tipo cpt ON p.tipo_persona_id = cpt.id
+                WHERE p.deleted_at IS NULL
+                  AND (
+                      p.id = :persona_id_match
+                      OR us.id = :usuario_sistema_id_match
+                      OR (:email_filter IS NOT NULL AND p.email = :email_match)
+                  )
+                ORDER BY CASE
+                    WHEN :email_order_filter IS NOT NULL AND p.email = :email_order_match THEN 0
+                    WHEN us.id = :usuario_sistema_id_order THEN 1
+                    WHEN p.id = :persona_id_order THEN 2
+                    ELSE 3
+                END
+                LIMIT 1";
+
+        return $this->db->fetchOne($sql, [
+            'persona_id_match' => $userId,
+            'usuario_sistema_id_match' => $userId,
+            'email_filter' => $email,
+            'email_match' => $email,
+            'email_order_filter' => $email,
+            'email_order_match' => $email,
+            'usuario_sistema_id_order' => $userId,
+            'persona_id_order' => $userId
+        ]);
+    }
+
+    /**
+     * Obtener prestamos activos de un aula especifica
      */
     public function getPrestamosActivosAula(int $aulaId): array
     {

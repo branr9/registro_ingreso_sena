@@ -113,7 +113,16 @@
         <form method="POST" action="<?= baseUrl('/control-llaves/procesar-prestamo') ?>">
             <div class="px-6 py-5 space-y-4">
                 <input type="hidden" id="aula_id" name="aula_id">
-                <p class="text-sm text-gray-600">Aula: <strong id="aula_nombre" class="text-gray-800"></strong></p>
+                <div class="flex items-center justify-between gap-3 flex-wrap">
+                    <p class="text-sm text-gray-600">Aula: <strong id="aula_nombre" class="text-gray-800"></strong></p>
+                    <?php if (!empty($usuarioActualPrestamo)): ?>
+                    <button type="button"
+                            onclick="autocompletarUsuarioActual()"
+                            class="inline-flex items-center gap-2 rounded-xl bg-primary-50 hover:bg-primary-100 transition text-primary-700 font-semibold px-3 py-2 text-xs">
+                        <i class="fas fa-user-check"></i> Usar mis datos
+                    </button>
+                    <?php endif; ?>
+                </div>
 
                 <div>
                     <label for="nombre_receptor" class="block text-sm font-semibold text-gray-700 mb-1">
@@ -213,6 +222,23 @@
 </div>
 
 <script>
+const usuarioActualPrestamo = <?= json_encode($usuarioActualPrestamo ?? null, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>;
+
+function setInputValue(id, value) {
+    document.getElementById(id).value = value || '';
+}
+
+function autocompletarUsuarioActual() {
+    if (!usuarioActualPrestamo) {
+        return;
+    }
+
+    setInputValue('nombre_receptor', usuarioActualPrestamo.nombre);
+    setInputValue('documento_receptor', usuarioActualPrestamo.documento);
+    setInputValue('departamento', usuarioActualPrestamo.departamento);
+    setInputValue('telefono', usuarioActualPrestamo.telefono);
+}
+
 function tomarLlave(aulaId, aulaNombre) {
     document.getElementById('aula_id').value = aulaId;
     document.getElementById('aula_nombre').textContent = aulaNombre;

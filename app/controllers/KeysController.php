@@ -167,6 +167,14 @@ class KeysController
         
         // Obtener todas las aulas con su información de disponibilidad y préstamos activos
         $aulas = $this->keysModel->getAulasConPrestamos();
+        $usuarioActualPrestamo = null;
+
+        if (!empty($_SESSION['user_id'])) {
+            $usuarioActualPrestamo = $this->keysModel->getDatosUsuarioActual(
+                (int)$_SESSION['user_id'],
+                $_SESSION['user_email'] ?? null
+            );
+        }
         
         require_once APP_PATH . '/views/keys/prestamo.php';
     }
