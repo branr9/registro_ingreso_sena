@@ -241,3 +241,83 @@ html.dark .theme-toggle .knob { transform: translateX(1.3rem); }
 .theme-toggle-light .knob { background: #6B46C1; color: #fff; }
 html.dark .theme-toggle-light { background: rgba(107,70,193,0.35); border-color: rgba(107,70,193,0.5); }
 html.dark .theme-toggle-light .knob { background: #ede7f8; color: #6B46C1; }
+
+/* =====================================================================
+   MODO OSCURO — Vista Kiosk / Consulta de Permisos de Salida
+   ===================================================================== */
+
+/* Fondo oscuro del kiosk + activar decoradores radiales */
+.dark .kiosk-mode {
+    background: linear-gradient(135deg, #1a0a3e 0%, #0f0520 40%, #050f20 100%) !important;
+}
+.dark .kiosk-mode::before,
+.dark .kiosk-mode::after {
+    opacity: 1 !important;
+}
+
+/* Cabecera glassmorphism */
+.dark .content-header-kiosk {
+    background: rgba(255,255,255,0.05) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+    box-shadow: none !important;
+}
+
+.dark .kiosk-title { color: #e0d6ff !important; }
+.dark .kiosk-title i { color: #00BCD4 !important; }
+.dark .kiosk-time { color: #79e2ef !important; }
+
+/* Paneles glassmorphism */
+.dark .search-panel,
+.dark .result-panel {
+    background: rgba(255,255,255,0.06) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(255,255,255,0.12) !important;
+    box-shadow: 0 24px 48px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+}
+
+.dark .search-panel h2 { color: #e0d6ff !important; }
+.dark .search-panel p  { color: rgba(200,190,230,0.8) !important; }
+.dark .search-panel p a { color: #79e2ef !important; }
+
+/* Input de código de barras */
+.dark .barcode-input {
+    background: rgba(255,255,255,0.04) !important;
+    border-color: rgba(107,70,193,0.55) !important;
+    color: #f1eefa !important;
+}
+.dark .barcode-input::placeholder { color: rgba(180,165,215,0.55) !important; }
+.dark .barcode-input:focus {
+    background: rgba(107,70,193,0.1) !important;
+    border-color: #8257c9 !important;
+    box-shadow: 0 0 0 4px rgba(107,70,193,0.2), 0 0 20px rgba(107,70,193,0.12) !important;
+}
+
+/* Instrucciones */
+.dark .search-instructions {
+    background: rgba(0,188,212,0.08) !important;
+    border-color: rgba(0,188,212,0.2) !important;
+    color: rgba(121,226,239,0.85) !important;
+}
+
+/* Botón secundario en dark */
+.dark .kiosk-mode .btn-secondary {
+    background: rgba(255,255,255,0.08) !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
+    color: #e0d6ff !important;
+}
+.dark .kiosk-mode .btn-secondary:hover {
+    background: rgba(255,255,255,0.15) !important;
+    border-color: rgba(255,255,255,0.35) !important;
+}
+
+/* Detalles del permiso */
+.dark .permission-details {
+    background: rgba(255,255,255,0.04) !important;
+    border-color: rgba(255,255,255,0.08) !important;
+}
+.dark .detail-row { border-bottom-color: rgba(255,255,255,0.07) !important; }
+.dark .detail-label { color: #b79aeb !important; }
+.dark .detail-value { color: #e8e2f8 !important; }

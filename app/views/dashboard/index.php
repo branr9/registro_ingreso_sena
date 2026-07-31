@@ -81,6 +81,17 @@
                 <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-xl text-xs font-semibold">Activo</span>
             </a>
 
+            <?php if (Auth::hasRole('vigilante') && !Auth::hasRole('admin')): ?>
+            <a href="<?= baseUrl('/permisos/consulta') ?>" class="block bg-white rounded-3xl shadow-md border border-primary-100 p-6 hover:shadow-xl hover:-translate-y-0.5 transition">
+                <div class="w-12 h-12 rounded-2xl bg-primary-100 text-primary-700 flex items-center justify-center text-xl mb-4">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h4 class="font-bold text-gray-800 mb-1">Consultar Permiso</h4>
+                <p class="text-sm text-gray-500 mb-3">Verificar permisos de salida por código de barras</p>
+                <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-xl text-xs font-semibold">Activo</span>
+            </a>
+            <?php endif; ?>
+
             <a href="<?= baseUrl('/acceso-externo') ?>" class="block bg-white rounded-3xl shadow-md border border-primary-100 p-6 hover:shadow-xl hover:-translate-y-0.5 transition">
                 <div class="w-12 h-12 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center text-xl mb-4">
                     <i class="fas fa-users"></i>
@@ -91,6 +102,7 @@
             </a>
             <?php endif; ?>
 
+
             <?php if (Auth::hasRole('admin') || Auth::hasRole('instructor')): ?>
             <a href="<?= baseUrl('/control-llaves') ?>" class="block bg-white rounded-3xl shadow-md border border-primary-100 p-6 hover:shadow-xl hover:-translate-y-0.5 transition">
                 <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center text-xl mb-4">
@@ -100,7 +112,17 @@
                 <p class="text-sm text-gray-500 mb-3">Préstamo y devolución de llaves</p>
                 <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-xl text-xs font-semibold">Activo</span>
             </a>
+
+            <a href="<?= baseUrl('/permisos') ?>" class="block bg-white rounded-3xl shadow-md border border-primary-100 p-6 hover:shadow-xl hover:-translate-y-0.5 transition">
+                <div class="w-12 h-12 rounded-2xl bg-primary-100 text-primary-700 flex items-center justify-center text-xl mb-4">
+                    <i class="fas fa-file-signature"></i>
+                </div>
+                <h4 class="font-bold text-gray-800 mb-1">Permisos de Salida</h4>
+                <p class="text-sm text-gray-500 mb-3">Gestión de permisos de salida para aprendices</p>
+                <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-xl text-xs font-semibold">Activo</span>
+            </a>
             <?php endif; ?>
+
 
             <?php if (Auth::hasRole('admin')): ?>
             <a href="<?= baseUrl('/reportes') ?>" class="block bg-white rounded-3xl shadow-md border border-primary-100 p-6 hover:shadow-xl hover:-translate-y-0.5 transition">
