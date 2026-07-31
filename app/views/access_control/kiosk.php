@@ -36,7 +36,7 @@
 <div class="flex flex-col lg:flex-row gap-6 items-stretch" style="min-height: calc(100vh - 260px);">
 
     <!-- Scanner Area -->
-    <div class="flex-[2] rounded-3xl shadow-xl p-8 md:p-10 flex flex-col items-center justify-center text-center text-white bg-gradient-to-br from-primary-700 via-primary-600 to-accent-500">
+    <div class="flex-[2] rounded-3xl shadow-xl p-8 md:p-10 flex flex-col items-center justify-center text-center text-white bg-gradient-to-br from-primary-700 via-primary-600 to-accent-500 overflow-hidden">
 
         <div id="scanner-idle" class="w-full flex flex-col items-center">
             <div class="scanner-icon-pulse w-28 h-28 rounded-full bg-white/15 flex items-center justify-center text-6xl mb-6">
@@ -75,17 +75,18 @@
         <div id="recent-list" class="space-y-3">
             <?php if (!empty($recent)): ?>
                 <?php foreach ($recent as $item): ?>
-                    <div class="bg-white rounded-2xl shadow-sm border-l-4 <?= $item['exitoso'] ? 'border-green-500' : 'border-red-500' ?> px-4 py-3">
+                    <div class="bg-white rounded-2xl shadow-sm border-l-4 <?php if (!$item['exitoso']): ?>border-red-500<?php elseif ($item['tipo_evento'] === 'SALIDA'): ?>border-orange-400<?php else: ?>border-green-500<?php endif; ?> px-4 py-3">
                         <div class="flex items-center justify-between gap-2">
                             <strong class="text-sm text-gray-800 truncate"><?= htmlspecialchars($item['nombres'] . ' ' . ($item['apellidos'] ?? '')) ?></strong>
-                            <span class="shrink-0 px-2 py-0.5 rounded-xl text-xs font-semibold <?= $item['exitoso'] ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' ?>">
+                            <span class="shrink-0 px-2 py-0.5 rounded-xl text-xs font-semibold
+                                <?php if (!$item['exitoso']): ?>bg-red-100 text-red-700<?php elseif ($item['tipo_evento'] === 'SALIDA'): ?>bg-orange-100 text-orange-600<?php else: ?>bg-green-100 text-green-700<?php endif; ?>">
                                 <?= $item['exitoso'] ? $item['tipo_evento'] : 'DENEGADO' ?>
                             </span>
                         </div>
                         <div class="text-xs text-gray-400 mt-1">
                             <?= date('H:i:s', strtotime($item['fecha_hora'])) ?>
                             <?php if ($item['exitoso']): ?>
-                                - <?= $item['tipo_evento'] === 'ENTRADA' ? '🟢 Ingresó' : '🔴 Salió' ?>
+                                - <?= $item['tipo_evento'] === 'ENTRADA' ? '🟢 Ingresó' : '🟠 Salió' ?>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -316,12 +317,27 @@ function showResult(data) {
     resultDisplay.classList.remove('hidden');
 
     const isAllowed = data.type === 'allowed';
-    resultDisplay.className = 'w-full rounded-2xl p-8 result-animate ' +
-        (isAllowed ? 'bg-white/15 border-2 border-green-400' : 'bg-white/15 border-2 border-red-400');
+    const isSalida = isAllowed && data.evento === 'SALIDA';
+
+    let borderColor = 'border-red-400';
+    if (isAllowed) borderColor = isSalida ? 'border-orange-400' : 'border-green-400';
+
+    resultDisplay.className = 'w-full rounded-2xl p-8 result-animate bg-white/15 border-2 ' + borderColor;
+
+    // Personalizar mensaje y emoji según el evento
+    let displayMessage = data.message;
+    let displayIcon = data.icon;
+    if (isAllowed && isSalida) {
+        displayMessage = 'SALIDA REGISTRADA';
+        displayIcon = '👋';
+    } else if (isAllowed) {
+        displayMessage = 'ACCESO PERMITIDO';
+        displayIcon = '✅';
+    }
 
     let html = `
-        <div class="text-6xl mb-4">${data.icon}</div>
-        <div class="text-3xl md:text-4xl font-extrabold mb-3">${data.message}</div>
+        <div class="text-6xl mb-4">${displayIcon}</div>
+        <div class="text-3xl md:text-4xl font-extrabold mb-3">${displayMessage}</div>
     `;
 
     if (data.persona) {
@@ -337,10 +353,13 @@ function showResult(data) {
 
     if (data.evento) {
         const horaEvento = new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        const textoEvento = data.evento === 'ENTRADA' ? `🟢 INGRESÓ a las ${horaEvento}` : `🔴 SALIÓ a las ${horaEvento}`;
+        const textoEvento = data.evento === 'ENTRADA'
+            ? `🟢 INGRESÓ a las ${horaEvento}`
+            : `🟠 SALIÓ a las ${horaEvento}`;
+        const badgeColor = data.evento === 'ENTRADA' ? 'bg-white text-gray-800' : 'bg-orange-100 text-orange-700';
         html += `
             <div class="mt-5">
-                <span class="inline-block bg-white text-gray-800 text-lg font-bold rounded-2xl px-6 py-2">
+                <span class="inline-block ${badgeColor} text-lg font-bold rounded-2xl px-6 py-2">
                     ${textoEvento}
                 </span>
             </div>
@@ -431,9 +450,23 @@ async function updateRecentActivity() {
                 }
                 recentList.innerHTML = data.recent.map(item => {
                     const hora = new Date(item.fecha_hora).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                    const textoEvento = item.exitoso ? (item.tipo_evento === 'ENTRADA' ? '🟢 Ingresó' : '🔴 Salió') : '';
-                    const borderClass = item.exitoso ? 'border-green-500' : 'border-red-500';
-                    const badgeClass = item.exitoso ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
+
+                    // Colores según tipo de evento (igual que en PHP)
+                    let borderClass, badgeClass, textoEvento;
+                    if (!item.exitoso) {
+                        borderClass = 'border-red-500';
+                        badgeClass  = 'bg-red-100 text-red-700';
+                        textoEvento = '';
+                    } else if (item.tipo_evento === 'SALIDA') {
+                        borderClass = 'border-orange-400';
+                        badgeClass  = 'bg-orange-100 text-orange-600';
+                        textoEvento = '🟠 Salió';
+                    } else {
+                        borderClass = 'border-green-500';
+                        badgeClass  = 'bg-green-100 text-green-700';
+                        textoEvento = '🟢 Ingresó';
+                    }
+
                     return `
                     <div class="bg-white rounded-2xl shadow-sm border-l-4 ${borderClass} px-4 py-3">
                         <div class="flex items-center justify-between gap-2">
