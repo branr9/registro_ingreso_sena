@@ -1,6 +1,10 @@
 <?php
 /**
  * Vista: Listado de Usuarios
+ * @var array   $stats      Estadísticas de usuarios (total, activos, etc.)
+ * @var array   $usuarios   Lista paginada de usuarios
+ * @var array   $pagination Datos de paginación (current_page, last_page, total, per_page)
+ * @var string  $pageTitle  Título de la página
  */
 require_once APP_PATH . '/views/layouts/header.php';
 ?>

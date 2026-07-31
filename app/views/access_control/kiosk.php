@@ -1,4 +1,10 @@
-<?php require_once APP_PATH . '/views/layouts/header.php'; ?>
+<?php
+/**
+ * @var array $personas_test
+ * @var array $stats
+ * @var array $recent
+ */
+require_once APP_PATH . '/views/layouts/header.php'; ?>
 
 <style>
     @keyframes pulse-soft {

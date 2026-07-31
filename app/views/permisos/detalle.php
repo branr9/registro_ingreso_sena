@@ -1,6 +1,7 @@
 <?php require_once APP_PATH . '/views/layouts/header.php'; ?>
 
 <?php
+/** @var array $permiso Permiso de salida pasado desde PermisosController::ver() */
 $estadoBadge = [
     'ACTIVO'    => 'bg-green-100 text-green-700 dark:bg-green-950/40 dark:text-green-400',
     'USADO'     => 'bg-blue-100 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400',
