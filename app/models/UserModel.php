@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Modelo UserModel - CRUD completo de usuarios
  * Extiende funcionalidad de User.php (autenticación)
@@ -26,26 +26,32 @@ class UserModel
 
         if (!empty($filters['search'])) {
             $searchValue = '%' . $filters['search'] . '%';
-            $where[] = '(p.documento LIKE :search1 OR p.nombres LIKE :search2 OR COALESCE(p.apellidos, "") LIKE :search3 OR COALESCE(p.email, "") LIKE :search4 OR COALESCE(us.username, "") LIKE :search5)';
+            $where[] = '(p.documento LIKE :search1 OR p.nombres LIKE :search2 OR COALESCE(p.apellidos, "") LIKE :search3 OR CONCAT(p.nombres, " ", COALESCE(p.apellidos, "")) LIKE :search4 OR COALESCE(p.email, "") LIKE :search5 OR COALESCE(us.username, "") LIKE :search6)';
             $params['search1'] = $searchValue;
             $params['search2'] = $searchValue;
             $params['search3'] = $searchValue;
             $params['search4'] = $searchValue;
             $params['search5'] = $searchValue;
+            $params['search6'] = $searchValue;
         }
 
         if (!empty($filters['tipo_persona'])) {
-            $where[] = 'cpt.codigo = :tipo_persona';
-            $params['tipo_persona'] = $filters['tipo_persona'];
+            $tipo = strtolower($filters['tipo_persona']);
+            if ($tipo === 'visitante' || $tipo === 'externo') {
+                $where[] = '(LOWER(cpt.codigo) = "externo" OR LOWER(cpt.codigo) = "visitante")';
+            } else {
+                $where[] = 'LOWER(cpt.codigo) = :tipo_persona';
+                $params['tipo_persona'] = $tipo;
+            }
         }
 
         if (!empty($filters['estado'])) {
-            $where[] = 'p.estado = :estado';
+            $where[] = 'LOWER(p.estado) = LOWER(:estado)';
             $params['estado'] = $filters['estado'];
         }
 
         if (!empty($filters['rol'])) {
-            $where[] = 'crs.codigo = :rol';
+            $where[] = 'LOWER(crs.codigo) = LOWER(:rol)';
             $params['rol'] = $filters['rol'];
         }
 

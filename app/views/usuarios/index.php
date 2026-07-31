@@ -86,18 +86,20 @@ require_once APP_PATH . '/views/layouts/header.php';
                         <option value="">Todos</option>
                         <option value="aprendiz" <?= ($_GET['tipo_persona'] ?? '') === 'aprendiz' ? 'selected' : '' ?>>Aprendiz</option>
                         <option value="instructor" <?= ($_GET['tipo_persona'] ?? '') === 'instructor' ? 'selected' : '' ?>>Instructor</option>
-                        <option value="admin" <?= ($_GET['tipo_persona'] ?? '') === 'admin' ? 'selected' : '' ?>>Admin</option>
+                        <option value="admin" <?= ($_GET['tipo_persona'] ?? '') === 'admin' ? 'selected' : '' ?>>Administrador</option>
                         <option value="vigilante" <?= ($_GET['tipo_persona'] ?? '') === 'vigilante' ? 'selected' : '' ?>>Vigilante</option>
+                        <option value="planta" <?= ($_GET['tipo_persona'] ?? '') === 'planta' ? 'selected' : '' ?>>Personal de Planta</option>
                         <option value="contratista" <?= ($_GET['tipo_persona'] ?? '') === 'contratista' ? 'selected' : '' ?>>Contratista</option>
-                        <option value="visitante" <?= ($_GET['tipo_persona'] ?? '') === 'visitante' ? 'selected' : '' ?>>Visitante</option>
+                        <option value="externo" <?= in_array($_GET['tipo_persona'] ?? '', ['externo', 'visitante']) ? 'selected' : '' ?>>Externo / Visitante</option>
+                        <option value="proveedor" <?= ($_GET['tipo_persona'] ?? '') === 'proveedor' ? 'selected' : '' ?>>Proveedor</option>
                     </select>
                 </div>
                 <div class="min-w-[160px]">
                     <label class="block text-xs font-semibold text-gray-600 mb-1">Estado</label>
                     <select name="estado" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none">
                         <option value="">Todos</option>
-                        <option value="ACTIVO" <?= ($_GET['estado'] ?? '') === 'ACTIVO' ? 'selected' : '' ?>>Activo</option>
-                        <option value="INACTIVO" <?= ($_GET['estado'] ?? '') === 'INACTIVO' ? 'selected' : '' ?>>Inactivo</option>
+                        <option value="ACTIVO" <?= strtolower($_GET['estado'] ?? '') === 'activo' ? 'selected' : '' ?>>Activo</option>
+                        <option value="INACTIVO" <?= strtolower($_GET['estado'] ?? '') === 'inactivo' ? 'selected' : '' ?>>Inactivo</option>
                     </select>
                 </div>
                 <div class="flex items-center gap-2">
@@ -156,16 +158,22 @@ require_once APP_PATH . '/views/layouts/header.php';
                         <td class="px-4 py-3">
                             <?php
                             $badgeColors = [
-                                'admin' => 'bg-primary-100 text-primary-700',
-                                'instructor' => 'bg-accent-100 text-accent-700',
-                                'vigilante' => 'bg-blue-100 text-blue-700',
-                                'persona' => 'bg-gray-100 text-gray-600'
+                                'ADMIN' => 'bg-purple-100 text-purple-700',
+                                'INSTRUCTOR' => 'bg-emerald-100 text-emerald-700',
+                                'VIGILANTE' => 'bg-blue-100 text-blue-700',
+                                'APRENDIZ' => 'bg-indigo-100 text-indigo-700',
+                                'PLANTA' => 'bg-teal-100 text-teal-700',
+                                'EXTERNO' => 'bg-sky-100 text-sky-700',
+                                'VISITANTE' => 'bg-sky-100 text-sky-700',
+                                'CONTRATISTA' => 'bg-amber-100 text-amber-700',
+                                'PROVEEDOR' => 'bg-orange-100 text-orange-700'
                             ];
-                            $rol = $usuario['rol'] ?? 'persona';
-                            $badgeClass = $badgeColors[$rol] ?? 'bg-gray-100 text-gray-600';
+                            $displayName = $usuario['rol_nombre'] ?? $usuario['tipo_persona_nombre'] ?? 'Persona';
+                            $codigo = strtoupper($usuario['rol'] ?? $usuario['tipo_persona'] ?? '');
+                            $badgeClass = $badgeColors[$codigo] ?? 'bg-gray-100 text-gray-600';
                             ?>
-                            <span class="<?= $badgeClass ?> px-2 py-0.5 rounded-xl text-xs font-semibold">
-                                <?= e($usuario['rol_nombre'] ?? ucfirst($rol)) ?>
+                            <span class="<?= $badgeClass ?> px-2.5 py-0.5 rounded-xl text-xs font-semibold">
+                                <?= e($displayName) ?>
                             </span>
                         </td>
                         <td class="px-4 py-3 text-center">

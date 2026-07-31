@@ -1,0 +1,101 @@
+documento,nombre,tipo_persona,empresa,email,username
+1059917677,Gustavo Moreno Reyes,instructor,SENA,gustavo.reyes@sena.edu.co,greyes
+1158509126,Daniel Navarro García,aprendiz,SENA,daniel.garcia@sena.edu.co,
+1135655277,Andrés Gómez Díaz,aprendiz,SENA,andres.diaz@sena.edu.co,
+1059174078,Esteban Navarro Valencia,instructor,SENA,esteban.valencia@sena.edu.co,evalencia
+1187405367,Fernanda González Rojas,aprendiz,SENA,fernanda.rojas@sena.edu.co,
+1027436862,Valentina Gómez Suárez,aprendiz,SENA,valentina.suarez@sena.edu.co,
+1071006778,Alejandro Mendoza Acosta,aprendiz,SENA,alejandro.acosta@sena.edu.co,
+1148187279,Juliana Torres Cárdenas,contratista,Empresa XYZ,juliana.cardenas@outlook.com,jcardenas
+1177506521,Manuela Ortiz Martínez,contratista,Vigilancia Andina Ltda,manuela.martinez@gmail.com,mmartinez
+1074617971,Marco Díaz Ramírez,contratista,Ingeniería y Diseño S.A.S,marco.ramirez@hotmail.com,mramirez
+1056239114,Camila Guerrero Mendoza,instructor,SENA,camila.mendoza@sena.edu.co,cmendoza
+42857966,Nicolás Rojas Navarro,vigilante,Compañía de Aseo Integral,nicolas.navarro@gmail.com,nnavarro
+1183774738,Yolanda Contreras Díaz,instructor,SENA,yolanda.diaz@sena.edu.co,ydiaz
+1107686853,Felipe Pérez Herrera,aprendiz,SENA,felipe.herrera@sena.edu.co,
+1057076502,Samuel Espinosa Herrera,aprendiz,SENA,samuel.herrera@sena.edu.co,
+28740864,Marcela Aguilar Castro,vigilante,Vigilancia Andina Ltda,marcela.castro@gmail.com,mcastro
+63606628,Daniela Vega Cortés,vigilante,Compañía de Aseo Integral,daniela.cortes@outlook.com,dcortes
+1012647705,Iván Medina García,aprendiz,SENA,ivan.garcia@sena.edu.co,
+1103285188,Cristian Rojas Cortés,contratista,Empresa XYZ,cristian.cortes@hotmail.com,ccortes
+1003081913,Isabella Jiménez Contreras,instructor,SENA,isabella.contreras@sena.edu.co,icontreras
+55657579,Daniel Navarro Moreno,vigilante,Compañía de Aseo Integral,daniel.moreno@example.com,dmoreno
+1134375061,Camilo González Jiménez,aprendiz,SENA,camilo.jimenez@sena.edu.co,
+1041027479,Marco Romero Rincón,contratista,Servicios Técnicos S.A.S,marco.rincon@outlook.com,mrincon
+1030029263,Nicolás Herrera Medina,contratista,Seguridad Total,nicolas.medina@outlook.com,nmedina
+1022992422,Sofía López Reyes,contratista,Empresa XYZ,sofia.reyes@hotmail.com,sreyes
+1071150596,Miguel Cruz Contreras,contratista,Alcaldía Municipal,miguel.contreras@hotmail.com,mcontreras
+1117601594,Esteban Romero Peña,visitante,Alcaldía Municipal,,
+1090754153,Paula Reyes Díaz,contratista,Empresa XYZ,paula.diaz@example.com,pdiaz
+1019057061,Mauricio Díaz González,instructor,SENA,mauricio.gonzalez@sena.edu.co,mgonzalez
+19510312,Felipe Martínez Pérez,vigilante,Vigilancia Andina Ltda,felipe.perez@gmail.com,fperez
+1194173474,Diana Navarro Vargas,aprendiz,SENA,diana.vargas@sena.edu.co,
+1025320389,Sofía Cruz Valencia,visitante,Ministerio de Educación,,
+1125365979,Sandra Cortés Valencia,aprendiz,SENA,sandra.valencia@sena.edu.co,
+1195478346,Daniel Ramírez López,contratista,Ingeniería y Diseño S.A.S,daniel.lopez@outlook.com,dlopez
+1120423783,Felipe Ortiz Ortiz,contratista,Grupo Empresarial del Norte,felipe.ortiz@gmail.com,fortiz
+1118952003,Adriana Reyes Martínez,aprendiz,SENA,adriana.martinez@sena.edu.co,
+1063452636,Carlos Navarro González,contratista,Empresa XYZ,carlos.gonzalez@gmail.com,cgonzalez
+1044194440,Diana Peña López,aprendiz,SENA,diana.lopez@sena.edu.co,
+1113550206,Carolina Aguilar Muñoz,aprendiz,SENA,carolina.munoz@sena.edu.co,
+17849494,Valentina Ortiz Muñoz,vigilante,Seguridad Total,valentina.munoz@example.com,vmunoz
+81286543,Carlos Vega Cruz,vigilante,Compañía de Aseo Integral,carlos.cruz@gmail.com,ccruz
+1159728520,Marco Morales Martínez,aprendiz,SENA,marco.martinez@sena.edu.co,
+1066092929,Fernando Torres Espinosa,aprendiz,SENA,fernando.espinosa@sena.edu.co,
+1176462265,Nicolás García Valencia,instructor,SENA,nicolas.valencia@sena.edu.co,nvalencia
+1179778197,Yolanda Jiménez Gómez,instructor,SENA,yolanda.gomez@sena.edu.co,ygomez
+96637649,Jorge Peña Vargas,vigilante,Compañía de Aseo Integral,jorge.vargas@outlook.com,jvargas
+1151127454,Juan Aguilar Bermúdez,instructor,SENA,juan.bermudez@sena.edu.co,jbermudez
+1035556038,Ricardo Gómez Rincón,visitante,Alcaldía Municipal,,
+1042344843,Rafael Reyes Guerrero,visitante,Alcaldía Municipal,,
+1179278163,Mariana Sánchez González,aprendiz,SENA,mariana.gonzalez@sena.edu.co,
+1030985146,Yolanda Ramírez Vargas,contratista,Distribuciones El Sol,yolanda.vargas@example.com,yvargas
+56020613,Jorge Muñoz Acosta,vigilante,Seguridad Total,jorge.acosta@gmail.com,jacosta
+22388090,Isabella Medina Jiménez,vigilante,Seguridad Total,isabella.jimenez@hotmail.com,ijimenez
+1043374331,Juan Suárez Vargas,contratista,Distribuciones El Sol,juan.vargas@hotmail.com,jvargas2
+1020198118,Juliana González Torres,instructor,SENA,juliana.torres@sena.edu.co,jtorres
+1115369993,Ricardo Pérez Guerrero,visitante,Ministerio de Educación,,
+1056391990,Sandra Pérez Mendoza,aprendiz,SENA,sandra.mendoza@sena.edu.co,
+30743797,Alejandro Contreras Valencia,vigilante,Compañía de Aseo Integral,alejandro.valencia@gmail.com,avalencia
+1197720018,Rafael Valencia Rodríguez,contratista,Alcaldía Municipal,rafael.rodriguez@outlook.com,rrodriguez
+1188247930,Fernanda Reyes Moreno,contratista,Alcaldía Municipal,fernanda.moreno@example.com,fmoreno
+1053572423,Marco Cruz Díaz,aprendiz,SENA,marco.diaz@sena.edu.co,
+1006352373,Sandra Romero Díaz,contratista,Logística del Valle,sandra.diaz@gmail.com,sdiaz
+1094260071,Lorena Martínez Moreno,aprendiz,SENA,lorena.moreno@sena.edu.co,
+1007408963,Beatriz Navarro Suárez,instructor,SENA,beatriz.suarez@sena.edu.co,bsuarez
+1010269588,Camila Vega Jiménez,aprendiz,SENA,camila.jimenez@sena.edu.co,
+1162727949,Sandra Herrera Cortés,aprendiz,SENA,sandra.cortes@sena.edu.co,
+1011914918,Fernando Espinosa Ortiz,visitante,Alcaldía Municipal,,
+67887757,Iván Navarro Ortiz,vigilante,Vigilancia Andina Ltda,ivan.ortiz@example.com,iortiz
+1136129661,Mariana Herrera Torres,visitante,Alcaldía Municipal,,
+1148823967,Natalia Peña Muñoz,aprendiz,SENA,natalia.munoz@sena.edu.co,
+1165226026,Beatriz Cárdenas Morales,aprendiz,SENA,beatriz.morales@sena.edu.co,
+1077017814,Juliana González Romero,instructor,SENA,juliana.romero@sena.edu.co,jromero
+1181362305,Adriana Salazar Salazar,aprendiz,SENA,adriana.salazar@sena.edu.co,
+1076178333,Fernanda Rojas García,aprendiz,SENA,fernanda.garcia@sena.edu.co,
+1060301519,Laura Reyes Romero,instructor,SENA,laura.romero@sena.edu.co,lromero
+1164087607,Juan Pérez Reyes,contratista,Compañía de Aseo Integral,juan.reyes@example.com,jreyes
+1107280998,Esteban Cárdenas Medina,instructor,SENA,esteban.medina@sena.edu.co,emedina
+1058744720,Rafael Ramírez Cortés,aprendiz,SENA,rafael.cortes@sena.edu.co,
+1032576951,Ana Contreras Reyes,aprendiz,SENA,ana.reyes@sena.edu.co,
+1159840514,Beatriz Sánchez Contreras,instructor,SENA,beatriz.contreras@sena.edu.co,bcontreras
+1147068257,Mariana Rincón Cortés,aprendiz,SENA,mariana.cortes@sena.edu.co,
+1069576201,Gustavo Cruz Salazar,aprendiz,SENA,gustavo.salazar@sena.edu.co,
+1073711690,Estefanía Sánchez Medina,contratista,Logística del Valle,estefania.medina@hotmail.com,emedina2
+1085821382,Sofía Moreno Suárez,aprendiz,SENA,sofia.suarez@sena.edu.co,
+1186280735,Miguel Castro Díaz,contratista,Ingeniería y Diseño S.A.S,miguel.diaz@gmail.com,mdiaz
+72535301,Julián Valencia Suárez,vigilante,Compañía de Aseo Integral,julian.suarez@hotmail.com,jsuarez
+1154535701,Patricia Vega Rodríguez,aprendiz,SENA,patricia.rodriguez@sena.edu.co,
+1112480168,Alejandro Romero Cárdenas,aprendiz,SENA,alejandro.cardenas@sena.edu.co,
+1116993829,Óscar Díaz Moreno,instructor,SENA,oscar.moreno@sena.edu.co,omoreno
+1125464087,Natalia Peña Rojas,instructor,SENA,natalia.rojas@sena.edu.co,nrojas
+1022534474,Samuel Peña Vega,visitante,Gobierno,,
+1013498178,Marco Aguilar Morales,instructor,SENA,marco.morales@sena.edu.co,mmorales
+1090597113,Diana Aguilar Herrera,aprendiz,SENA,diana.herrera@sena.edu.co,
+1126247030,Carolina Valencia Jiménez,contratista,Empresa XYZ,carolina.jimenez@example.com,cjimenez
+15403355,Alejandro Díaz Martínez,vigilante,Compañía de Aseo Integral,alejandro.martinez@example.com,amartinez
+1064033920,Leonardo Rodríguez Bermúdez,visitante,Ministerio de Educación,,
+1187761199,Mauricio Gómez Aguilar,aprendiz,SENA,mauricio.aguilar@sena.edu.co,
+1192832551,Camila Acosta Acosta,aprendiz,SENA,camila.acosta@sena.edu.co,
+1006892998,Diego Ramírez Vega,aprendiz,SENA,diego.vega@sena.edu.co,
+1027353922,Patricia Ortiz Martínez,visitante,Ministerio de Educación,,
