@@ -434,6 +434,62 @@ class UserModel
         }
     }
 
+    /**
+     * Eliminar lógicamente un grupo de personas y registrar cada acción.
+     *
+     * @return int|false Cantidad de usuarios eliminados o false si falla la operación.
+     */
+    public function bulkDelete(array $ids, int $deletedBy): int|false
+    {
+        $ids = array_values(array_unique(array_filter(
+            array_map('intval', $ids),
+            static fn (int $id): bool => $id > 0
+        )));
+
+        if (empty($ids)) {
+            return 0;
+        }
+
+        try {
+            $this->connection->beginTransaction();
+
+            $placeholders = implode(', ', array_fill(0, count($ids), '?'));
+            $sqlUsers = "SELECT p.*, cpt.codigo AS tipo_persona
+                         FROM personas p
+                         INNER JOIN cat_persona_tipo cpt ON p.tipo_persona_id = cpt.id
+                         WHERE p.id IN ({$placeholders}) AND p.deleted_at IS NULL";
+            $stmtUsers = $this->connection->prepare($sqlUsers);
+            $stmtUsers->execute($ids);
+            $users = $stmtUsers->fetchAll(PDO::FETCH_ASSOC);
+
+            if (empty($users)) {
+                $this->connection->commit();
+                return 0;
+            }
+
+            $activeIds = array_map(static fn (array $user): int => (int) $user['id'], $users);
+            $activePlaceholders = implode(', ', array_fill(0, count($activeIds), '?'));
+            $sqlDelete = "UPDATE personas SET deleted_at = NOW(), updated_at = NOW()
+                          WHERE id IN ({$activePlaceholders}) AND deleted_at IS NULL";
+            $stmtDelete = $this->connection->prepare($sqlDelete);
+            $stmtDelete->execute($activeIds);
+            $deleted = $stmtDelete->rowCount();
+
+            foreach ($users as $user) {
+                $this->logAudit((int) $user['id'], 'eliminar', $deletedBy, $user, null);
+            }
+
+            $this->connection->commit();
+            return $deleted;
+        } catch (Exception $e) {
+            if ($this->connection->inTransaction()) {
+                $this->connection->rollBack();
+            }
+            error_log('Error al eliminar usuarios en grupo: ' . $e->getMessage());
+            return false;
+        }
+    }
+
     private function dividirNombreCompleto(string $nombreCompleto): array
     {
         $nombreCompleto = trim($nombreCompleto);

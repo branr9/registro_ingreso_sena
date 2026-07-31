@@ -281,6 +281,50 @@ class UsersController
         redirect('/usuarios');
     }
 
+    /**
+     * Eliminar varios usuarios seleccionados (borrado lógico).
+     */
+    public function bulkDelete(): void
+    {
+        if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
+            setFlashMessage('Token de seguridad inválido', 'error');
+            redirect('/usuarios');
+        }
+
+        $ids = $_POST['usuario_ids'] ?? [];
+        if (!is_array($ids)) {
+            $ids = [];
+        }
+
+        $ids = array_values(array_unique(array_filter(
+            array_map('intval', $ids),
+            static fn (int $id): bool => $id > 0
+        )));
+
+        $currentUserId = (int) Auth::user()['id'];
+        $ids = array_values(array_filter(
+            $ids,
+            static fn (int $id): bool => $id !== $currentUserId
+        ));
+
+        if (empty($ids)) {
+            setFlashMessage('Seleccione al menos un usuario distinto al de su sesión', 'warning');
+            redirect('/usuarios');
+        }
+
+        $deleted = $this->model->bulkDelete($ids, $currentUserId);
+
+        if ($deleted === false) {
+            setFlashMessage('Error al eliminar los usuarios seleccionados', 'error');
+        } elseif ($deleted === 0) {
+            setFlashMessage('Los usuarios seleccionados ya no están disponibles', 'warning');
+        } else {
+            setFlashMessage($deleted . ' usuario' . ($deleted === 1 ? '' : 's') . ' eliminado' . ($deleted === 1 ? '' : 's') . ' exitosamente', 'success');
+        }
+
+        redirect('/usuarios');
+    }
+
     // ========================================
     // IMPORTACIÓN MASIVA
     // ========================================

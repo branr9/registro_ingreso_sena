@@ -120,13 +120,33 @@ require_once APP_PATH . '/views/layouts/header.php';
 
     <!-- Tabla de usuarios -->
     <div class="bg-white/85 backdrop-blur-md border border-primary-100 rounded-3xl shadow-xl overflow-hidden">
-        <div class="px-6 py-4 border-b border-primary-100 bg-gradient-to-r from-white to-primary-50 dark:from-[#1c1830] dark:to-[#241a42]">
-            <h3 class="text-lg font-bold text-primary-700"><i class="fas fa-list"></i> Listado de Usuarios</h3>
+        <div class="px-6 py-4 border-b border-primary-100 bg-gradient-to-r from-white to-primary-50 dark:from-[#1c1830] dark:to-[#241a42] flex flex-wrap items-center justify-between gap-3">
+            <div>
+                <h3 class="text-lg font-bold text-primary-700"><i class="fas fa-list"></i> Listado de Usuarios</h3>
+                <?php if (Auth::hasRole('admin')): ?>
+                <p class="text-xs text-gray-500 mt-1">Filtre por categoría, seleccione los usuarios y elimínelos en una sola acción.</p>
+                <?php endif; ?>
+            </div>
+            <?php if (Auth::hasRole('admin')): ?>
+            <form id="bulkDeleteForm" method="POST" action="<?= baseUrl('/usuarios/bulk-delete') ?>" class="flex items-center gap-2">
+                <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
+                <span id="selectedUsersCount" class="hidden text-xs font-semibold text-gray-500 whitespace-nowrap" aria-live="polite">0 seleccionados</span>
+                <button id="bulkDeleteButton" type="submit" disabled
+                        class="inline-flex items-center gap-2 rounded-xl bg-red-600 text-white font-semibold px-4 py-2 text-sm shadow-sm transition disabled:opacity-50 disabled:cursor-not-allowed hover:bg-red-700">
+                    <i class="fas fa-trash-alt"></i> Eliminar seleccionados
+                </button>
+            </form>
+            <?php endif; ?>
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full text-sm">
                 <thead>
                     <tr class="bg-primary-50 text-primary-800 text-xs uppercase">
+                        <?php if (Auth::hasRole('admin')): ?>
+                        <th class="px-4 py-3 text-center font-bold w-12">
+                            <input id="selectAllUsers" type="checkbox" class="w-4 h-4 rounded border-gray-300 text-primary-700 focus:ring-primary-500" aria-label="Seleccionar todos los usuarios visibles">
+                        </th>
+                        <?php endif; ?>
                         <th class="px-4 py-3 text-left font-bold">Documento</th>
                         <th class="px-4 py-3 text-left font-bold">Nombre</th>
                         <th class="px-4 py-3 text-left font-bold">Empresa</th>
@@ -141,7 +161,7 @@ require_once APP_PATH . '/views/layouts/header.php';
                 <tbody class="divide-y divide-gray-100">
                     <?php if (empty($usuarios)): ?>
                     <tr>
-                        <td colspan="7" class="px-4 py-16 text-center text-gray-400">
+                        <td colspan="<?= Auth::hasRole('admin') ? 8 : 6 ?>" class="px-4 py-16 text-center text-gray-400">
                             <i class="fas fa-inbox text-4xl mb-3 block"></i>
                             No se encontraron usuarios
                         </td>
@@ -149,6 +169,15 @@ require_once APP_PATH . '/views/layouts/header.php';
                     <?php else: ?>
                     <?php foreach ($usuarios as $usuario): ?>
                     <tr class="hover:bg-primary-50/50 transition">
+                        <?php if (Auth::hasRole('admin')): ?>
+                        <td class="px-4 py-3 text-center">
+                            <?php if ((int) $usuario['id'] !== (int) Auth::user()['id']): ?>
+                            <input type="checkbox" name="usuario_ids[]" value="<?= (int) $usuario['id'] ?>" form="bulkDeleteForm"
+                                   class="user-select-checkbox w-4 h-4 rounded border-gray-300 text-primary-700 focus:ring-primary-500"
+                                   aria-label="Seleccionar a <?= e(trim($usuario['nombres'] . ' ' . ($usuario['apellidos'] ?? ''))) ?>">
+                            <?php endif; ?>
+                        </td>
+                        <?php endif; ?>
                         <td class="px-4 py-3 font-medium text-gray-700"><?= e($usuario['documento']) ?></td>
                         <td class="px-4 py-3 text-gray-700">
                             <?= e(trim($usuario['nombres'] . ' ' . ($usuario['apellidos'] ?? ''))) ?>
@@ -207,7 +236,7 @@ require_once APP_PATH . '/views/layouts/header.php';
                                         <i class="fas fa-<?= strtoupper($usuario['estado']) === 'ACTIVO' ? 'ban' : 'check' ?> text-xs"></i>
                                     </button>
                                 </form>
-                                <?php if ($usuario['id'] !== Auth::user()['id']): ?>
+                                <?php if ((int) $usuario['id'] !== (int) Auth::user()['id']): ?>
                                 <form method="POST" action="<?= baseUrl('/usuarios/delete/' . $usuario['id']) ?>" class="inline">
                                     <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
                                     <button type="submit"
@@ -258,5 +287,39 @@ require_once APP_PATH . '/views/layouts/header.php';
         <?php endif; ?>
     </div>
 </div>
+
+<?php if (Auth::hasRole('admin')): ?>
+<script>
+    (function () {
+        const checkboxes = Array.from(document.querySelectorAll('.user-select-checkbox'));
+        const selectAll = document.getElementById('selectAllUsers');
+        const deleteButton = document.getElementById('bulkDeleteButton');
+        const selectedCount = document.getElementById('selectedUsersCount');
+        const form = document.getElementById('bulkDeleteForm');
+
+        function updateSelection() {
+            const selected = checkboxes.filter((checkbox) => checkbox.checked).length;
+            deleteButton.disabled = selected === 0;
+            selectedCount.textContent = selected + (selected === 1 ? ' seleccionado' : ' seleccionados');
+            selectedCount.classList.toggle('hidden', selected === 0);
+            selectAll.checked = checkboxes.length > 0 && selected === checkboxes.length;
+            selectAll.indeterminate = selected > 0 && selected < checkboxes.length;
+        }
+
+        selectAll.addEventListener('change', function () {
+            checkboxes.forEach((checkbox) => { checkbox.checked = this.checked; });
+            updateSelection();
+        });
+        checkboxes.forEach((checkbox) => checkbox.addEventListener('change', updateSelection));
+        form.addEventListener('submit', function (event) {
+            const selected = checkboxes.filter((checkbox) => checkbox.checked).length;
+            if (selected === 0 || !window.confirm('¿Eliminar ' + selected + (selected === 1 ? ' usuario seleccionado?' : ' usuarios seleccionados?'))) {
+                event.preventDefault();
+            }
+        });
+        updateSelection();
+    })();
+</script>
+<?php endif; ?>
 
 <?php require_once APP_PATH . '/views/layouts/footer.php'; ?>

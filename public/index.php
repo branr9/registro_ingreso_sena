@@ -121,6 +121,14 @@ try {
             }
             break;
 
+        case '/usuarios/bulk-delete':
+            if ($requestMethod === 'POST') {
+                Auth::requireRole('admin');
+                $controller = new UsersController();
+                $controller->bulkDelete();
+            }
+            break;
+
         case '/usuarios/import':
             Auth::requireRole('admin');
             $controller = new UsersController();
