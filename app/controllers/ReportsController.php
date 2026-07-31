@@ -77,128 +77,97 @@ class ReportsController
     }
 
     /**
-     * Exportar a Excel
+     * Exportar a CSV (compatible con Excel)
      */
     public function exportExcel(): void
     {
         $fechaInicio = $_GET['fecha_inicio'] ?? date('Y-m-d', strtotime('-30 days'));
-        $fechaFin = $_GET['fecha_fin'] ?? date('Y-m-d');
-        $documento = $_GET['documento'] ?? null;
+        $fechaFin    = $_GET['fecha_fin']    ?? date('Y-m-d');
+        $documento   = $_GET['documento']    ?? null;
 
-        // Obtener datos de marcaciones y préstamos
         $marcaciones = $this->accessModel->getAccessReport($fechaInicio, $fechaFin, $documento);
-        $prestamos = $this->keysModel->getReportePrestamos($fechaInicio, $fechaFin, $documento);
+        $prestamos   = $this->keysModel->getReportePrestamos($fechaInicio, $fechaFin, $documento);
 
-        // Configurar headers para descarga de Excel
-        header('Content-Type: application/vnd.ms-excel; charset=UTF-8');
-        header('Content-Disposition: attachment; filename="reporte_accesos_' . date('Y-m-d_His') . '.xls"');
+        // Limpiar cualquier output previo
+        if (ob_get_level()) ob_end_clean();
+
+        $filename = 'reporte_accesos_' . date('Y-m-d_His') . '.csv';
+        header('Content-Type: text/csv; charset=UTF-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
         header('Cache-Control: max-age=0');
+        header('Pragma: no-cache');
 
-        // Crear tabla HTML que Excel puede interpretar
-        echo "\xEF\xBB\xBF"; // UTF-8 BOM
-        echo '<html xmlns:x="urn:schemas-microsoft-com:office:excel">';
-        echo '<head>';
-        echo '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">';
-        echo '<style>';
-        echo 'table { border-collapse: collapse; width: 100%; }';
-        echo 'th, td { border: 1px solid #000; padding: 8px; text-align: left; }';
-        echo 'th { background-color: #39B54A; color: white; font-weight: bold; }';
-        echo '</style>';
-        echo '</head>';
-        echo '<body>';
-        echo '<h2>Reporte de Accesos - SENA</h2>';
-        echo '<p>Período: ' . date('d/m/Y', strtotime($fechaInicio)) . ' al ' . date('d/m/Y', strtotime($fechaFin)) . '</p>';
-        echo '<table>';
-        echo '<thead>';
-        echo '<tr>';
-        echo '<th>Fecha</th>';
-        echo '<th>Hora</th>';
-        echo '<th>Documento</th>';
-        echo '<th>Nombre Completo</th>';
-        echo '<th>Tipo Persona</th>';
-        echo '<th>Tipo Acceso</th>';
-        echo '<th>Método</th>';
-        echo '</tr>';
-        echo '</thead>';
-        echo '<tbody>';
+        $out = fopen('php://output', 'w');
 
-        foreach ($marcaciones as $marcacion) {
-            echo '<tr>';
-            echo '<td>' . date('d/m/Y', strtotime($marcacion['fecha_hora'])) . '</td>';
-            echo '<td>' . date('H:i:s', strtotime($marcacion['fecha_hora'])) . '</td>';
-            echo '<td>' . htmlspecialchars($marcacion['documento']) . '</td>';
-            echo '<td>' . htmlspecialchars($marcacion['nombre_completo']) . '</td>';
-            echo '<td>' . htmlspecialchars($marcacion['tipo_persona']) . '</td>';
-            echo '<td>' . htmlspecialchars($marcacion['tipo_acceso']) . '</td>';
-            echo '<td>' . htmlspecialchars($marcacion['metodo']) . '</td>';
-            echo '</tr>';
+        // BOM para que Excel reconozca UTF-8
+        fprintf($out, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+        // === MARCACIONES DE ACCESO ===
+        fputcsv($out, ['REPORTE DE CONTROL DE ACCESOS - SENA'], ';');
+        fputcsv($out, ['Periodo:', date('d/m/Y', strtotime($fechaInicio)) . ' al ' . date('d/m/Y', strtotime($fechaFin))], ';');
+        fputcsv($out, [], ';');
+        fputcsv($out, ['MARCACIONES DE ACCESO'], ';');
+        fputcsv($out, ['Fecha', 'Hora', 'Documento', 'Nombre Completo', 'Tipo Persona', 'Tipo Acceso', 'Metodo'], ';');
+
+        foreach ($marcaciones as $m) {
+            fputcsv($out, [
+                date('d/m/Y', strtotime($m['fecha_hora'])),
+                date('H:i:s', strtotime($m['fecha_hora'])),
+                $m['documento'],
+                $m['nombre_completo'],
+                $m['tipo_persona'],
+                $m['tipo_acceso'],
+                $m['metodo'],
+            ], ';');
         }
 
-        echo '</tbody>';
-        echo '</table>';
-        echo '<p>Total de registros: ' . count($marcaciones) . '</p>';
-        
-        // Tabla de préstamos de llaves
-        echo '<br><br>';
-        echo '<h3>Préstamos de Llaves</h3>';
-        echo '<table>';
-        echo '<thead>';
-        echo '<tr>';
-        echo '<th>Fecha Préstamo</th>';
-        echo '<th>Aula</th>';
-        echo '<th>Documento</th>';
-        echo '<th>Nombre Completo</th>';
-        echo '<th>Tipo Persona</th>';
-        echo '<th>Fecha Devolución</th>';
-        echo '<th>Estado</th>';
-        echo '</tr>';
-        echo '</thead>';
-        echo '<tbody>';
+        fputcsv($out, ['Total de registros:', count($marcaciones)], ';');
+        fputcsv($out, [], ';');
 
-        foreach ($prestamos as $prestamo) {
-            echo '<tr>';
-            echo '<td>' . date('d/m/Y H:i', strtotime($prestamo['fecha_prestamo'])) . '</td>';
-            echo '<td>' . htmlspecialchars($prestamo['aula_nombre']) . '</td>';
-            echo '<td>' . htmlspecialchars($prestamo['documento']) . '</td>';
-            echo '<td>' . htmlspecialchars($prestamo['nombre_completo']) . '</td>';
-            echo '<td>' . htmlspecialchars($prestamo['tipo_persona']) . '</td>';
-            echo '<td>' . ($prestamo['fecha_devolucion'] ? date('d/m/Y H:i', strtotime($prestamo['fecha_devolucion'])) : 'Pendiente') . '</td>';
-            echo '<td>' . htmlspecialchars($prestamo['estado']) . '</td>';
-            echo '</tr>';
+        // === PRESTAMOS DE LLAVES ===
+        fputcsv($out, ['PRESTAMOS DE LLAVES'], ';');
+        fputcsv($out, ['Fecha Prestamo', 'Aula', 'Documento', 'Nombre Completo', 'Tipo Persona', 'Fecha Devolucion', 'Estado'], ';');
+
+        foreach ($prestamos as $p) {
+            fputcsv($out, [
+                date('d/m/Y H:i', strtotime($p['fecha_prestamo'])),
+                $p['aula_nombre'],
+                $p['documento'],
+                $p['nombre_completo'],
+                $p['tipo_persona'],
+                $p['fecha_devolucion'] ? date('d/m/Y H:i', strtotime($p['fecha_devolucion'])) : 'Pendiente',
+                $p['estado'],
+            ], ';');
         }
 
-        echo '</tbody>';
-        echo '</table>';
-        echo '<p>Total de préstamos: ' . count($prestamos) . '</p>';
-        echo '<p>Generado el ' . date('d/m/Y H:i:s') . '</p>';
-        echo '</body>';
-        echo '</html>';
+        fputcsv($out, ['Total de prestamos:', count($prestamos)], ';');
+        fputcsv($out, ['Generado el:', date('d/m/Y H:i:s')], ';');
+
+        fclose($out);
         exit;
     }
 
+
+
     /**
-     * Exportar a PDF
+     * Exportar a PDF (vista HTML de impresión)
      */
     public function exportPdf(): void
     {
         $fechaInicio = $_GET['fecha_inicio'] ?? date('Y-m-d', strtotime('-30 days'));
-        $fechaFin = $_GET['fecha_fin'] ?? date('Y-m-d');
-        $documento = $_GET['documento'] ?? null;
+        $fechaFin    = $_GET['fecha_fin']    ?? date('Y-m-d');
+        $documento   = $_GET['documento']    ?? null;
 
-        // Obtener datos de marcaciones
         $marcaciones = $this->accessModel->getAccessReport($fechaInicio, $fechaFin, $documento);
-        $prestamos = $this->keysModel->getReportePrestamos($fechaInicio, $fechaFin, $documento);
+        $prestamos   = $this->keysModel->getReportePrestamos($fechaInicio, $fechaFin, $documento);
 
-        // Configurar headers para PDF
-        header('Content-Type: application/pdf');
-        header('Content-Disposition: attachment; filename="reporte_accesos_' . date('Y-m-d_His') . '.pdf"');
+        // Limpiar cualquier output previo y servir HTML limpio (sin layout del sistema)
+        if (ob_get_level()) ob_end_clean();
 
-        // Generar HTML simple que se puede convertir a PDF
-        $html = $this->generatePdfHtml($marcaciones, $prestamos, $fechaInicio, $fechaFin);
-        
-        // Por ahora, redirigir a una vista que muestra el HTML
-        // En producción, usar una librería como TCPDF o DomPDF
-        echo $html;
+        header('Content-Type: text/html; charset=UTF-8');
+        header('Cache-Control: no-cache');
+
+        echo $this->generatePdfHtml($marcaciones, $prestamos, $fechaInicio, $fechaFin);
         exit;
     }
 
