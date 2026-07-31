@@ -339,9 +339,13 @@ class UsersController
         }
 
         // Opciones de importación
+        $rawDelimiter = $_POST['delimiter'] ?? ',';
+        // Convertir la secuencia literal '\t' al carácter real de tabulación
+        $delimiter = ($rawDelimiter === '\t' || $rawDelimiter === 'tab') ? "\t" : $rawDelimiter;
+
         $options = [
             'has_header' => isset($_POST['has_header']) && $_POST['has_header'] === '1',
-            'delimiter' => $_POST['delimiter'] ?? ',',
+            'delimiter' => $delimiter,
             'mode' => $_POST['mode'] ?? 'upsert'
         ];
 
