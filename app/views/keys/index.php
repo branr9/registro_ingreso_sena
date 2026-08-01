@@ -139,11 +139,18 @@
                                            class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center hover:bg-blue-200 transition" title="Editar">
                                             <i class="fas fa-edit text-xs"></i>
                                         </a>
-                                        <form method="POST" action="<?= baseUrl('/control-llaves/toggle/' . $aula['id']) ?>" class="inline">
+                                        <form method="POST" action="<?= baseUrl('/control-llaves/toggle/' . $aula['id']) ?>" class="inline flex items-center">
+                                            <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
                                             <button type="submit"
-                                                    class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center hover:bg-amber-200 transition"
-                                                    title="Cambiar Estado">
-                                                <i class="fas fa-toggle-on text-xs"></i>
+                                                    onclick="return confirm('¿Desea <?= $aula['estado'] === 'ACTIVO' ? 'desactivar' : 'activar' ?> el aula <?= e($aula['nombre']) ?>?')"
+                                                    class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 <?= $aula['estado'] === 'ACTIVO' ? 'bg-emerald-500 hover:bg-emerald-600' : 'bg-gray-300 dark:bg-gray-600 hover:bg-gray-400' ?>"
+                                                    role="switch"
+                                                    aria-checked="<?= $aula['estado'] === 'ACTIVO' ? 'true' : 'false' ?>"
+                                                    title="<?= $aula['estado'] === 'ACTIVO' ? 'Desactivar Aula (Activa)' : 'Activar Aula (Inactiva)' ?>">
+                                                <span class="sr-only">Cambiar estado</span>
+                                                <span aria-hidden="true"
+                                                      class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out <?= $aula['estado'] === 'ACTIVO' ? 'translate-x-5' : 'translate-x-0' ?>">
+                                                </span>
                                             </button>
                                         </form>
                                         <form method="POST" action="<?= baseUrl('/control-llaves/delete/' . $aula['id']) ?>" class="inline"
