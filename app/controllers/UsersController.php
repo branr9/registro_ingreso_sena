@@ -325,6 +325,58 @@ class UsersController
         redirect('/usuarios');
     }
 
+    /**
+     * Activar o desactivar varios usuarios seleccionados.
+     */
+    public function bulkStatus(): void
+    {
+        if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
+            setFlashMessage('Token de seguridad inválido', 'error');
+            redirect('/usuarios');
+        }
+
+        $status = strtoupper(trim($_POST['status'] ?? ''));
+        if (!in_array($status, ['ACTIVO', 'INACTIVO'], true)) {
+            setFlashMessage('Estado especificado no es válido', 'error');
+            redirect('/usuarios');
+        }
+
+        $ids = $_POST['usuario_ids'] ?? [];
+        if (!is_array($ids)) {
+            $ids = [];
+        }
+
+        $ids = array_values(array_unique(array_filter(
+            array_map('intval', $ids),
+            static fn (int $id): bool => $id > 0
+        )));
+
+        $currentUserId = (int) Auth::user()['id'];
+        $ids = array_values(array_filter(
+            $ids,
+            static fn (int $id): bool => $id !== $currentUserId
+        ));
+
+        if (empty($ids)) {
+            setFlashMessage('Seleccione al menos un usuario distinto al de su sesión', 'warning');
+            redirect('/usuarios');
+        }
+
+        $updated = $this->model->bulkStatus($ids, $status, $currentUserId);
+
+        if ($updated === false) {
+            setFlashMessage('Error al actualizar el estado de los usuarios seleccionados', 'error');
+        } elseif ($updated === 0) {
+            setFlashMessage('No se pudo actualizar ningún usuario seleccionado', 'warning');
+        } else {
+            $estadoTexto = ($status === 'ACTIVO') ? 'activado' : 'desactivado';
+            $plural = ($updated === 1) ? '' : 's';
+            setFlashMessage("{$updated} usuario{$plural} {$estadoTexto}{$plural} exitosamente", 'success');
+        }
+
+        redirect('/usuarios');
+    }
+
     // ========================================
     // IMPORTACIÓN MASIVA
     // ========================================

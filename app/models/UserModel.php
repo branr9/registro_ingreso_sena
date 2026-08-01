@@ -490,6 +490,77 @@ class UserModel
         }
     }
 
+    /**
+     * Cambiar el estado (ACTIVO / INACTIVO) de un grupo de usuarios.
+     *
+     * @return int|false Cantidad de usuarios actualizados o false si falla.
+     */
+    public function bulkStatus(array $ids, string $status, int $updatedBy): int|false
+    {
+        $status = strtoupper(trim($status));
+        if (!in_array($status, ['ACTIVO', 'INACTIVO'], true)) {
+            return false;
+        }
+
+        $ids = array_values(array_unique(array_filter(
+            array_map('intval', $ids),
+            static fn (int $id): bool => $id > 0
+        )));
+
+        if (empty($ids)) {
+            return 0;
+        }
+
+        try {
+            $this->connection->beginTransaction();
+
+            $placeholders = implode(', ', array_fill(0, count($ids), '?'));
+            $sqlUsers = "SELECT p.id, p.estado
+                         FROM personas p
+                         WHERE p.id IN ({$placeholders}) AND p.deleted_at IS NULL";
+            $stmtUsers = $this->connection->prepare($sqlUsers);
+            $stmtUsers->execute($ids);
+            $users = $stmtUsers->fetchAll(PDO::FETCH_ASSOC);
+
+            if (empty($users)) {
+                $this->connection->commit();
+                return 0;
+            }
+
+            $validIds = array_map(static fn (array $u): int => (int) $u['id'], $users);
+            $validPlaceholders = implode(', ', array_fill(0, count($validIds), '?'));
+
+            // Actualizar personas
+            $sqlUpdatePersonas = "UPDATE personas SET estado = ?, updated_at = NOW()
+                                  WHERE id IN ({$validPlaceholders}) AND deleted_at IS NULL";
+            $stmtPersonas = $this->connection->prepare($sqlUpdatePersonas);
+            $paramsPersonas = array_merge([$status], $validIds);
+            $stmtPersonas->execute($paramsPersonas);
+            $updated = $stmtPersonas->rowCount();
+
+            // Actualizar usuarios_sistema
+            $sqlUpdateUsuarios = "UPDATE usuarios_sistema SET estado = ?, updated_at = NOW()
+                                  WHERE persona_id IN ({$validPlaceholders})";
+            $stmtUsuarios = $this->connection->prepare($sqlUpdateUsuarios);
+            $paramsUsuarios = array_merge([$status], $validIds);
+            $stmtUsuarios->execute($paramsUsuarios);
+
+            $action = ($status === 'ACTIVO') ? 'activar' : 'desactivar';
+            foreach ($users as $u) {
+                $this->logAudit((int) $u['id'], $action, $updatedBy, ['estado' => $u['estado']], ['estado' => $status]);
+            }
+
+            $this->connection->commit();
+            return $updated;
+        } catch (Exception $e) {
+            if ($this->connection->inTransaction()) {
+                $this->connection->rollBack();
+            }
+            error_log('Error al actualizar estado de usuarios en grupo: ' . $e->getMessage());
+            return false;
+        }
+    }
+
     private function dividirNombreCompleto(string $nombreCompleto): array
     {
         $nombreCompleto = trim($nombreCompleto);

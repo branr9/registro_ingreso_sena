@@ -119,24 +119,14 @@ require_once APP_PATH . '/views/layouts/header.php';
     </div>
 
     <!-- Tabla de usuarios -->
-    <div class="bg-white/85 backdrop-blur-md border border-primary-100 rounded-3xl shadow-xl overflow-hidden">
+    <div class="bg-white/85 backdrop-blur-md border border-primary-100 rounded-3xl shadow-xl overflow-hidden relative">
         <div class="px-6 py-4 border-b border-primary-100 bg-gradient-to-r from-white to-primary-50 dark:from-[#1c1830] dark:to-[#241a42] flex flex-wrap items-center justify-between gap-3">
             <div>
                 <h3 class="text-lg font-bold text-primary-700"><i class="fas fa-list"></i> Listado de Usuarios</h3>
                 <?php if (Auth::hasRole('admin')): ?>
-                <p class="text-xs text-gray-500 mt-1">Filtre por categoría, seleccione los usuarios y elimínelos en una sola acción.</p>
+                <p class="text-xs text-gray-500 mt-1">Filtre por categoría o seleccione los usuarios para aplicar acciones en lote.</p>
                 <?php endif; ?>
             </div>
-            <?php if (Auth::hasRole('admin')): ?>
-            <form id="bulkDeleteForm" method="POST" action="<?= baseUrl('/usuarios/bulk-delete') ?>" class="flex items-center gap-2">
-                <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
-                <span id="selectedUsersCount" class="hidden text-xs font-semibold text-gray-500 whitespace-nowrap" aria-live="polite">0 seleccionados</span>
-                <button id="bulkDeleteButton" type="submit" disabled
-                        class="inline-flex items-center gap-2 rounded-xl bg-red-600 text-white font-semibold px-4 py-2 text-sm shadow-sm transition disabled:opacity-50 disabled:cursor-not-allowed hover:bg-red-700">
-                    <i class="fas fa-trash-alt"></i> Eliminar seleccionados
-                </button>
-            </form>
-            <?php endif; ?>
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full text-sm">
@@ -172,8 +162,9 @@ require_once APP_PATH . '/views/layouts/header.php';
                         <?php if (Auth::hasRole('admin')): ?>
                         <td class="px-4 py-3 text-center">
                             <?php if ((int) $usuario['id'] !== (int) Auth::user()['id']): ?>
-                            <input type="checkbox" name="usuario_ids[]" value="<?= (int) $usuario['id'] ?>" form="bulkDeleteForm"
-                                   class="user-select-checkbox w-4 h-4 rounded border-gray-300 text-primary-700 focus:ring-primary-500"
+                            <input type="checkbox" name="usuario_ids[]" value="<?= (int) $usuario['id'] ?>"
+                                   data-estado="<?= strtoupper(e($usuario['estado'])) ?>"
+                                   class="user-select-checkbox w-4 h-4 rounded border-gray-300 text-primary-700 focus:ring-primary-500 cursor-pointer"
                                    aria-label="Seleccionar a <?= e(trim($usuario['nombres'] . ' ' . ($usuario['apellidos'] ?? ''))) ?>">
                             <?php endif; ?>
                         </td>
@@ -289,35 +280,231 @@ require_once APP_PATH . '/views/layouts/header.php';
 </div>
 
 <?php if (Auth::hasRole('admin')): ?>
+<!-- Dock Flotante de Acciones en Lote -->
+<div id="bulkFloatingBar" 
+     class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 transform opacity-0 pointer-events-none translate-y-8 flex items-center gap-3 bg-white/95 dark:bg-[#1a152e]/95 backdrop-blur-xl border border-primary-200/80 dark:border-primary-800/80 shadow-2xl rounded-2xl px-5 py-3 text-sm">
+    <div class="flex items-center gap-2 pr-3 border-r border-gray-200 dark:border-gray-700/80">
+        <span id="floatingSelectedCount" class="w-7 h-7 rounded-full bg-primary-100 dark:bg-primary-900/80 text-primary-700 dark:text-primary-300 flex items-center justify-center font-bold text-xs shadow-inner">
+            0
+        </span>
+        <span class="font-semibold text-gray-700 dark:text-gray-200 text-xs sm:text-sm">seleccionado(s)</span>
+    </div>
+
+    <!-- Formulario Activar en Lote -->
+    <form id="bulkActivateForm" method="POST" action="<?= baseUrl('/usuarios/bulk-status') ?>" class="inline">
+        <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
+        <input type="hidden" name="status" value="ACTIVO">
+        <div class="hidden-inputs-container"></div>
+        <button type="submit" class="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3.5 py-2 text-xs shadow-sm transition active:scale-95">
+            <i class="fas fa-check-circle"></i> Activar
+        </button>
+    </form>
+
+    <!-- Formulario Desactivar en Lote -->
+    <form id="bulkDeactivateForm" method="POST" action="<?= baseUrl('/usuarios/bulk-status') ?>" class="inline">
+        <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
+        <input type="hidden" name="status" value="INACTIVO">
+        <div class="hidden-inputs-container"></div>
+        <button type="submit" class="inline-flex items-center gap-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-semibold px-3.5 py-2 text-xs shadow-sm transition active:scale-95">
+            <i class="fas fa-ban"></i> Desactivar
+        </button>
+    </form>
+
+    <!-- Formulario Eliminar en Lote -->
+    <form id="bulkDeleteForm" method="POST" action="<?= baseUrl('/usuarios/bulk-delete') ?>" class="inline">
+        <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
+        <div class="hidden-inputs-container"></div>
+        <button type="submit" class="inline-flex items-center gap-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold px-3.5 py-2 text-xs shadow-sm transition active:scale-95">
+            <i class="fas fa-trash-alt"></i> Eliminar
+        </button>
+    </form>
+
+    <div class="pl-2 border-l border-gray-200 dark:border-gray-700/80">
+        <button type="button" id="clearSelectionButton" 
+                class="w-7 h-7 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 flex items-center justify-center transition"
+                title="Desmarcar todos">
+            <i class="fas fa-times text-xs"></i>
+        </button>
+    </div>
+</div>
+
 <script>
     (function () {
+        const STORAGE_KEY = 'sena_selected_users_v1';
         const checkboxes = Array.from(document.querySelectorAll('.user-select-checkbox'));
         const selectAll = document.getElementById('selectAllUsers');
-        const deleteButton = document.getElementById('bulkDeleteButton');
-        const selectedCount = document.getElementById('selectedUsersCount');
-        const form = document.getElementById('bulkDeleteForm');
+        const floatingBar = document.getElementById('bulkFloatingBar');
+        const selectedCount = document.getElementById('floatingSelectedCount');
+        const clearButton = document.getElementById('clearSelectionButton');
+        const activateForm = document.getElementById('bulkActivateForm');
+        const deactivateForm = document.getElementById('bulkDeactivateForm');
+        const deleteForm = document.getElementById('bulkDeleteForm');
 
-        function updateSelection() {
-            const selected = checkboxes.filter((checkbox) => checkbox.checked).length;
-            deleteButton.disabled = selected === 0;
-            selectedCount.textContent = selected + (selected === 1 ? ' seleccionado' : ' seleccionados');
-            selectedCount.classList.toggle('hidden', selected === 0);
-            selectAll.checked = checkboxes.length > 0 && selected === checkboxes.length;
-            selectAll.indeterminate = selected > 0 && selected < checkboxes.length;
+        function getStoredSelection() {
+            try {
+                return JSON.parse(sessionStorage.getItem(STORAGE_KEY)) || {};
+            } catch (e) {
+                return {};
+            }
         }
 
-        selectAll.addEventListener('change', function () {
-            checkboxes.forEach((checkbox) => { checkbox.checked = this.checked; });
-            updateSelection();
-        });
-        checkboxes.forEach((checkbox) => checkbox.addEventListener('change', updateSelection));
-        form.addEventListener('submit', function (event) {
-            const selected = checkboxes.filter((checkbox) => checkbox.checked).length;
-            if (selected === 0 || !window.confirm('¿Eliminar ' + selected + (selected === 1 ? ' usuario seleccionado?' : ' usuarios seleccionados?'))) {
-                event.preventDefault();
+        function saveStoredSelection(map) {
+            try {
+                sessionStorage.setItem(STORAGE_KEY, JSON.stringify(map));
+            } catch (e) {}
+        }
+
+        function clearStoredSelection() {
+            try {
+                sessionStorage.removeItem(STORAGE_KEY);
+            } catch (e) {}
+        }
+
+        const selectedMap = getStoredSelection();
+
+        // Restaurar estado de casillas visibles desde sessionStorage
+        checkboxes.forEach((cb) => {
+            if (selectedMap[cb.value]) {
+                cb.checked = true;
+                if (cb.dataset.estado) {
+                    selectedMap[cb.value].estado = cb.dataset.estado;
+                }
             }
         });
-        updateSelection();
+        saveStoredSelection(selectedMap);
+
+        function syncHiddenInputs() {
+            const selectedItems = Object.values(selectedMap);
+            [activateForm, deactivateForm, deleteForm].forEach(form => {
+                if (!form) return;
+                const container = form.querySelector('.hidden-inputs-container');
+                if (!container) return;
+                container.innerHTML = '';
+                selectedItems.forEach(item => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'usuario_ids[]';
+                    input.value = item.id;
+                    container.appendChild(input);
+                });
+            });
+        }
+
+        function updateUI() {
+            const selectedItems = Object.values(selectedMap);
+            const totalSelected = selectedItems.length;
+
+            // 1. Resaltado dinámico de filas en la página actual
+            checkboxes.forEach((cb) => {
+                const tr = cb.closest('tr');
+                const isChecked = !!selectedMap[cb.value];
+                cb.checked = isChecked;
+                if (tr) {
+                    tr.classList.toggle('bg-primary-50/80', isChecked);
+                    tr.classList.toggle('dark:bg-primary-900/30', isChecked);
+                    tr.classList.toggle('font-medium', isChecked);
+                }
+            });
+
+            // 2. Contador y visibilidad general del dock flotante
+            if (selectedCount) selectedCount.textContent = totalSelected;
+            if (floatingBar) {
+                if (totalSelected > 0) {
+                    floatingBar.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-8');
+                    floatingBar.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                } else {
+                    floatingBar.classList.add('opacity-0', 'pointer-events-none', 'translate-y-8');
+                    floatingBar.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                }
+            }
+
+            // 3. Visibilidad inteligente de los botones Activar y Desactivar
+            const hasInactive = selectedItems.some(item => (item.estado || '').toUpperCase() === 'INACTIVO');
+            const hasActive = selectedItems.some(item => (item.estado || '').toUpperCase() === 'ACTIVO');
+
+            if (activateForm) {
+                activateForm.classList.toggle('hidden', !hasInactive);
+            }
+            if (deactivateForm) {
+                deactivateForm.classList.toggle('hidden', !hasActive);
+            }
+
+            // 4. Sincronizar inputs ocultos en los 3 formularios
+            syncHiddenInputs();
+
+            // 5. Estado del checkbox "Seleccionar Todo" en la página actual
+            if (selectAll) {
+                const visibleCheckedCount = checkboxes.filter(cb => cb.checked).length;
+                selectAll.checked = checkboxes.length > 0 && visibleCheckedCount === checkboxes.length;
+                selectAll.indeterminate = visibleCheckedCount > 0 && visibleCheckedCount < checkboxes.length;
+            }
+        }
+
+        // Eventos para checkboxes en la página actual
+        checkboxes.forEach((cb) => {
+            cb.addEventListener('change', function () {
+                if (this.checked) {
+                    selectedMap[this.value] = {
+                        id: this.value,
+                        estado: (this.dataset.estado || 'ACTIVO').toUpperCase()
+                    };
+                } else {
+                    delete selectedMap[this.value];
+                }
+                saveStoredSelection(selectedMap);
+                updateUI();
+            });
+        });
+
+        // Evento para "Seleccionar todo"
+        if (selectAll) {
+            selectAll.addEventListener('change', function () {
+                checkboxes.forEach((cb) => {
+                    cb.checked = this.checked;
+                    if (this.checked) {
+                        selectedMap[cb.value] = {
+                            id: cb.value,
+                            estado: (cb.dataset.estado || 'ACTIVO').toUpperCase()
+                        };
+                    } else {
+                        delete selectedMap[cb.value];
+                    }
+                });
+                saveStoredSelection(selectedMap);
+                updateUI();
+            });
+        }
+
+        // Botón Desmarcar Todos
+        if (clearButton) {
+            clearButton.addEventListener('click', function () {
+                for (const key in selectedMap) {
+                    delete selectedMap[key];
+                }
+                clearStoredSelection();
+                updateUI();
+            });
+        }
+
+        // Manejo de envíos de formularios masivos
+        function attachSubmitHandler(form, confirmMsg) {
+            if (!form) return;
+            form.addEventListener('submit', function (event) {
+                const count = Object.keys(selectedMap).length;
+                if (count === 0 || !window.confirm(confirmMsg.replace('{n}', count).replace('{s}', count === 1 ? '' : 's'))) {
+                    event.preventDefault();
+                    return;
+                }
+                clearStoredSelection();
+            });
+        }
+
+        attachSubmitHandler(activateForm, '¿Activar {n} usuario{s} seleccionado{s}?');
+        attachSubmitHandler(deactivateForm, '¿Desactivar {n} usuario{s} seleccionado{s}?');
+        attachSubmitHandler(deleteForm, '¿Eliminar {n} usuario{s} seleccionado{s}?');
+
+        // Inicializar al cargar
+        updateUI();
     })();
 </script>
 <?php endif; ?>

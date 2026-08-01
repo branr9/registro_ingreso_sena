@@ -129,6 +129,14 @@ try {
             }
             break;
 
+        case '/usuarios/bulk-status':
+            if ($requestMethod === 'POST') {
+                Auth::requireRole('admin');
+                $controller = new UsersController();
+                $controller->bulkStatus();
+            }
+            break;
+
         case '/usuarios/import':
             Auth::requireRole('admin');
             $controller = new UsersController();
