@@ -9,11 +9,24 @@
 
     <div class="bg-white/85 backdrop-blur-md border border-primary-100 rounded-3xl shadow-xl overflow-hidden">
         <div class="px-6 py-4 border-b border-primary-100 bg-gradient-to-r from-white to-primary-50 dark:from-[#1c1830] dark:to-[#241a42] flex items-center justify-between flex-wrap gap-3">
-            <h3 class="text-lg font-bold text-primary-700">Últimos 100 Movimientos</h3>
-            <a href="<?= baseUrl('/control-llaves') ?>"
-               class="inline-flex items-center gap-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition text-gray-700 font-semibold px-4 py-2 text-sm">
-                <i class="fas fa-arrow-left"></i> Volver
-            </a>
+            <h3 class="text-lg font-bold text-primary-700">Últimos Movimientos de Llaves</h3>
+            <div class="flex items-center gap-2 flex-wrap">
+                <a href="<?= baseUrl('/control-llaves/export-historial') ?>"
+                   class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 transition text-white font-semibold px-4 py-2 text-sm shadow-sm"
+                   title="Exportar a Excel / CSV">
+                    <i class="fas fa-file-excel"></i> Exportar CSV
+                </a>
+                <a href="<?= baseUrl('/control-llaves/export-pdf') ?>"
+                   target="_blank"
+                   class="inline-flex items-center gap-2 rounded-xl bg-red-600 hover:bg-red-700 transition text-white font-semibold px-4 py-2 text-sm shadow-sm"
+                   title="Imprimir / Exportar PDF">
+                    <i class="fas fa-file-pdf"></i> Exportar PDF
+                </a>
+                <a href="<?= baseUrl('/control-llaves') ?>"
+                   class="inline-flex items-center gap-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition text-gray-700 font-semibold px-4 py-2 text-sm">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </a>
+            </div>
         </div>
 
         <div class="p-6">

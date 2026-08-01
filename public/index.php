@@ -279,6 +279,20 @@ try {
             $controller->historial();
             break;
 
+        case '/control-llaves/export-historial':
+            Auth::requireAuth();
+            Auth::requireRole(['admin', 'instructor']);
+            $controller = new KeysController();
+            $controller->exportHistorial();
+            break;
+
+        case '/control-llaves/export-pdf':
+            Auth::requireAuth();
+            Auth::requireRole(['admin', 'instructor']);
+            $controller = new KeysController();
+            $controller->exportPdf();
+            break;
+
         // ========================================
         // RUTAS DEL MÓDULO DE PERMISOS DE SALIDA
         // ========================================
