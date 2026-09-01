@@ -306,20 +306,9 @@ class KeysModel
      */
     public function getHistorialPrestamos(int $limit = 50): array
     {
-        $sql = "SELECT pl.*,
-                       a.nombre as aula_nombre,
-                       pl.nombre_receptor,
-                       pl.documento_receptor,
-                       pl.departamento,
-                       pl.telefono,
-                       p.documento,
-                       p.nombres,
-                       p.apellidos,
-                       cpt.nombre as tipo_persona
+        $sql = "SELECT pl.*, a.nombre as aula_nombre
                 FROM prestamos_llaves pl
                 INNER JOIN aulas a ON pl.aula_id = a.id
-                INNER JOIN personas p ON pl.usuario_id = p.id
-                LEFT JOIN cat_persona_tipo cpt ON p.tipo_persona_id = cpt.id
                 ORDER BY pl.fecha_prestamo DESC
                 LIMIT :limit";
         

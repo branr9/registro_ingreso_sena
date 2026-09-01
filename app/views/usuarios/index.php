@@ -79,16 +79,16 @@ $returnSuffix = $returnQuery === '' ? '' : '?' . $returnQuery;
             <h3 class="text-lg font-bold text-primary-700"><i class="fas fa-filter"></i> Filtros</h3>
         </div>
         <div class="p-6">
-            <form method="GET" action="<?= baseUrl('/usuarios') ?>" class="flex flex-wrap items-end gap-4">
-                <div class="flex-1 min-w-[220px]">
+            <form method="GET" action="<?= baseUrl('/usuarios') ?>" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-[minmax(220px,1fr)_minmax(160px,190px)_minmax(160px,190px)_auto] items-end gap-4">
+                <div class="flex flex-col">
                     <label class="block text-xs font-semibold text-gray-600 mb-1">Buscar</label>
                     <input type="text" name="search" value="<?= e($_GET['search'] ?? '') ?>"
                            placeholder="Documento, nombre, email..."
-                           class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none">
+                           class="w-full h-10 rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none">
                 </div>
-                <div class="min-w-[160px]">
+                <div class="flex flex-col">
                     <label class="block text-xs font-semibold text-gray-600 mb-1">Tipo</label>
-                    <select name="tipo_persona" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none">
+                    <select name="tipo_persona" class="w-full h-10 rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none">
                         <option value="">Todos</option>
                         <option value="aprendiz" <?= ($_GET['tipo_persona'] ?? '') === 'aprendiz' ? 'selected' : '' ?>>Aprendiz</option>
                         <option value="instructor" <?= ($_GET['tipo_persona'] ?? '') === 'instructor' ? 'selected' : '' ?>>Instructor</option>
@@ -100,19 +100,19 @@ $returnSuffix = $returnQuery === '' ? '' : '?' . $returnQuery;
                         <option value="proveedor" <?= ($_GET['tipo_persona'] ?? '') === 'proveedor' ? 'selected' : '' ?>>Proveedor</option>
                     </select>
                 </div>
-                <div class="min-w-[160px]">
+                <div class="flex flex-col">
                     <label class="block text-xs font-semibold text-gray-600 mb-1">Estado</label>
-                    <select name="estado" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none">
+                    <select name="estado" class="w-full h-10 rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none">
                         <option value="">Todos</option>
                         <option value="ACTIVO" <?= strtolower($_GET['estado'] ?? '') === 'activo' ? 'selected' : '' ?>>Activo</option>
                         <option value="INACTIVO" <?= strtolower($_GET['estado'] ?? '') === 'inactivo' ? 'selected' : '' ?>>Inactivo</option>
                     </select>
                 </div>
-                <div class="flex items-center gap-2">
-                    <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-primary-700 hover:bg-primary-800 transition text-white font-semibold px-4 py-2 text-sm">
+                <div class="flex items-end gap-2">
+                    <button type="submit" class="inline-flex h-10 items-center gap-2 rounded-xl bg-primary-700 hover:bg-primary-800 transition text-white font-semibold px-4 py-2 text-sm">
                         <i class="fas fa-search"></i> Buscar
                     </button>
-                    <a href="<?= baseUrl('/usuarios') ?>" class="inline-flex items-center gap-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition text-gray-700 font-semibold px-4 py-2 text-sm">
+                    <a href="<?= baseUrl('/usuarios') ?>" class="inline-flex h-10 items-center gap-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition text-gray-700 font-semibold px-4 py-2 text-sm">
                         <i class="fas fa-redo"></i> Limpiar
                     </a>
                 </div>

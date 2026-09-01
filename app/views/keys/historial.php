@@ -43,7 +43,7 @@
                                 <th class="px-4 py-3 text-left font-bold">Fecha Préstamo</th>
                                 <th class="px-4 py-3 text-left font-bold">Aula</th>
                                 <th class="px-4 py-3 text-left font-bold">Receptor de la Llave</th>
-                                <th class="px-4 py-3 text-left font-bold">Registrado Por</th>
+                                <th class="px-4 py-3 text-left font-bold">Observaciones</th>
                                 <th class="px-4 py-3 text-left font-bold">Fecha Devolución</th>
                                 <th class="px-4 py-3 text-left font-bold">Estado</th>
                             </tr>
@@ -62,15 +62,21 @@
                                     <?php if (!empty($prestamo['telefono'])): ?>
                                     <small class="text-gray-500 block"><i class="fas fa-phone"></i> <?= e($prestamo['telefono']) ?></small>
                                     <?php endif; ?>
-                                    <?php if (!empty($prestamo['observaciones_prestamo'])): ?>
-                                    <small class="text-gray-400 block"><i class="fas fa-comment"></i> <?= e($prestamo['observaciones_prestamo']) ?></small>
-                                    <?php endif; ?>
                                 </td>
                                 <td class="px-4 py-3">
-                                    <span class="text-gray-700"><?= e($prestamo['nombres'] . ' ' . $prestamo['apellidos']) ?></span>
-                                    <small class="text-gray-400 block"><?= e($prestamo['documento']) ?></small>
-                                    <?php if ($prestamo['tipo_persona']): ?>
-                                    <span class="inline-block mt-1 bg-gray-100 text-gray-600 px-2 py-0.5 rounded-xl text-xs font-semibold"><?= e($prestamo['tipo_persona']) ?></span>
+                                    <?php
+                                    $observacionPrestamo = trim((string)($prestamo['observaciones_prestamo'] ?? ''));
+                                    $observacionDevolucion = trim((string)($prestamo['observaciones_devolucion'] ?? ''));
+                                    ?>
+                                    <?php if ($observacionPrestamo !== '' || $observacionDevolucion !== ''): ?>
+                                        <?php if ($observacionPrestamo !== ''): ?>
+                                        <p class="text-gray-700 break-words"><span class="font-semibold">Préstamo:</span> <?= e($observacionPrestamo) ?></p>
+                                        <?php endif; ?>
+                                        <?php if ($observacionDevolucion !== ''): ?>
+                                        <p class="mt-1 text-gray-500 break-words"><span class="font-semibold">Devolución:</span> <?= e($observacionDevolucion) ?></p>
+                                        <?php endif; ?>
+                                    <?php else: ?>
+                                    <span class="text-gray-400 italic">Sin observaciones</span>
                                     <?php endif; ?>
                                 </td>
                                 <td class="px-4 py-3 text-gray-600 whitespace-nowrap">

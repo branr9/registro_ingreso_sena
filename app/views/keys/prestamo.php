@@ -28,12 +28,13 @@
             No hay aulas registradas en el sistema.
         </div>
     <?php else: ?>
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 items-start gap-6">
             <?php foreach ($aulas as $aula): ?>
-            <div class="bg-white rounded-3xl shadow-md border border-primary-100 p-6 <?= $aula['estado'] !== 'ACTIVO' ? 'opacity-60' : '' ?> hover:shadow-lg transition">
+            <div class="min-w-0 self-start bg-white rounded-3xl shadow-md border border-primary-100 p-6 <?= $aula['estado'] !== 'ACTIVO' ? 'opacity-60' : '' ?> hover:shadow-lg transition">
                 <div class="flex items-center justify-between pb-4 mb-4 border-b border-gray-100">
-                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                        <i class="fas fa-door-open text-primary-600"></i> <?= e($aula['nombre']) ?>
+                    <h3 class="min-w-0 text-lg font-bold text-gray-800 flex items-center gap-2">
+                        <i class="fas fa-door-open text-primary-600 shrink-0"></i>
+                        <span class="truncate"><?= e($aula['nombre']) ?></span>
                     </h3>
                     <span class="px-2 py-0.5 rounded-xl text-xs font-semibold <?= $aula['estado'] === 'ACTIVO' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600' ?>">
                         <?= e($aula['estado']) ?>
@@ -60,14 +61,14 @@
                     <h4 class="text-xs font-bold text-gray-500 uppercase mb-3 flex items-center gap-2">
                         <i class="fas fa-users"></i> Llaves prestadas
                     </h4>
-                    <div class="space-y-2">
+                    <div class="max-h-64 space-y-2 overflow-y-auto pr-1">
                         <?php foreach ($aula['prestamos_activos'] as $prestamo): ?>
                         <div class="flex items-center justify-between gap-3 bg-white rounded-xl px-3 py-2 shadow-sm">
                             <div class="flex flex-col min-w-0">
                                 <strong class="text-sm text-gray-800 truncate"><?= e($prestamo['nombre_receptor']) ?></strong>
-                                <small class="text-xs text-gray-500">Doc: <?= e($prestamo['documento_receptor']) ?></small>
+                                <small class="text-xs text-gray-500 break-words">Doc: <?= e($prestamo['documento_receptor']) ?></small>
                                 <?php if ($prestamo['departamento']): ?>
-                                <small class="text-xs text-gray-500">Dpto: <?= e($prestamo['departamento']) ?></small>
+                                <small class="text-xs text-gray-500 break-words">Dpto: <?= e($prestamo['departamento']) ?></small>
                                 <?php endif; ?>
                                 <small class="text-xs text-gray-400">Desde: <?= date('d/m/Y H:i', strtotime($prestamo['fecha_prestamo'])) ?></small>
                             </div>

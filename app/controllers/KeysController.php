@@ -282,13 +282,9 @@ class KeysController
             'DOC RECEPTOR',
             'DEPARTAMENTO / AREA',
             'TELEFONO',
-            'REGISTRADO POR',
-            'DOC REGISTRADOR',
-            'TIPO PERSONA',
             'FECHA DEVOLUCION',
             'ESTADO',
-            'OBSERVACIONES PRESTAMO',
-            'OBSERVACIONES DEVOLUCION'
+            'OBSERVACIONES'
         ], ';');
 
         foreach ($prestamos as $p) {
@@ -299,13 +295,9 @@ class KeysController
                 $p['documento_receptor'] ?? '',
                 $p['departamento'] ?? '-',
                 $p['telefono'] ?? '-',
-                trim(($p['nombres'] ?? '') . ' ' . ($p['apellidos'] ?? '')),
-                $p['documento'] ?? '',
-                $p['tipo_persona'] ?? '',
                 !empty($p['fecha_devolucion']) ? date('d/m/Y H:i', strtotime($p['fecha_devolucion'])) : 'Pendiente',
                 $p['estado'] ?? '',
-                $p['observaciones_prestamo'] ?? '',
-                $p['observaciones_devolucion'] ?? ''
+                $this->formatObservaciones($p)
             ], ';');
         }
 
@@ -337,6 +329,22 @@ class KeysController
     /**
      * Generar vista imprimible / PDF del historial de préstamos de llaves
      */
+    private function formatObservaciones(array $prestamo): string
+    {
+        $observaciones = [];
+        $prestamoTexto = trim((string)($prestamo['observaciones_prestamo'] ?? ''));
+        $devolucionTexto = trim((string)($prestamo['observaciones_devolucion'] ?? ''));
+
+        if ($prestamoTexto !== '') {
+            $observaciones[] = 'Préstamo: ' . $prestamoTexto;
+        }
+        if ($devolucionTexto !== '') {
+            $observaciones[] = 'Devolución: ' . $devolucionTexto;
+        }
+
+        return empty($observaciones) ? 'Sin observaciones' : implode(' | ', $observaciones);
+    }
+
     private function generatePdfHtml(array $prestamos): string
     {
         ob_start();
@@ -388,7 +396,7 @@ class KeysController
                         <th>Aula</th>
                         <th>Receptor de la Llave</th>
                         <th>Doc. Receptor</th>
-                        <th>Registrado Por</th>
+                        <th>Observaciones</th>
                         <th>Fecha Devolución</th>
                         <th>Estado</th>
                     </tr>
@@ -411,7 +419,7 @@ class KeysController
                             <?php endif; ?>
                         </td>
                         <td><?= htmlspecialchars($p['documento_receptor']) ?></td>
-                        <td><?= htmlspecialchars(trim($p['nombres'] . ' ' . $p['apellidos'])) ?></td>
+                        <td><?= htmlspecialchars($this->formatObservaciones($p)) ?></td>
                         <td><?= !empty($p['fecha_devolucion']) ? date('d/m/Y H:i', strtotime($p['fecha_devolucion'])) : 'Pendiente' ?></td>
                         <td>
                             <?php if ($p['estado'] === 'PRESTADO'): ?>
