@@ -5,13 +5,16 @@
 require_once APP_PATH . '/views/layouts/header.php';
 $errors = $_SESSION['errors'] ?? [];
 $old = $_SESSION['old'] ?? $usuario;
+$returnQuery = $returnQuery ?? '';
+$returnSuffix = $returnQuery === '' ? '' : '?' . $returnQuery;
+$estadoActual = strtolower((string)($old['estado'] ?? 'activo'));
 unset($_SESSION['errors'], $_SESSION['old']);
 ?>
 
 <div class="w-full max-w-5xl mx-auto">
     <div class="mb-8">
         <div class="flex items-center gap-4 mb-2">
-            <a href="<?= baseUrl('/usuarios') ?>"
+            <a href="<?= baseUrl('/usuarios' . $returnSuffix) ?>"
                class="inline-flex items-center gap-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition text-gray-700 font-semibold px-4 py-2 text-sm">
                 <i class="fas fa-arrow-left"></i> Volver
             </a>
@@ -25,6 +28,7 @@ unset($_SESSION['errors'], $_SESSION['old']);
     <div class="bg-white/85 backdrop-blur-md border border-primary-100 rounded-3xl shadow-xl p-6 md:p-8">
         <form method="POST" action="<?= baseUrl('/usuarios/update/' . $usuario['id']) ?>">
             <input type="hidden" name="csrf_token" value="<?= $csrfToken ?>">
+            <input type="hidden" name="return_query" value="<?= e($returnQuery) ?>">
 
             <h3 class="text-primary-700 font-bold text-lg mb-5 pb-2 border-b-2 border-primary-700 flex items-center gap-2">
                 <i class="fas fa-id-card"></i> Datos Personales
@@ -58,11 +62,11 @@ unset($_SESSION['errors'], $_SESSION['old']);
                     <select id="tipo_persona" name="tipo_persona" required
                             class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none">
                         <?php
-                        $tipos = ['aprendiz', 'instructor', 'admin', 'vigilante', 'contratista', 'visitante', 'proveedor'];
+                        $tipos = ['aprendiz', 'instructor', 'admin', 'vigilante', 'planta', 'contratista', 'visitante', 'externo', 'proveedor'];
                         foreach ($tipos as $tipo):
                         ?>
                         <option value="<?= $tipo ?>" <?= ($old['tipo_persona'] ?? '') === $tipo ? 'selected' : '' ?>>
-                            <?= ucfirst($tipo) ?>
+                            <?= $tipo === 'planta' ? 'Personal de Planta' : ucfirst($tipo) ?>
                         </option>
                         <?php endforeach; ?>
                     </select>
@@ -134,18 +138,18 @@ unset($_SESSION['errors'], $_SESSION['old']);
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Estado <span class="text-red-500">*</span></label>
                 <div class="flex gap-6">
                     <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="radio" name="estado" value="activo" <?= ($old['estado'] ?? 'activo') === 'activo' ? 'checked' : '' ?> required class="accent-primary-700">
+                        <input type="radio" name="estado" value="activo" <?= $estadoActual === 'activo' ? 'checked' : '' ?> required class="accent-primary-700">
                         <span class="text-sm text-gray-700">Activo</span>
                     </label>
                     <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="radio" name="estado" value="inactivo" <?= ($old['estado'] ?? 'activo') === 'inactivo' ? 'checked' : '' ?> class="accent-primary-700">
+                        <input type="radio" name="estado" value="inactivo" <?= $estadoActual === 'inactivo' ? 'checked' : '' ?> class="accent-primary-700">
                         <span class="text-sm text-gray-700">Inactivo</span>
                     </label>
                 </div>
             </div>
 
             <div class="flex gap-3 justify-end pt-6 border-t border-gray-100">
-                <a href="<?= baseUrl('/usuarios') ?>"
+                <a href="<?= baseUrl('/usuarios' . $returnSuffix) ?>"
                    class="inline-flex items-center gap-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition text-gray-700 font-semibold px-5 py-2.5">
                     <i class="fas fa-times"></i> Cancelar
                 </a>

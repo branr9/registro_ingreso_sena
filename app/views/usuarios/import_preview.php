@@ -4,6 +4,8 @@
  */
 require_once APP_PATH . '/views/layouts/header.php';
 $preview = $_SESSION['import_data']['preview'] ?? [];
+$returnQuery = $_SESSION['import_data']['return_query'] ?? '';
+$returnSuffix = $returnQuery === '' ? '' : '?' . $returnQuery;
 $previewData = $preview['preview'] ?? [];
 $errors = $preview['errors'] ?? [];
 $total = $preview['total'] ?? 0;
@@ -187,7 +189,7 @@ $tasa = $total > 0 ? round(($valid / $total) * 100, 1) : 0;
                 <?php endif; ?>
             </div>
             <div class="flex items-center gap-3">
-                <a href="<?= baseUrl('/usuarios/import') ?>"
+                <a href="<?= baseUrl('/usuarios/import' . $returnSuffix) ?>"
                    class="inline-flex items-center gap-2 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-[#2d2550] dark:hover:bg-[#3a2e66] transition text-gray-700 dark:text-gray-300 font-semibold px-5 py-2.5 text-sm">
                     <i class="fas fa-times"></i> Cancelar
                 </a>

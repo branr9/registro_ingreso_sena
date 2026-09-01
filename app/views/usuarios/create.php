@@ -5,12 +5,14 @@
 require_once APP_PATH . '/views/layouts/header.php';
 $errors = $_SESSION['errors'] ?? [];
 $old = $_SESSION['old'] ?? [];
+$returnQuery = $returnQuery ?? '';
+$returnSuffix = $returnQuery === '' ? '' : '?' . $returnQuery;
 unset($_SESSION['errors'], $_SESSION['old']);
 ?>
 
 <div class="w-full max-w-5xl mx-auto">
     <div class="flex items-center gap-4 mb-8">
-        <a href="<?= baseUrl('/usuarios') ?>"
+        <a href="<?= baseUrl('/usuarios' . $returnSuffix) ?>"
            class="inline-flex items-center gap-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition text-gray-700 font-semibold px-4 py-2 text-sm">
             <i class="fas fa-arrow-left"></i> Volver
         </a>
@@ -22,6 +24,7 @@ unset($_SESSION['errors'], $_SESSION['old']);
     <div class="bg-white/85 backdrop-blur-md border border-primary-100 rounded-3xl shadow-xl p-6 md:p-8">
         <form method="POST" action="<?= baseUrl('/usuarios/store') ?>" id="formUsuario">
             <input type="hidden" name="csrf_token" value="<?= $csrfToken ?>">
+            <input type="hidden" name="return_query" value="<?= e($returnQuery) ?>">
 
             <!-- Datos Personales -->
             <h3 class="text-primary-700 font-bold text-lg mb-5 pb-2 border-b-2 border-primary-700 flex items-center gap-2">
@@ -60,8 +63,10 @@ unset($_SESSION['errors'], $_SESSION['old']);
                         <option value="instructor" <?= ($old['tipo_persona'] ?? '') === 'instructor' ? 'selected' : '' ?>>Instructor</option>
                         <option value="admin" <?= ($old['tipo_persona'] ?? '') === 'admin' ? 'selected' : '' ?>>Administrador</option>
                         <option value="vigilante" <?= ($old['tipo_persona'] ?? '') === 'vigilante' ? 'selected' : '' ?>>Vigilante</option>
+                        <option value="planta" <?= ($old['tipo_persona'] ?? '') === 'planta' ? 'selected' : '' ?>>Personal de Planta</option>
                         <option value="contratista" <?= ($old['tipo_persona'] ?? '') === 'contratista' ? 'selected' : '' ?>>Contratista</option>
                         <option value="visitante" <?= ($old['tipo_persona'] ?? '') === 'visitante' ? 'selected' : '' ?>>Visitante</option>
+                        <option value="externo" <?= ($old['tipo_persona'] ?? '') === 'externo' ? 'selected' : '' ?>>Externo</option>
                         <option value="proveedor" <?= ($old['tipo_persona'] ?? '') === 'proveedor' ? 'selected' : '' ?>>Proveedor</option>
                     </select>
                     <?php if (isset($errors['tipo_persona'])): ?>
@@ -135,7 +140,7 @@ unset($_SESSION['errors'], $_SESSION['old']);
 
             <!-- Botones -->
             <div class="flex gap-3 justify-end pt-6 border-t border-gray-100">
-                <a href="<?= baseUrl('/usuarios') ?>"
+                <a href="<?= baseUrl('/usuarios' . $returnSuffix) ?>"
                    class="inline-flex items-center gap-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition text-gray-700 font-semibold px-5 py-2.5">
                     <i class="fas fa-times"></i> Cancelar
                 </a>

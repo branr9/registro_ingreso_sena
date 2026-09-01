@@ -8,6 +8,8 @@ class UsersController
 {
     private UserModel $model;
 
+    private const USERS_FILTER_KEYS = ['search', 'tipo_persona', 'estado', 'rol', 'page'];
+
     public function __construct()
     {
         $this->model = new UserModel();
@@ -41,6 +43,7 @@ class UsersController
 
         // Estadísticas
         $stats = $this->model->getStats();
+        $returnQuery = $this->buildUsersReturnQuery($_GET);
 
         $pageTitle = 'Gestión de Usuarios';
         require_once APP_PATH . '/views/usuarios/index.php';
@@ -53,6 +56,7 @@ class UsersController
     {
         $pageTitle = 'Crear Usuario';
         $csrfToken = generateCSRFToken();
+        $returnQuery = $this->buildUsersReturnQuery($_GET);
         require_once APP_PATH . '/views/usuarios/create.php';
     }
 
@@ -64,7 +68,7 @@ class UsersController
         // Validar CSRF
         if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
             setFlashMessage('Token de seguridad inválido', 'error');
-            redirect('/usuarios/create');
+            redirect($this->usersFormPath('/usuarios/create', $_POST));
         }
 
         // Validar datos
@@ -72,7 +76,7 @@ class UsersController
         $rules = [
             'documento' => 'required|document|unique:personas,documento',
             'nombre' => 'required|min:3|max:100',
-            'tipo_persona' => 'required|in:admin,instructor,vigilante,aprendiz,contratista,visitante,proveedor',
+            'tipo_persona' => 'required|in:admin,instructor,vigilante,aprendiz,planta,contratista,visitante,externo,proveedor',
             'estado' => 'required|in:activo,inactivo'
         ];
 
@@ -91,7 +95,7 @@ class UsersController
         if (!$validator->validate($rules)) {
             $_SESSION['errors'] = $validator->errors();
             $_SESSION['old'] = $_POST;
-            redirect('/usuarios/create');
+            redirect($this->usersFormPath('/usuarios/create', $_POST));
         }
 
         // Preparar datos para el nuevo schema
@@ -108,7 +112,7 @@ class UsersController
         if (!$tipoPersonaId) {
             setFlashMessage('Tipo de persona no válido', 'error');
             $_SESSION['old'] = $_POST;
-            redirect('/usuarios/create');
+            redirect($this->usersFormPath('/usuarios/create', $_POST));
         }
         
         $data['tipo_persona'] = $tipoPersonaId;
@@ -123,11 +127,11 @@ class UsersController
 
         if ($userId) {
             setFlashMessage('Usuario creado exitosamente', 'success');
-            redirect('/usuarios');
+            redirect($this->usersIndexPath($_POST));
         } else {
             setFlashMessage('Error al crear usuario', 'error');
             $_SESSION['old'] = $_POST;
-            redirect('/usuarios/create');
+            redirect($this->usersFormPath('/usuarios/create', $_POST));
         }
     }
 
@@ -140,11 +144,12 @@ class UsersController
 
         if (!$usuario) {
             setFlashMessage('Usuario no encontrado', 'error');
-            redirect('/usuarios');
+            redirect($this->usersIndexPath($_GET));
         }
 
         $pageTitle = 'Editar Usuario';
         $csrfToken = generateCSRFToken();
+        $returnQuery = $this->buildUsersReturnQuery($_GET);
         require_once APP_PATH . '/views/usuarios/edit.php';
     }
 
@@ -156,14 +161,14 @@ class UsersController
         // Validar CSRF
         if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
             setFlashMessage('Token de seguridad inválido', 'error');
-            redirect('/usuarios/edit/' . $id);
+            redirect($this->usersFormPath('/usuarios/edit/' . $id, $_POST));
         }
 
         // Validar que existe
         $usuario = $this->model->findById($id);
         if (!$usuario) {
             setFlashMessage('Usuario no encontrado', 'error');
-            redirect('/usuarios');
+            redirect($this->usersIndexPath($_POST));
         }
 
         // Validar datos
@@ -171,7 +176,7 @@ class UsersController
         $rules = [
             'documento' => 'required|document|unique:personas,documento,' . $id,
             'nombre' => 'required|min:3|max:100',
-            'tipo_persona' => 'required|in:admin,instructor,vigilante,aprendiz,contratista,visitante,proveedor',
+            'tipo_persona' => 'required|in:admin,instructor,vigilante,aprendiz,planta,contratista,visitante,externo,proveedor',
             'estado' => 'required|in:activo,inactivo'
         ];
 
@@ -181,7 +186,11 @@ class UsersController
 
         if ($esPersonalSistema) {
             $rules['rol'] = 'required|in:admin,instructor,vigilante';
-            $rules['username'] = 'required|min:4|max:50|unique:usuarios_sistema,username,' . $id;
+            // El listado se identifica por persona_id, pero la regla unique debe
+            // excluir el id real de usuarios_sistema al editar el mismo usuario.
+            $usuarioSistemaId = (int)($usuario['usuario_sistema_id'] ?? 0);
+            $rules['username'] = 'required|min:4|max:50|unique:usuarios_sistema,username'
+                . ($usuarioSistemaId > 0 ? ',' . $usuarioSistemaId : '');
         }
 
         if (!empty($_POST['email'])) {
@@ -196,7 +205,7 @@ class UsersController
         if (!$validator->validate($rules)) {
             $_SESSION['errors'] = $validator->errors();
             $_SESSION['old'] = $_POST;
-            redirect('/usuarios/edit/' . $id);
+            redirect($this->usersFormPath('/usuarios/edit/' . $id, $_POST));
         }
 
         // Preparar datos para el nuevo schema
@@ -213,7 +222,7 @@ class UsersController
         if (!$tipoPersonaId) {
             setFlashMessage('Tipo de persona no válido', 'error');
             $_SESSION['old'] = $_POST;
-            redirect('/usuarios/edit/' . $id);
+            redirect($this->usersFormPath('/usuarios/edit/' . $id, $_POST));
         }
         
         $data['tipo_persona'] = $tipoPersonaId;
@@ -223,11 +232,11 @@ class UsersController
 
         if ($result) {
             setFlashMessage('Usuario actualizado exitosamente', 'success');
-            redirect('/usuarios');
+            redirect($this->usersIndexPath($_POST));
         } else {
             setFlashMessage('Error al actualizar usuario', 'error');
             $_SESSION['old'] = $_POST;
-            redirect('/usuarios/edit/' . $id);
+            redirect($this->usersFormPath('/usuarios/edit/' . $id, $_POST));
         }
     }
 
@@ -239,7 +248,7 @@ class UsersController
         // Validar CSRF
         if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
             setFlashMessage('Token de seguridad inválido', 'error');
-            redirect('/usuarios');
+            redirect($this->usersIndexPath($_POST));
         }
 
         $result = $this->model->toggleStatus($id, Auth::user()['id']);
@@ -250,7 +259,7 @@ class UsersController
             setFlashMessage('Error al cambiar estado', 'error');
         }
 
-        redirect('/usuarios');
+        redirect($this->usersIndexPath($_POST));
     }
 
     /**
@@ -261,13 +270,13 @@ class UsersController
         // Validar CSRF
         if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
             setFlashMessage('Token de seguridad inválido', 'error');
-            redirect('/usuarios');
+            redirect($this->usersIndexPath($_POST));
         }
 
         // No permitir eliminar el propio usuario
         if ($id === Auth::user()['id']) {
             setFlashMessage('No puede eliminar su propio usuario', 'error');
-            redirect('/usuarios');
+            redirect($this->usersIndexPath($_POST));
         }
 
         $result = $this->model->delete($id, Auth::user()['id']);
@@ -278,7 +287,7 @@ class UsersController
             setFlashMessage('Error al eliminar usuario', 'error');
         }
 
-        redirect('/usuarios');
+        redirect($this->usersIndexPath($_POST));
     }
 
     /**
@@ -288,7 +297,7 @@ class UsersController
     {
         if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
             setFlashMessage('Token de seguridad inválido', 'error');
-            redirect('/usuarios');
+            redirect($this->usersIndexPath($_POST));
         }
 
         $ids = $_POST['usuario_ids'] ?? [];
@@ -309,7 +318,7 @@ class UsersController
 
         if (empty($ids)) {
             setFlashMessage('Seleccione al menos un usuario distinto al de su sesión', 'warning');
-            redirect('/usuarios');
+            redirect($this->usersIndexPath($_POST));
         }
 
         $deleted = $this->model->bulkDelete($ids, $currentUserId);
@@ -322,7 +331,7 @@ class UsersController
             setFlashMessage($deleted . ' usuario' . ($deleted === 1 ? '' : 's') . ' eliminado' . ($deleted === 1 ? '' : 's') . ' exitosamente', 'success');
         }
 
-        redirect('/usuarios');
+        redirect($this->usersIndexPath($_POST));
     }
 
     /**
@@ -332,13 +341,13 @@ class UsersController
     {
         if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
             setFlashMessage('Token de seguridad inválido', 'error');
-            redirect('/usuarios');
+            redirect($this->usersIndexPath($_POST));
         }
 
         $status = strtoupper(trim($_POST['status'] ?? ''));
         if (!in_array($status, ['ACTIVO', 'INACTIVO'], true)) {
             setFlashMessage('Estado especificado no es válido', 'error');
-            redirect('/usuarios');
+            redirect($this->usersIndexPath($_POST));
         }
 
         $ids = $_POST['usuario_ids'] ?? [];
@@ -359,7 +368,7 @@ class UsersController
 
         if (empty($ids)) {
             setFlashMessage('Seleccione al menos un usuario distinto al de su sesión', 'warning');
-            redirect('/usuarios');
+            redirect($this->usersIndexPath($_POST));
         }
 
         $updated = $this->model->bulkStatus($ids, $status, $currentUserId);
@@ -374,7 +383,7 @@ class UsersController
             setFlashMessage("{$updated} usuario{$plural} {$estadoTexto}{$plural} exitosamente", 'success');
         }
 
-        redirect('/usuarios');
+        redirect($this->usersIndexPath($_POST));
     }
 
     // ========================================
@@ -384,10 +393,58 @@ class UsersController
     /**
      * Mostrar formulario de importación
      */
+    /**
+     * Builds a return query limited to the user-list filters.
+     */
+    private function buildUsersReturnQuery(array $source): string
+    {
+        if (isset($source['return_query']) && is_string($source['return_query'])) {
+            parse_str($source['return_query'], $source);
+        }
+
+        $params = [];
+        foreach (self::USERS_FILTER_KEYS as $key) {
+            if (!isset($source[$key]) || is_array($source[$key])) {
+                continue;
+            }
+
+            $value = trim((string) $source[$key]);
+            if ($value === '') {
+                continue;
+            }
+
+            if ($key === 'page') {
+                $page = filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+                if ($page === false) {
+                    continue;
+                }
+                $params[$key] = $page;
+                continue;
+            }
+
+            $params[$key] = $value;
+        }
+
+        return http_build_query($params);
+    }
+
+    private function usersIndexPath(array $source): string
+    {
+        $query = $this->buildUsersReturnQuery($source);
+        return '/usuarios' . ($query === '' ? '' : '?' . $query);
+    }
+
+    private function usersFormPath(string $path, array $source): string
+    {
+        $query = $this->buildUsersReturnQuery($source);
+        return $path . ($query === '' ? '' : '?' . $query);
+    }
+
     public function importForm(): void
     {
         $pageTitle = 'Importar Usuarios';
         $csrfToken = generateCSRFToken();
+        $returnQuery = $this->buildUsersReturnQuery($_GET);
         require_once APP_PATH . '/views/usuarios/import.php';
     }
 
@@ -458,7 +515,8 @@ class UsersController
         $_SESSION['import_data'] = [
             'file_path' => $tempPath,
             'options' => $options,
-            'preview' => $preview
+            'preview' => $preview,
+            'return_query' => $this->buildUsersReturnQuery($_POST)
         ];
 
         $pageTitle = 'Vista Previa de Importación';
@@ -516,6 +574,6 @@ class UsersController
             setFlashMessage($mensaje, 'success');
         }
 
-        redirect('/usuarios');
+        redirect($this->usersIndexPath($importData));
     }
 }

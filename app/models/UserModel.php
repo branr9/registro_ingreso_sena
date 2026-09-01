@@ -596,20 +596,16 @@ class UserModel
             'total' => 0, 'activos' => 0, 'inactivos' => 0, 'por_tipo' => []
         ];
 
-        $sql = "SELECT p.estado, COUNT(*) as count 
-                FROM personas p 
-                WHERE p.deleted_at IS NULL 
-                GROUP BY p.estado";
-        $results = $this->db->fetchAll($sql);
-        
-        foreach ($results as $row) {
-            $stats['total'] += $row['count'];
-            if ($row['estado'] === 'ACTIVO') {
-                $stats['activos'] = (int)$row['count'];
-            } else {
-                $stats['inactivos'] = (int)$row['count'];
-            }
-        }
+        $sql = "SELECT
+                    COUNT(*) AS total,
+                    COALESCE(SUM(CASE WHEN UPPER(p.estado) = 'ACTIVO' THEN 1 ELSE 0 END), 0) AS activos,
+                    COALESCE(SUM(CASE WHEN UPPER(p.estado) = 'INACTIVO' THEN 1 ELSE 0 END), 0) AS inactivos
+                FROM personas p
+                WHERE p.deleted_at IS NULL";
+        $row = $this->db->fetchOne($sql) ?? [];
+        $stats['total'] = (int)($row['total'] ?? 0);
+        $stats['activos'] = (int)($row['activos'] ?? 0);
+        $stats['inactivos'] = (int)($row['inactivos'] ?? 0);
 
         $sql = "SELECT cpt.codigo, cpt.nombre, COUNT(*) as count 
                 FROM personas p

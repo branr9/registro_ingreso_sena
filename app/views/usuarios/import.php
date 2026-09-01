@@ -3,11 +3,13 @@
  * Vista: Importar Usuarios desde CSV
  */
 require_once APP_PATH . '/views/layouts/header.php';
+$returnQuery = $returnQuery ?? '';
+$returnSuffix = $returnQuery === '' ? '' : '?' . $returnQuery;
 ?>
 
 <div class="w-full">
     <div class="flex items-center gap-4 mb-8">
-        <a href="<?= baseUrl('/usuarios') ?>"
+        <a href="<?= baseUrl('/usuarios' . $returnSuffix) ?>"
            class="inline-flex items-center gap-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition text-gray-700 font-semibold px-4 py-2 text-sm">
             <i class="fas fa-arrow-left"></i> Volver
         </a>
@@ -74,6 +76,7 @@ require_once APP_PATH . '/views/layouts/header.php';
     <div class="bg-white/85 backdrop-blur-md border border-primary-100 rounded-3xl shadow-xl p-6 md:p-8">
         <form method="POST" action="<?= baseUrl('/usuarios/import-preview') ?>" enctype="multipart/form-data">
             <input type="hidden" name="csrf_token" value="<?= $csrfToken ?>">
+            <input type="hidden" name="return_query" value="<?= e($returnQuery) ?>">
 
             <h3 class="text-primary-700 font-bold text-lg mb-5"><i class="fas fa-upload"></i> Subir Archivo</h3>
 
@@ -114,7 +117,7 @@ require_once APP_PATH . '/views/layouts/header.php';
             </div>
 
             <div class="flex gap-3 justify-end pt-6 border-t border-gray-100">
-                <a href="<?= baseUrl('/usuarios') ?>"
+                <a href="<?= baseUrl('/usuarios' . $returnSuffix) ?>"
                    class="inline-flex items-center gap-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition text-gray-700 font-semibold px-5 py-2.5">
                     <i class="fas fa-times"></i> Cancelar
                 </a>

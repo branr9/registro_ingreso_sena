@@ -7,6 +7,8 @@
  * @var string  $pageTitle  Título de la página
  */
 require_once APP_PATH . '/views/layouts/header.php';
+$returnQuery = $returnQuery ?? '';
+$returnSuffix = $returnQuery === '' ? '' : '?' . $returnQuery;
 ?>
 
 <div>
@@ -17,11 +19,11 @@ require_once APP_PATH . '/views/layouts/header.php';
         </h1>
         <?php if (Auth::hasRole('admin')): ?>
         <div class="flex items-center gap-3">
-            <a href="<?= baseUrl('/usuarios/import') ?>"
+            <a href="<?= baseUrl('/usuarios/import' . $returnSuffix) ?>"
                class="inline-flex items-center gap-2 rounded-2xl bg-blue-600 hover:bg-blue-700 transition text-white font-semibold px-5 py-2.5 shadow-md">
                 <i class="fas fa-file-upload"></i> Importar CSV
             </a>
-            <a href="<?= baseUrl('/usuarios/create') ?>"
+            <a href="<?= baseUrl('/usuarios/create' . $returnSuffix) ?>"
                class="inline-flex items-center gap-2 rounded-2xl bg-primary-700 hover:bg-primary-800 transition text-white font-semibold px-5 py-2.5 shadow-md">
                 <i class="fas fa-plus"></i> Crear Usuario
             </a>
@@ -214,12 +216,13 @@ require_once APP_PATH . '/views/layouts/header.php';
                         <?php if (Auth::hasRole('admin')): ?>
                         <td class="px-4 py-3">
                             <div class="flex items-center justify-center gap-2">
-                                <a href="<?= baseUrl('/usuarios/edit/' . $usuario['id']) ?>"
+                                <a href="<?= baseUrl('/usuarios/edit/' . $usuario['id'] . $returnSuffix) ?>"
                                    class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center hover:bg-blue-200 transition" title="Editar">
                                     <i class="fas fa-edit text-xs"></i>
                                 </a>
                                 <form method="POST" action="<?= baseUrl('/usuarios/toggle/' . $usuario['id']) ?>" class="inline">
                                     <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
+                                    <input type="hidden" name="return_query" value="<?= e($returnQuery) ?>">
                                     <button type="submit"
                                             class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center hover:bg-amber-200 transition"
                                             title="<?= strtoupper($usuario['estado']) === 'ACTIVO' ? 'Desactivar' : 'Activar' ?>"
@@ -230,6 +233,7 @@ require_once APP_PATH . '/views/layouts/header.php';
                                 <?php if ((int) $usuario['id'] !== (int) Auth::user()['id']): ?>
                                 <form method="POST" action="<?= baseUrl('/usuarios/delete/' . $usuario['id']) ?>" class="inline">
                                     <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
+                                    <input type="hidden" name="return_query" value="<?= e($returnQuery) ?>">
                                     <button type="submit"
                                             class="w-8 h-8 rounded-lg bg-red-100 text-red-700 flex items-center justify-center hover:bg-red-200 transition"
                                             title="Eliminar"
@@ -293,6 +297,7 @@ require_once APP_PATH . '/views/layouts/header.php';
     <!-- Formulario Activar en Lote -->
     <form id="bulkActivateForm" method="POST" action="<?= baseUrl('/usuarios/bulk-status') ?>" class="inline">
         <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
+        <input type="hidden" name="return_query" value="<?= e($returnQuery) ?>">
         <input type="hidden" name="status" value="ACTIVO">
         <div class="hidden-inputs-container"></div>
         <button type="submit" class="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3.5 py-2 text-xs shadow-sm transition active:scale-95">
@@ -303,6 +308,7 @@ require_once APP_PATH . '/views/layouts/header.php';
     <!-- Formulario Desactivar en Lote -->
     <form id="bulkDeactivateForm" method="POST" action="<?= baseUrl('/usuarios/bulk-status') ?>" class="inline">
         <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
+        <input type="hidden" name="return_query" value="<?= e($returnQuery) ?>">
         <input type="hidden" name="status" value="INACTIVO">
         <div class="hidden-inputs-container"></div>
         <button type="submit" class="inline-flex items-center gap-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-semibold px-3.5 py-2 text-xs shadow-sm transition active:scale-95">
@@ -313,6 +319,7 @@ require_once APP_PATH . '/views/layouts/header.php';
     <!-- Formulario Eliminar en Lote -->
     <form id="bulkDeleteForm" method="POST" action="<?= baseUrl('/usuarios/bulk-delete') ?>" class="inline">
         <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
+        <input type="hidden" name="return_query" value="<?= e($returnQuery) ?>">
         <div class="hidden-inputs-container"></div>
         <button type="submit" class="inline-flex items-center gap-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold px-3.5 py-2 text-xs shadow-sm transition active:scale-95">
             <i class="fas fa-trash-alt"></i> Eliminar
