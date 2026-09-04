@@ -1,0 +1,433 @@
+[Mon Aug 24 14:30:41 2026] PHP 8.3.30 Development Server (http://localhost:8080) started
+[Mon Aug 24 14:30:45 2026] [::1]:54696 Accepted
+[Mon Aug 24 14:30:49 2026] [::1]:54696 [200]: GET /login
+[Mon Aug 24 14:30:49 2026] [::1]:54696 Closing
+[Mon Aug 24 14:30:59 2026] [::1]:59152 Accepted
+[Mon Aug 24 14:31:03 2026] [::1]:59152 [200]: GET /login
+[Mon Aug 24 14:31:03 2026] [::1]:59152 Closing
+[Mon Aug 24 14:33:50 2026] [::1]:52427 Accepted
+[Mon Aug 24 14:33:51 2026] [::1]:52427 [200]: GET /login
+[Mon Aug 24 14:33:51 2026] [::1]:52427 Closing
+[Mon Aug 24 14:39:37 2026] [::1]:49823 Accepted
+[Mon Aug 24 14:39:37 2026] [::1]:49823 [200]: GET /login
+[Mon Aug 24 14:39:37 2026] [::1]:49823 Closing
+[Mon Aug 24 14:40:36 2026] [::1]:62097 Accepted
+[Mon Aug 24 14:40:36 2026] [::1]:62097 [200]: GET /login
+[Mon Aug 24 14:40:36 2026] [::1]:62097 Closing
+[Mon Aug 24 14:40:36 2026] [::1]:57740 Accepted
+[Mon Aug 24 14:40:36 2026] [::1]:54223 Accepted
+[Mon Aug 24 14:40:36 2026] [::1]:57740 [200]: GET /css/style-v2.css?v=1787600436
+[Mon Aug 24 14:40:36 2026] [::1]:54223 [200]: GET /css/dark-mode.css?v=1787600436
+[Mon Aug 24 14:40:36 2026] [::1]:57740 Closing
+[Mon Aug 24 14:40:36 2026] [::1]:54223 Closing
+[Mon Aug 24 15:12:47 2026] [::1]:53107 Accepted
+[Mon Aug 24 15:12:47 2026] [::1]:60385 Accepted
+[Mon Aug 24 15:12:47 2026] [::1]:53107 [200]: GET /login
+[Mon Aug 24 15:12:47 2026] [::1]:53107 Closing
+[Mon Aug 24 15:12:47 2026] [::1]:60385 [200]: GET /css/style-v2.css?v=1787602367
+[Mon Aug 24 15:12:47 2026] [::1]:60400 Accepted
+[Mon Aug 24 15:12:47 2026] [::1]:60400 [200]: GET /css/dark-mode.css?v=1787602367
+[Mon Aug 24 15:12:47 2026] [::1]:60385 Closing
+[Mon Aug 24 15:12:47 2026] [::1]:60400 Closing
+[Mon Aug 24 15:12:51 2026] [::1]:57469 Accepted
+[Mon Aug 24 15:12:51 2026] [::1]:57469 [404]: GET /favicon.ico - No such file or directory
+[Mon Aug 24 15:12:51 2026] [::1]:57469 Closing
+[Mon Aug 24 15:13:58 2026] [::1]:62769 Accepted
+[Mon Aug 24 15:13:58 2026] [::1]:51589 Accepted
+[Mon Aug 24 15:14:01 2026] [::1]:62769 [200]: POST /login
+[Mon Aug 24 15:14:01 2026] [::1]:62769 Closing
+[Mon Aug 24 15:15:19 2026] [::1]:51589 Closed without sending a request; it was probably just an unused speculative preconnection
+[Mon Aug 24 15:15:19 2026] [::1]:51589 Closing
+[Mon Aug 24 15:15:19 2026] [::1]:58468 Accepted
+[Mon Aug 24 15:15:19 2026] [::1]:57523 Accepted
+[Mon Aug 24 15:15:20 2026] [::1]:58468 [200]: GET /login
+[Mon Aug 24 15:15:20 2026] [::1]:58468 Closing
+[Mon Aug 24 15:15:20 2026] [::1]:57523 [200]: GET /css/style-v2.css?v=1787602520
+[Mon Aug 24 15:15:20 2026] [::1]:65150 Accepted
+[Mon Aug 24 15:15:20 2026] [::1]:57523 Closing
+[Mon Aug 24 15:15:20 2026] [::1]:65150 [200]: GET /css/dark-mode.css?v=1787602520
+[Mon Aug 24 15:15:20 2026] [::1]:65150 Closing
+[Mon Aug 24 15:15:24 2026] [::1]:53478 Accepted
+[Mon Aug 24 15:15:24 2026] [::1]:56540 Accepted
+[Mon Aug 24 15:15:24 2026] [::1]:53478 [200]: GET /login
+[Mon Aug 24 15:15:24 2026] [::1]:53478 Closing
+[Mon Aug 24 15:15:24 2026] [::1]:56540 [200]: GET /css/style-v2.css?v=1787602524
+[Mon Aug 24 15:15:24 2026] [::1]:57087 Accepted
+[Mon Aug 24 15:15:24 2026] [::1]:56540 Closing
+[Mon Aug 24 15:15:24 2026] [::1]:57087 [200]: GET /css/dark-mode.css?v=1787602524
+[Mon Aug 24 15:15:24 2026] [::1]:57087 Closing
+[Mon Aug 24 15:15:32 2026] [::1]:57640 Accepted
+[Mon Aug 24 15:15:32 2026] [::1]:54482 Accepted
+[Mon Aug 24 15:15:33 2026] [::1]:54482 [200]: POST /login
+[Mon Aug 24 15:15:33 2026] [::1]:54482 Closing
+[Mon Aug 24 15:15:49 2026] [::1]:57640 [200]: POST /login
+[Mon Aug 24 15:15:49 2026] [::1]:57640 Closing
+[Mon Aug 24 15:15:49 2026] [::1]:51654 Accepted
+[Mon Aug 24 15:15:51 2026] [::1]:51654 [200]: GET /login
+[Mon Aug 24 15:15:51 2026] [::1]:51654 Closing
+[Mon Aug 24 15:15:51 2026] [::1]:58567 Accepted
+[Mon Aug 24 15:15:51 2026] [::1]:58567 [200]: GET /css/style-v2.css?v=1787602551
+[Mon Aug 24 15:15:51 2026] [::1]:58567 Closing
+[Mon Aug 24 15:15:51 2026] [::1]:58056 Accepted
+[Mon Aug 24 15:15:51 2026] [::1]:58056 [200]: GET /css/dark-mode.css?v=1787602551
+[Mon Aug 24 15:15:51 2026] [::1]:58056 Closing
+[Mon Aug 24 15:15:54 2026] [::1]:63119 Accepted
+[Mon Aug 24 15:15:54 2026] [::1]:60272 Accepted
+[Mon Aug 24 15:15:54 2026] [::1]:63119 [200]: POST /login
+[Mon Aug 24 15:15:54 2026] [::1]:63119 Closing
+[Mon Aug 24 15:17:23 2026] [::1]:60272 Closed without sending a request; it was probably just an unused speculative preconnection
+[Mon Aug 24 15:17:23 2026] [::1]:60272 Closing
+[Mon Aug 24 15:24:22 2026] [::1]:51182 Accepted
+[Mon Aug 24 15:24:32 2026] [::1]:51182 [200]: GET /login
+[Mon Aug 24 15:24:32 2026] [::1]:51182 Closing
+[Mon Aug 24 15:24:33 2026] [::1]:65405 Accepted
+[Mon Aug 24 15:24:35 2026] [::1]:65405 [200]: GET /login
+[Mon Aug 24 15:24:35 2026] [::1]:65405 Closing
+[Mon Aug 24 15:24:35 2026] [::1]:60573 Accepted
+[Mon Aug 24 15:24:36 2026] [::1]:60573 [200]: GET /css/style-v2.css?v=1787603075
+[Mon Aug 24 15:24:36 2026] [::1]:55312 Accepted
+[Mon Aug 24 15:24:36 2026] [::1]:55312 [200]: GET /css/dark-mode.css?v=1787603075
+[Mon Aug 24 15:24:36 2026] [::1]:60573 Closing
+[Mon Aug 24 15:24:36 2026] [::1]:55312 Closing
+[Mon Aug 24 15:24:43 2026] [::1]:50238 Accepted
+[Mon Aug 24 15:24:43 2026] [::1]:59314 Accepted
+[Mon Aug 24 15:24:44 2026] [::1]:59314 [302]: POST /login
+[Mon Aug 24 15:24:44 2026] [::1]:59314 Closing
+[Mon Aug 24 15:24:45 2026] [::1]:50238 [200]: GET /dashboard
+[Mon Aug 24 15:24:45 2026] [::1]:50238 Closing
+[Mon Aug 24 15:24:45 2026] [::1]:64610 Accepted
+[Mon Aug 24 15:24:45 2026] [::1]:62197 Accepted
+[Mon Aug 24 15:24:45 2026] [::1]:64610 [200]: GET /css/style-v2.css?v=1787603085
+[Mon Aug 24 15:24:45 2026] [::1]:62197 [200]: GET /css/dark-mode.css?v=1787603085
+[Mon Aug 24 15:24:45 2026] [::1]:64610 Closing
+[Mon Aug 24 15:24:45 2026] [::1]:62197 Closing
+[Mon Aug 24 15:24:45 2026] [::1]:49481 Accepted
+[Mon Aug 24 15:24:45 2026] [::1]:59286 Accepted
+[Mon Aug 24 15:24:45 2026] [::1]:49481 [200]: GET /js/main.js
+[Mon Aug 24 15:24:46 2026] [::1]:59286 [200]: GET /images/logo.png
+[Mon Aug 24 15:24:46 2026] [::1]:49481 Closing
+[Mon Aug 24 15:24:46 2026] [::1]:59286 Closing
+[Mon Aug 24 15:25:47 2026] [::1]:64633 Accepted
+[Mon Aug 24 15:25:47 2026] [::1]:65529 Accepted
+[Mon Aug 24 15:25:48 2026] [::1]:64633 [200]: GET /usuarios
+[Mon Aug 24 15:25:48 2026] [::1]:64633 Closing
+[Mon Aug 24 15:25:49 2026] [::1]:65529 [200]: GET /css/style-v2.css?v=1787603148
+[Mon Aug 24 15:25:49 2026] [::1]:49703 Accepted
+[Mon Aug 24 15:25:49 2026] [::1]:49703 [200]: GET /css/dark-mode.css?v=1787603148
+[Mon Aug 24 15:25:49 2026] [::1]:56345 Accepted
+[Mon Aug 24 15:25:49 2026] [::1]:65529 Closing
+[Mon Aug 24 15:25:49 2026] [::1]:49600 Accepted
+[Mon Aug 24 15:25:49 2026] [::1]:56345 [200]: GET /images/logo.png
+[Mon Aug 24 15:25:49 2026] [::1]:49600 [200]: GET /js/main.js
+[Mon Aug 24 15:25:49 2026] [::1]:49703 Closing
+[Mon Aug 24 15:25:49 2026] [::1]:56345 Closing
+[Mon Aug 24 15:25:49 2026] [::1]:49600 Closing
+[Mon Aug 24 15:25:56 2026] [::1]:52989 Accepted
+[Mon Aug 24 15:25:56 2026] [::1]:57492 Accepted
+[Mon Aug 24 15:25:56 2026] [::1]:52989 [200]: GET /reportes
+[Mon Aug 24 15:25:56 2026] [::1]:52989 Closing
+[Mon Aug 24 15:25:56 2026] [::1]:57492 [200]: GET /css/style-v2.css?v=1787603156
+[Mon Aug 24 15:25:56 2026] [::1]:52879 Accepted
+[Mon Aug 24 15:25:56 2026] [::1]:57492 Closing
+[Mon Aug 24 15:25:56 2026] [::1]:52879 [200]: GET /css/dark-mode.css?v=1787603156
+[Mon Aug 24 15:25:56 2026] [::1]:54068 Accepted
+[Mon Aug 24 15:25:56 2026] [::1]:52879 Closing
+[Mon Aug 24 15:25:56 2026] [::1]:56624 Accepted
+[Mon Aug 24 15:25:56 2026] [::1]:54068 [200]: GET /images/logo.png
+[Mon Aug 24 15:25:56 2026] [::1]:56624 [200]: GET /js/main.js
+[Mon Aug 24 15:25:56 2026] [::1]:54068 Closing
+[Mon Aug 24 15:25:56 2026] [::1]:56624 Closing
+[Mon Aug 24 15:26:00 2026] [::1]:60603 Accepted
+[Mon Aug 24 15:26:00 2026] [::1]:56274 Accepted
+[Mon Aug 24 15:26:01 2026] [::1]:60603 [200]: GET /dashboard
+[Mon Aug 24 15:26:01 2026] [::1]:60603 Closing
+[Mon Aug 24 15:26:01 2026] [::1]:65444 Accepted
+[Mon Aug 24 15:26:01 2026] [::1]:56274 [200]: GET /css/style-v2.css?v=1787603161
+[Mon Aug 24 15:26:01 2026] [::1]:56858 Accepted
+[Mon Aug 24 15:26:01 2026] [::1]:65444 [200]: GET /css/dark-mode.css?v=1787603161
+[Mon Aug 24 15:26:01 2026] [::1]:56858 [200]: GET /images/logo.png
+[Mon Aug 24 15:26:01 2026] [::1]:56274 Closing
+[Mon Aug 24 15:26:01 2026] [::1]:65444 Closing
+[Mon Aug 24 15:26:01 2026] [::1]:56858 Closing
+[Mon Aug 24 15:26:01 2026] [::1]:52407 Accepted
+[Mon Aug 24 15:26:01 2026] [::1]:52407 [200]: GET /js/main.js
+[Mon Aug 24 15:26:01 2026] [::1]:52407 Closing
+[Mon Aug 24 15:26:02 2026] [::1]:65060 Accepted
+[Mon Aug 24 15:26:02 2026] [::1]:52404 Accepted
+[Mon Aug 24 15:26:03 2026] [::1]:65060 [200]: GET /usuarios
+[Mon Aug 24 15:26:03 2026] [::1]:65060 Closing
+[Mon Aug 24 15:26:03 2026] [::1]:60553 Accepted
+[Mon Aug 24 15:26:03 2026] [::1]:52404 [200]: GET /css/style-v2.css?v=1787603162
+[Mon Aug 24 15:26:03 2026] [::1]:61578 Accepted
+[Mon Aug 24 15:26:03 2026] [::1]:60553 [200]: GET /css/dark-mode.css?v=1787603162
+[Mon Aug 24 15:26:03 2026] [::1]:61578 [200]: GET /images/logo.png
+[Mon Aug 24 15:26:03 2026] [::1]:56250 Accepted
+[Mon Aug 24 15:26:03 2026] [::1]:52404 Closing
+[Mon Aug 24 15:26:03 2026] [::1]:56250 [200]: GET /js/main.js
+[Mon Aug 24 15:26:03 2026] [::1]:60553 Closing
+[Mon Aug 24 15:26:03 2026] [::1]:61578 Closing
+[Mon Aug 24 15:26:03 2026] [::1]:56250 Closing
+[Mon Aug 24 15:26:04 2026] [::1]:57646 Accepted
+[Mon Aug 24 15:26:05 2026] [::1]:60305 Accepted
+[Mon Aug 24 15:26:05 2026] [::1]:57646 [200]: GET /reportes
+[Mon Aug 24 15:26:05 2026] [::1]:57646 Closing
+[Mon Aug 24 15:26:05 2026] [::1]:64921 Accepted
+[Mon Aug 24 15:26:05 2026] [::1]:60305 [200]: GET /css/style-v2.css?v=1787603165
+[Mon Aug 24 15:26:05 2026] [::1]:50060 Accepted
+[Mon Aug 24 15:26:05 2026] [::1]:64921 [200]: GET /css/dark-mode.css?v=1787603165
+[Mon Aug 24 15:26:05 2026] [::1]:57984 Accepted
+[Mon Aug 24 15:26:05 2026] [::1]:50060 [200]: GET /images/logo.png
+[Mon Aug 24 15:26:05 2026] [::1]:57984 [200]: GET /js/main.js
+[Mon Aug 24 15:26:05 2026] [::1]:60305 Closing
+[Mon Aug 24 15:26:05 2026] [::1]:64921 Closing
+[Mon Aug 24 15:26:05 2026] [::1]:50060 Closing
+[Mon Aug 24 15:26:05 2026] [::1]:57984 Closing
+[Mon Aug 24 15:26:18 2026] [::1]:52683 Accepted
+[Mon Aug 24 15:26:21 2026] [::1]:52683 [302]: GET /logout
+[Mon Aug 24 15:26:21 2026] [::1]:52683 Closing
+[Mon Aug 24 15:26:21 2026] [::1]:63317 Accepted
+[Mon Aug 24 15:26:22 2026] [::1]:63317 [200]: GET /login
+[Mon Aug 24 15:26:22 2026] [::1]:63317 Closing
+[Mon Aug 24 15:26:22 2026] [::1]:52225 Accepted
+[Mon Aug 24 15:26:22 2026] [::1]:52225 [200]: GET /css/style-v2.css?v=1787603182
+[Mon Aug 24 15:26:22 2026] [::1]:50297 Accepted
+[Mon Aug 24 15:26:22 2026] [::1]:52225 Closing
+[Mon Aug 24 15:26:22 2026] [::1]:50297 [200]: GET /css/dark-mode.css?v=1787603182
+[Mon Aug 24 15:26:22 2026] [::1]:50297 Closing
+[Mon Aug 24 15:26:32 2026] [::1]:53537 Accepted
+[Mon Aug 24 15:26:32 2026] [::1]:64717 Accepted
+[Mon Aug 24 15:26:32 2026] [::1]:64717 [302]: POST /login
+[Mon Aug 24 15:26:32 2026] [::1]:64717 Closing
+[Mon Aug 24 15:26:33 2026] [::1]:53537 [200]: GET /dashboard
+[Mon Aug 24 15:26:33 2026] [::1]:53537 Closing
+[Mon Aug 24 15:26:33 2026] [::1]:61298 Accepted
+[Mon Aug 24 15:26:33 2026] [::1]:61580 Accepted
+[Mon Aug 24 15:26:33 2026] [::1]:61298 [200]: GET /css/style-v2.css?v=1787603193
+[Mon Aug 24 15:26:33 2026] [::1]:51965 Accepted
+[Mon Aug 24 15:26:33 2026] [::1]:61580 [200]: GET /css/dark-mode.css?v=1787603193
+[Mon Aug 24 15:26:33 2026] [::1]:63488 Accepted
+[Mon Aug 24 15:26:33 2026] [::1]:51965 [200]: GET /images/logo.png
+[Mon Aug 24 15:26:33 2026] [::1]:63488 [200]: GET /js/main.js
+[Mon Aug 24 15:26:33 2026] [::1]:61298 Closing
+[Mon Aug 24 15:26:33 2026] [::1]:61580 Closing
+[Mon Aug 24 15:26:33 2026] [::1]:51965 Closing
+[Mon Aug 24 15:26:33 2026] [::1]:63488 Closing
+[Mon Aug 24 15:26:59 2026] [::1]:52777 Accepted
+[Mon Aug 24 15:27:00 2026] [::1]:49496 Accepted
+[Mon Aug 24 15:27:00 2026] [::1]:52777 [200]: GET /control-llaves
+[Mon Aug 24 15:27:00 2026] [::1]:52777 Closing
+[Mon Aug 24 15:27:00 2026] [::1]:49496 [200]: GET /css/style-v2.css?v=1787603220
+[Mon Aug 24 15:27:00 2026] [::1]:49496 Closing
+[Mon Aug 24 15:27:00 2026] [::1]:62257 Accepted
+[Mon Aug 24 15:27:00 2026] [::1]:57515 Accepted
+[Mon Aug 24 15:27:00 2026] [::1]:62257 [200]: GET /css/dark-mode.css?v=1787603220
+[Mon Aug 24 15:27:00 2026] [::1]:57515 [200]: GET /images/logo.png
+[Mon Aug 24 15:27:00 2026] [::1]:62257 Closing
+[Mon Aug 24 15:27:00 2026] [::1]:57515 Closing
+[Mon Aug 24 15:27:00 2026] [::1]:50719 Accepted
+[Mon Aug 24 15:27:00 2026] [::1]:50719 [200]: GET /js/main.js
+[Mon Aug 24 15:27:00 2026] [::1]:50719 Closing
+[Mon Aug 24 15:27:03 2026] [::1]:56126 Accepted
+[Mon Aug 24 15:27:03 2026] [::1]:63770 Accepted
+[Mon Aug 24 15:27:03 2026] [::1]:56126 [200]: GET /permisos
+[Mon Aug 24 15:27:03 2026] [::1]:56126 Closing
+[Mon Aug 24 15:27:03 2026] [::1]:63770 [200]: GET /css/style-v2.css?v=1787603223
+[Mon Aug 24 15:27:03 2026] [::1]:63770 Closing
+[Mon Aug 24 15:27:03 2026] [::1]:51027 Accepted
+[Mon Aug 24 15:27:03 2026] [::1]:51027 [200]: GET /css/dark-mode.css?v=1787603223
+[Mon Aug 24 15:27:03 2026] [::1]:49795 Accepted
+[Mon Aug 24 15:27:03 2026] [::1]:51027 Closing
+[Mon Aug 24 15:27:03 2026] [::1]:57317 Accepted
+[Mon Aug 24 15:27:03 2026] [::1]:49795 [200]: GET /images/logo.png
+[Mon Aug 24 15:27:03 2026] [::1]:57317 [200]: GET /js/main.js
+[Mon Aug 24 15:27:03 2026] [::1]:49795 Closing
+[Mon Aug 24 15:27:03 2026] [::1]:57317 Closing
+[Mon Aug 24 15:27:10 2026] [::1]:64838 Accepted
+[Mon Aug 24 15:27:10 2026] [::1]:64838 [200]: GET /control-llaves
+[Mon Aug 24 15:27:10 2026] [::1]:64838 Closing
+[Mon Aug 24 15:27:10 2026] [::1]:65093 Accepted
+[Mon Aug 24 15:27:10 2026] [::1]:65093 [200]: GET /css/style-v2.css?v=1787603230
+[Mon Aug 24 15:27:10 2026] [::1]:65093 Closing
+[Mon Aug 24 15:27:10 2026] [::1]:49742 Accepted
+[Mon Aug 24 15:27:10 2026] [::1]:49742 [200]: GET /css/dark-mode.css?v=1787603230
+[Mon Aug 24 15:27:10 2026] [::1]:50958 Accepted
+[Mon Aug 24 15:27:10 2026] [::1]:49742 Closing
+[Mon Aug 24 15:27:10 2026] [::1]:58146 Accepted
+[Mon Aug 24 15:27:10 2026] [::1]:50958 [200]: GET /images/logo.png
+[Mon Aug 24 15:27:10 2026] [::1]:58146 [200]: GET /js/main.js
+[Mon Aug 24 15:27:10 2026] [::1]:50958 Closing
+[Mon Aug 24 15:27:10 2026] [::1]:58146 Closing
+[Mon Aug 24 15:27:11 2026] [::1]:52628 Accepted
+[Mon Aug 24 15:27:12 2026] [::1]:52511 Accepted
+[Mon Aug 24 15:27:12 2026] [::1]:52628 [200]: GET /permisos
+[Mon Aug 24 15:27:12 2026] [::1]:52628 Closing
+[Mon Aug 24 15:27:12 2026] [::1]:52511 [200]: GET /css/style-v2.css?v=1787603232
+[Mon Aug 24 15:27:12 2026] [::1]:55613 Accepted
+[Mon Aug 24 15:27:12 2026] [::1]:61853 Accepted
+[Mon Aug 24 15:27:12 2026] [::1]:50602 Accepted
+[Mon Aug 24 15:27:12 2026] [::1]:55613 [200]: GET /css/dark-mode.css?v=1787603232
+[Mon Aug 24 15:27:12 2026] [::1]:52511 Closing
+[Mon Aug 24 15:27:12 2026] [::1]:61853 [200]: GET /images/logo.png
+[Mon Aug 24 15:27:12 2026] [::1]:50602 [200]: GET /js/main.js
+[Mon Aug 24 15:27:12 2026] [::1]:55613 Closing
+[Mon Aug 24 15:27:12 2026] [::1]:61853 Closing
+[Mon Aug 24 15:27:12 2026] [::1]:50602 Closing
+[Mon Aug 24 15:27:15 2026] [::1]:59296 Accepted
+[Mon Aug 24 15:27:17 2026] [::1]:59296 [302]: GET /logout
+[Mon Aug 24 15:27:17 2026] [::1]:59296 Closing
+[Mon Aug 24 15:27:17 2026] [::1]:58625 Accepted
+[Mon Aug 24 15:27:18 2026] [::1]:58625 [200]: GET /login
+[Mon Aug 24 15:27:18 2026] [::1]:58625 Closing
+[Mon Aug 24 15:27:18 2026] [::1]:62667 Accepted
+[Mon Aug 24 15:27:18 2026] [::1]:50444 Accepted
+[Mon Aug 24 15:27:18 2026] [::1]:62667 [200]: GET /css/style-v2.css?v=1787603238
+[Mon Aug 24 15:27:18 2026] [::1]:50444 [200]: GET /css/dark-mode.css?v=1787603238
+[Mon Aug 24 15:27:18 2026] [::1]:62667 Closing
+[Mon Aug 24 15:27:18 2026] [::1]:50444 Closing
+[Mon Aug 24 15:27:29 2026] [::1]:52998 Accepted
+[Mon Aug 24 15:27:29 2026] [::1]:52998 [302]: POST /login
+[Mon Aug 24 15:27:29 2026] [::1]:52998 Closing
+[Mon Aug 24 15:27:29 2026] [::1]:57058 Accepted
+[Mon Aug 24 15:27:29 2026] [::1]:57058 [200]: GET /dashboard
+[Mon Aug 24 15:27:29 2026] [::1]:57058 Closing
+[Mon Aug 24 15:27:29 2026] [::1]:61456 Accepted
+[Mon Aug 24 15:27:29 2026] [::1]:64039 Accepted
+[Mon Aug 24 15:27:29 2026] [::1]:61456 [200]: GET /css/style-v2.css?v=1787603249
+[Mon Aug 24 15:27:29 2026] [::1]:55843 Accepted
+[Mon Aug 24 15:27:29 2026] [::1]:64039 [200]: GET /css/dark-mode.css?v=1787603249
+[Mon Aug 24 15:27:29 2026] [::1]:55843 [200]: GET /images/logo.png
+[Mon Aug 24 15:27:29 2026] [::1]:61456 Closing
+[Mon Aug 24 15:27:29 2026] [::1]:64039 Closing
+[Mon Aug 24 15:27:29 2026] [::1]:55843 Closing
+[Mon Aug 24 15:27:30 2026] [::1]:63459 Accepted
+[Mon Aug 24 15:27:30 2026] [::1]:63459 [200]: GET /js/main.js
+[Mon Aug 24 15:27:30 2026] [::1]:63459 Closing
+[Mon Aug 24 15:27:37 2026] [::1]:60020 Accepted
+[Mon Aug 24 15:27:38 2026] [::1]:60620 Accepted
+[Mon Aug 24 15:27:38 2026] [::1]:60020 [200]: GET /control-ingreso/kiosk
+[Mon Aug 24 15:27:38 2026] [::1]:60020 Closing
+[Mon Aug 24 15:27:38 2026] [::1]:60620 [200]: GET /css/style-v2.css?v=1787603258
+[Mon Aug 24 15:27:38 2026] [::1]:60620 Closing
+[Mon Aug 24 15:27:38 2026] [::1]:51137 Accepted
+[Mon Aug 24 15:27:38 2026] [::1]:51137 [200]: GET /css/dark-mode.css?v=1787603258
+[Mon Aug 24 15:27:38 2026] [::1]:51137 Closing
+[Mon Aug 24 15:27:38 2026] [::1]:64901 Accepted
+[Mon Aug 24 15:27:38 2026] [::1]:64901 [200]: GET /images/logo.png
+[Mon Aug 24 15:27:38 2026] [::1]:64901 Closing
+[Mon Aug 24 15:27:38 2026] [::1]:63669 Accepted
+[Mon Aug 24 15:27:38 2026] [::1]:63669 [200]: GET /js/main.js
+[Mon Aug 24 15:27:38 2026] [::1]:63669 Closing
+[Mon Aug 24 15:27:39 2026] [::1]:49293 Accepted
+[Mon Aug 24 15:27:39 2026] [::1]:62120 Accepted
+[Mon Aug 24 15:27:40 2026] [::1]:49293 [200]: GET /permisos/consulta
+[Mon Aug 24 15:27:40 2026] [::1]:49293 Closing
+[Mon Aug 24 15:27:40 2026] [::1]:62120 [200]: GET /css/style-v2.css?v=1787603260
+[Mon Aug 24 15:27:40 2026] [::1]:62120 Closing
+[Mon Aug 24 15:27:40 2026] [::1]:64455 Accepted
+[Mon Aug 24 15:27:40 2026] [::1]:64455 [200]: GET /css/dark-mode.css?v=1787603260
+[Mon Aug 24 15:27:40 2026] [::1]:62648 Accepted
+[Mon Aug 24 15:27:40 2026] [::1]:62648 [200]: GET /images/logo.png
+[Mon Aug 24 15:27:40 2026] [::1]:64455 Closing
+[Mon Aug 24 15:27:40 2026] [::1]:62648 Closing
+[Mon Aug 24 15:27:40 2026] [::1]:58311 Accepted
+[Mon Aug 24 15:27:40 2026] [::1]:58311 [200]: GET /js/main.js
+[Mon Aug 24 15:27:40 2026] [::1]:58311 Closing
+[Mon Aug 24 15:27:43 2026] [::1]:60877 Accepted
+[Mon Aug 24 15:27:43 2026] [::1]:52456 Accepted
+[Mon Aug 24 15:27:44 2026] [::1]:60877 [200]: GET /acceso-externo
+[Mon Aug 24 15:27:44 2026] [::1]:60877 Closing
+[Mon Aug 24 15:27:44 2026] [::1]:52456 [200]: GET /css/style-v2.css?v=1787603264
+[Mon Aug 24 15:27:44 2026] [::1]:55977 Accepted
+[Mon Aug 24 15:27:44 2026] [::1]:52456 Closing
+[Mon Aug 24 15:27:44 2026] [::1]:55977 [200]: GET /css/dark-mode.css?v=1787603264
+[Mon Aug 24 15:27:44 2026] [::1]:55977 Closing
+[Mon Aug 24 15:27:44 2026] [::1]:52767 Accepted
+[Mon Aug 24 15:27:44 2026] [::1]:60879 Accepted
+[Mon Aug 24 15:27:44 2026] [::1]:52767 [200]: GET /images/logo.png
+[Mon Aug 24 15:27:44 2026] [::1]:60879 [200]: GET /js/main.js
+[Mon Aug 24 15:27:44 2026] [::1]:52767 Closing
+[Mon Aug 24 15:27:44 2026] [::1]:60879 Closing
+[Mon Aug 24 15:30:26 2026] [::1]:53719 Accepted
+[Mon Aug 24 15:30:26 2026] [::1]:53719 [200]: GET /control-ingreso/kiosk
+[Mon Aug 24 15:30:26 2026] [::1]:53719 Closing
+[Mon Aug 24 15:30:26 2026] [::1]:64421 Accepted
+[Mon Aug 24 15:30:26 2026] [::1]:64421 [200]: GET /css/style-v2.css?v=1787603426
+[Mon Aug 24 15:30:26 2026] [::1]:64421 Closing
+[Mon Aug 24 15:30:26 2026] [::1]:64503 Accepted
+[Mon Aug 24 15:30:26 2026] [::1]:64503 [200]: GET /css/dark-mode.css?v=1787603426
+[Mon Aug 24 15:30:26 2026] [::1]:63099 Accepted
+[Mon Aug 24 15:30:26 2026] [::1]:56646 Accepted
+[Mon Aug 24 15:30:26 2026] [::1]:63099 [200]: GET /images/logo.png
+[Mon Aug 24 15:30:26 2026] [::1]:64503 Closing
+[Mon Aug 24 15:30:26 2026] [::1]:56646 [200]: GET /js/main.js
+[Mon Aug 24 15:30:26 2026] [::1]:63099 Closing
+[Mon Aug 24 15:30:26 2026] [::1]:56646 Closing
+[Mon Aug 24 15:30:32 2026] [::1]:50750 Accepted
+[Mon Aug 24 15:30:33 2026] [::1]:58893 Accepted
+[Mon Aug 24 15:30:33 2026] [::1]:50750 [200]: GET /permisos/consulta
+[Mon Aug 24 15:30:33 2026] [::1]:50750 Closing
+[Mon Aug 24 15:30:33 2026] [::1]:58893 [200]: GET /css/style-v2.css?v=1787603433
+[Mon Aug 24 15:30:33 2026] [::1]:55141 Accepted
+[Mon Aug 24 15:30:33 2026] [::1]:58893 Closing
+[Mon Aug 24 15:30:33 2026] [::1]:55141 [200]: GET /css/dark-mode.css?v=1787603433
+[Mon Aug 24 15:30:33 2026] [::1]:55141 Closing
+[Mon Aug 24 15:30:33 2026] [::1]:61682 Accepted
+[Mon Aug 24 15:30:33 2026] [::1]:57178 Accepted
+[Mon Aug 24 15:30:33 2026] [::1]:61682 [200]: GET /images/logo.png
+[Mon Aug 24 15:30:33 2026] [::1]:57178 [200]: GET /js/main.js
+[Mon Aug 24 15:30:33 2026] [::1]:61682 Closing
+[Mon Aug 24 15:30:33 2026] [::1]:57178 Closing
+[Mon Aug 24 15:30:38 2026] [::1]:55010 Accepted
+[Mon Aug 24 15:30:38 2026] [::1]:55010 [200]: GET /acceso-externo
+[Mon Aug 24 15:30:38 2026] [::1]:55010 Closing
+[Mon Aug 24 15:30:38 2026] [::1]:53937 Accepted
+[Mon Aug 24 15:30:38 2026] [::1]:53937 [200]: GET /css/style-v2.css?v=1787603438
+[Mon Aug 24 15:30:38 2026] [::1]:53937 Closing
+[Mon Aug 24 15:30:38 2026] [::1]:51795 Accepted
+[Mon Aug 24 15:30:38 2026] [::1]:51795 [200]: GET /css/dark-mode.css?v=1787603438
+[Mon Aug 24 15:30:38 2026] [::1]:60099 Accepted
+[Mon Aug 24 15:30:38 2026] [::1]:51795 Closing
+[Mon Aug 24 15:30:38 2026] [::1]:54485 Accepted
+[Mon Aug 24 15:30:38 2026] [::1]:60099 [200]: GET /images/logo.png
+[Mon Aug 24 15:30:38 2026] [::1]:54485 [200]: GET /js/main.js
+[Mon Aug 24 15:30:38 2026] [::1]:60099 Closing
+[Mon Aug 24 15:30:38 2026] [::1]:54485 Closing
+[Mon Aug 24 15:30:40 2026] [::1]:62582 Accepted
+[Mon Aug 24 15:30:41 2026] [::1]:60344 Accepted
+[Mon Aug 24 15:30:41 2026] [::1]:62582 [200]: GET /control-ingreso/kiosk
+[Mon Aug 24 15:30:41 2026] [::1]:62582 Closing
+[Mon Aug 24 15:30:41 2026] [::1]:60344 [200]: GET /css/style-v2.css?v=1787603441
+[Mon Aug 24 15:30:41 2026] [::1]:58558 Accepted
+[Mon Aug 24 15:30:41 2026] [::1]:60344 Closing
+[Mon Aug 24 15:30:41 2026] [::1]:58558 [200]: GET /css/dark-mode.css?v=1787603441
+[Mon Aug 24 15:30:41 2026] [::1]:50871 Accepted
+[Mon Aug 24 15:30:41 2026] [::1]:58558 Closing
+[Mon Aug 24 15:30:41 2026] [::1]:62137 Accepted
+[Mon Aug 24 15:30:41 2026] [::1]:50871 [200]: GET /images/logo.png
+[Mon Aug 24 15:30:41 2026] [::1]:62137 [200]: GET /js/main.js
+[Mon Aug 24 15:30:41 2026] [::1]:50871 Closing
+[Mon Aug 24 15:30:41 2026] [::1]:62137 Closing
+[Mon Aug 24 15:30:49 2026] [::1]:59184 Accepted
+[Mon Aug 24 15:30:52 2026] [::1]:58574 Accepted
+[Mon Aug 24 15:30:52 2026] [::1]:59184 [302]: GET /logout
+[Mon Aug 24 15:30:52 2026] [::1]:59184 Closing
+[Mon Aug 24 15:30:52 2026] [::1]:58574 [302]: GET /control-ingreso/recent
+[Mon Aug 24 15:30:52 2026] [::1]:58574 Closing
+[Mon Aug 24 15:30:52 2026] [::1]:62108 Accepted
+[Mon Aug 24 15:30:52 2026] [::1]:62108 [200]: GET /login
+[Mon Aug 24 15:30:52 2026] [::1]:62108 Closing
+[Mon Aug 24 15:30:52 2026] [::1]:49254 Accepted
+[Mon Aug 24 15:30:52 2026] [::1]:49254 [200]: GET /login
+[Mon Aug 24 15:30:52 2026] [::1]:49254 Closing
+[Mon Aug 24 15:30:52 2026] [::1]:57579 Accepted
+[Mon Aug 24 15:30:52 2026] [::1]:57579 [200]: GET /css/style-v2.css?v=1787603452
+[Mon Aug 24 15:30:52 2026] [::1]:57579 Closing
+[Mon Aug 24 15:30:52 2026] [::1]:58346 Accepted
+[Mon Aug 24 15:30:52 2026] [::1]:58346 [200]: GET /css/dark-mode.css?v=1787603452
+[Mon Aug 24 15:30:52 2026] [::1]:58346 Closing
+[Tue Aug 25 08:27:51 2026] [::1]:53576 Accepted
+[Tue Aug 25 08:28:51 2026] [::1]:53576 Closed without sending a request; it was probably just an unused speculative preconnection
+[Tue Aug 25 08:28:51 2026] [::1]:53576 Closing
+[Mon Aug 31 14:22:50 2026] [::1]:61783 Accepted
+[Mon Aug 31 14:22:54 2026] [::1]:61783 [200]: GET /login
+[Mon Aug 31 14:22:55 2026] [::1]:61783 Closing

@@ -11,7 +11,7 @@ main.main-content:has(.kiosk-mode) {
     <div class="content-header-kiosk">
         <div class="kiosk-title">
             <img src="<?= asset('images/logo.png') ?>" alt="Logo SENA" style="height: 60px; margin-right: 15px;">
-            <h1><i class="fas fa-door-open"></i> Consulta de Permisos de Salida</h1>
+            <h1><i class="fas fa-door-open"></i> Consulta de Permisos de Salida.</h1>
         </div>
         <div class="kiosk-actions">
             <div class="kiosk-time" id="currentTime"></div>
