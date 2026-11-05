@@ -6,9 +6,9 @@
     <meta name="description" content="Sistema de Control de Ingreso SENA">
     <title>Iniciar Sesión - Sistema Ingreso SENA</title>
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="<?= asset('js/tailwind.js') ?>"></script>
+    <link href="<?= asset('fonts/inter/inter.css') ?>" rel="stylesheet">
+    <link rel="stylesheet" href="<?= asset('fontawesome/css/all.min.css') ?>">
     <link rel="stylesheet" href="<?= asset('css/style-v2.css') ?>?v=<?= time() ?>">
     <link rel="stylesheet" href="<?= asset('css/dark-mode.css') ?>?v=<?= time() ?>">
 
