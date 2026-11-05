@@ -131,6 +131,13 @@
             <?php endif; ?>
 
             <?php if (Auth::hasRole('admin') || Auth::hasRole('instructor')): ?>
+            <a href="<?= baseUrl('/ambientes') ?>" class="<?= navClass(str_starts_with($currentPath, '/ambientes')) ?>">
+                <i class="fas fa-building w-5 text-center"></i>
+                <span>Ambientes</span>
+            </a>
+            <?php endif; ?>
+
+            <?php if (Auth::hasRole('admin') || Auth::hasRole('instructor')): ?>
             <a href="<?= baseUrl('/permisos') ?>" class="<?= navClass($currentPath === '/permisos') ?>">
                 <i class="fas fa-file-signature w-5 text-center"></i>
                 <span>Permisos de Salida</span>

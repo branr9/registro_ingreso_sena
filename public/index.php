@@ -407,6 +407,116 @@ try {
             break;
 
         // ========================================
+        // RUTAS DEL MÓDULO DE AMBIENTES
+        // ========================================
+        case '/ambientes':
+            Auth::requireRole(['admin', 'instructor']);
+            (new AmbientesController())->index();
+            break;
+
+        case '/ambientes/gestion':
+            Auth::requireRole(['admin', 'instructor']);
+            (new AmbientesController())->gestion();
+            break;
+
+        case '/ambientes/crear':
+            Auth::requireRole('admin');
+            (new AmbientesController())->create();
+            break;
+
+        case '/ambientes/guardar':
+            if ($requestMethod === 'POST') {
+                Auth::requireRole('admin');
+                (new AmbientesController())->store();
+            }
+            break;
+
+        case (preg_match('/^\/ambientes\/ver\/(\d+)$/', $requestUri, $matches) ? true : false):
+            Auth::requireRole(['admin', 'instructor']);
+            (new AmbientesController())->show((int)$matches[1]);
+            break;
+
+        case (preg_match('/^\/ambientes\/editar\/(\d+)$/', $requestUri, $matches) ? true : false):
+            Auth::requireRole('admin');
+            (new AmbientesController())->edit((int)$matches[1]);
+            break;
+
+        case (preg_match('/^\/ambientes\/actualizar\/(\d+)$/', $requestUri, $matches) ? true : false):
+            if ($requestMethod === 'POST') {
+                Auth::requireRole('admin');
+                (new AmbientesController())->update((int)$matches[1]);
+            }
+            break;
+
+        case (preg_match('/^\/ambientes\/estado\/(\d+)$/', $requestUri, $matches) ? true : false):
+            if ($requestMethod === 'POST') {
+                Auth::requireRole('admin');
+                (new AmbientesController())->toggle((int)$matches[1]);
+            }
+            break;
+
+        case '/ambientes/reservas':
+            Auth::requireRole(['admin', 'instructor']);
+            (new AmbientesController())->reservas();
+            break;
+
+        case '/ambientes/reservas/crear':
+            Auth::requireRole(['admin', 'instructor']);
+            (new AmbientesController())->createReserva();
+            break;
+
+        case '/ambientes/reservas/guardar':
+            if ($requestMethod === 'POST') {
+                Auth::requireRole(['admin', 'instructor']);
+                (new AmbientesController())->storeReserva();
+            }
+            break;
+
+        case (preg_match('/^\/ambientes\/reservas\/ver\/(\d+)$/', $requestUri, $matches) ? true : false):
+            Auth::requireRole(['admin', 'instructor']);
+            (new AmbientesController())->showReserva((int)$matches[1]);
+            break;
+
+        case (preg_match('/^\/ambientes\/reservas\/editar\/(\d+)$/', $requestUri, $matches) ? true : false):
+            Auth::requireRole(['admin', 'instructor']);
+            (new AmbientesController())->editReserva((int)$matches[1]);
+            break;
+
+        case (preg_match('/^\/ambientes\/reservas\/actualizar\/(\d+)$/', $requestUri, $matches) ? true : false):
+            if ($requestMethod === 'POST') {
+                Auth::requireRole(['admin', 'instructor']);
+                (new AmbientesController())->updateReserva((int)$matches[1]);
+            }
+            break;
+
+        case (preg_match('/^\/ambientes\/reservas\/cancelar\/(\d+)$/', $requestUri, $matches) ? true : false):
+            if ($requestMethod === 'POST') {
+                Auth::requireRole(['admin', 'instructor']);
+                (new AmbientesController())->cancelReserva((int)$matches[1]);
+            }
+            break;
+
+        case '/ambientes/calendario':
+            Auth::requireRole(['admin', 'instructor']);
+            (new AmbientesController())->calendario();
+            break;
+
+        case '/ambientes/calendario/eventos':
+            Auth::requireRole(['admin', 'instructor']);
+            (new AmbientesController())->calendarEvents();
+            break;
+
+        case '/ambientes/disponibilidad':
+            Auth::requireRole(['admin', 'instructor']);
+            (new AmbientesController())->disponibilidad();
+            break;
+
+        case '/ambientes/reportes/exportar':
+            Auth::requireRole(['admin', 'instructor']);
+            (new AmbientesController())->exportReporte();
+            break;
+
+        // ========================================
         // RUTAS DEL MÓDULO DE REPORTES
         // ========================================
         case '/reportes':

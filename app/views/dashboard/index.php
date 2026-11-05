@@ -113,6 +113,15 @@
                 <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-xl text-xs font-semibold">Activo</span>
             </a>
 
+            <a href="<?= baseUrl('/ambientes') ?>" class="block bg-white rounded-3xl shadow-md border border-primary-100 p-6 hover:shadow-xl hover:-translate-y-0.5 transition">
+                <div class="w-12 h-12 rounded-2xl bg-accent-100 text-accent-700 flex items-center justify-center text-xl mb-4">
+                    <i class="fas fa-building"></i>
+                </div>
+                <h4 class="font-bold text-gray-800 mb-1">Ambientes</h4>
+                <p class="text-sm text-gray-500 mb-3">Administración, disponibilidad y reservas temporales</p>
+                <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-xl text-xs font-semibold">Activo</span>
+            </a>
+
             <a href="<?= baseUrl('/permisos') ?>" class="block bg-white rounded-3xl shadow-md border border-primary-100 p-6 hover:shadow-xl hover:-translate-y-0.5 transition">
                 <div class="w-12 h-12 rounded-2xl bg-primary-100 text-primary-700 flex items-center justify-center text-xl mb-4">
                     <i class="fas fa-file-signature"></i>

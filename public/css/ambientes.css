@@ -1,0 +1,22 @@
+/* Estilos aislados del módulo Ambientes. La paleta y radios vienen del sistema. */
+.amb-calendar-wrap { overflow-x: auto; padding: 1rem; }
+.amb-calendar { min-width: 760px; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border-top: 1px solid #ede7f8; border-left: 1px solid #ede7f8; }
+.amb-calendar-weekday { padding: .7rem .5rem; background: #f5f3fb; color: #5a3ba8; font-size: .72rem; font-weight: 800; text-align: center; text-transform: uppercase; border-right: 1px solid #ede7f8; border-bottom: 1px solid #ede7f8; }
+.amb-calendar-day { min-height: 126px; padding: .5rem; background: rgba(255,255,255,.86); border-right: 1px solid #ede7f8; border-bottom: 1px solid #ede7f8; }
+.amb-calendar-day.is-outside { background: #f9fafb; color: #9ca3af; }
+.amb-calendar-day.is-today { box-shadow: inset 0 0 0 2px #00bcd4; }
+.amb-calendar-date { display: flex; align-items: center; justify-content: space-between; margin-bottom: .35rem; font-size: .75rem; font-weight: 800; }
+.amb-calendar-event { width: 100%; display: block; margin-top: .3rem; padding: .35rem .45rem; border-radius: .6rem; background: #6b46c1; color: #fff; font-size: .68rem; line-height: 1.25; text-align: left; box-shadow: 0 2px 5px rgba(90,59,168,.18); overflow: hidden; }
+.amb-calendar-event:hover { background: #5a3ba8; }
+.amb-calendar-event[disabled] { cursor: default; opacity: .85; }
+.amb-calendar-event-time { display: block; font-weight: 800; }
+.amb-calendar-event-title { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.amb-calendar-loading { padding: 4rem 1rem; text-align: center; color: #6b7280; }
+.amb-calendar-error { margin: 2rem; padding: 1rem; border: 1px solid #fecaca; background: #fef2f2; color: #991b1b; border-radius: 1rem; text-align: center; }
+.amb-availability-card { transition: transform .2s ease, box-shadow .2s ease; }
+.amb-availability-card:hover { transform: translateY(-2px); box-shadow: 0 14px 28px rgba(90,59,168,.12); }
+.dark .amb-calendar-weekday { background: #241a42; color: #d9cef1; border-color: #3b3154; }
+.dark .amb-calendar { border-color: #3b3154; }
+.dark .amb-calendar-day { background: #1c1830; border-color: #3b3154; }
+.dark .amb-calendar-day.is-outside { background: #161322; color: #6b7280; }
+@media (max-width: 640px) { .amb-calendar-wrap { padding: .5rem; } }
