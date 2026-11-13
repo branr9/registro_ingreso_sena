@@ -14,6 +14,19 @@
             <div><label for="titulo" class="block text-sm font-semibold text-gray-700 mb-1"><i class="fas fa-heading text-primary-600"></i> Actividad o motivo *</label><input id="titulo" name="titulo" minlength="3" maxlength="160" value="<?= e($reserva['titulo']??'') ?>" placeholder="Ej: Formación ficha 2678901" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 outline-none" required></div>
             <?php $defaultStart=$preselectedDate.'T'.$preselectedStart; $defaultEnd=$preselectedDate.'T'.$preselectedEnd; ?>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5"><div><label for="inicio" class="block text-sm font-semibold text-gray-700 mb-1"><i class="fas fa-clock text-primary-600"></i> Inicio *</label><input type="datetime-local" id="inicio" name="inicio" value="<?= $editing?date('Y-m-d\TH:i',strtotime($reserva['inicio'])):$defaultStart ?>" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 outline-none" required></div><div><label for="fin" class="block text-sm font-semibold text-gray-700 mb-1"><i class="fas fa-clock text-primary-600"></i> Fin *</label><input type="datetime-local" id="fin" name="fin" value="<?= $editing?date('Y-m-d\TH:i',strtotime($reserva['fin'])):$defaultEnd ?>" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 outline-none" required></div></div>
+            <div class="rounded-2xl border border-primary-100 bg-primary-50 p-4">
+                <label class="inline-flex items-center gap-2 text-sm font-semibold text-gray-700">
+                    <input type="checkbox" id="recurrencia_semanal" name="recurrencia_semanal" value="1" class="rounded border-gray-300 text-primary-700 focus:ring-primary-500">
+                    <i class="fas fa-redo text-primary-600"></i> Repetir semanalmente
+                </label>
+                <p class="text-xs text-gray-600 mt-1 ml-6"><?= $editing
+                    ? 'La reserva actual será la primera ocurrencia y se crearán las siguientes semanas.'
+                    : 'Se creará esta reserva y se repetirá el mismo día y horario durante las siguientes semanas.' ?></p>
+                <div id="recurrenciaOpciones" class="hidden mt-3 ml-6 max-w-sm">
+                    <label for="recurrencia_hasta" class="block text-sm font-semibold text-gray-700 mb-1">Repetir hasta *</label>
+                    <input type="date" id="recurrencia_hasta" name="recurrencia_hasta" min="<?= e($editing ? date('Y-m-d', strtotime($reserva['inicio'])) : $preselectedDate) ?>" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 outline-none">
+                </div>
+            </div>
             <div><label for="descripcion" class="block text-sm font-semibold text-gray-700 mb-1"><i class="fas fa-comment text-primary-600"></i> Descripción</label><textarea id="descripcion" name="descripcion" maxlength="255" rows="3" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 outline-none" placeholder="Información adicional (opcional)"><?= e($reserva['descripcion']??'') ?></textarea></div>
             <div class="bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl px-4 py-3 text-sm"><i class="fas fa-shield-alt mr-1"></i> El sistema comprobará la disponibilidad al guardar y rechazará cualquier horario superpuesto.</div>
             <div class="flex flex-wrap gap-3"><button class="inline-flex items-center gap-2 rounded-2xl bg-primary-700 hover:bg-primary-800 text-white font-semibold px-5 py-2.5 shadow-md"><i class="fas fa-save"></i> Guardar Reserva</button><a href="<?= baseUrl('/ambientes/reservas') ?>" class="inline-flex items-center gap-2 rounded-2xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-5 py-2.5"><i class="fas fa-times"></i> Cancelar</a></div>
@@ -25,6 +38,16 @@
     const start=document.getElementById('inicio'); const end=document.getElementById('fin');
     function sync(){ if(!start.value) return; end.min=start.value; if(!end.value||end.value<=start.value){ const d=new Date(start.value); d.setHours(d.getHours()+1); end.value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+'T'+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }}
     start.addEventListener('change',sync); sync();
+    const recurring=document.getElementById('recurrencia_semanal');
+    const recurringOptions=document.getElementById('recurrenciaOpciones');
+    const recurringUntil=document.getElementById('recurrencia_hasta');
+    if(recurring){
+        recurring.addEventListener('change',function(){
+            recurringOptions.classList.toggle('hidden',!recurring.checked);
+            recurringUntil.required=recurring.checked;
+        });
+        start.addEventListener('change',function(){ recurringUntil.min=start.value.slice(0,10); });
+    }
 })();
 </script>
 <?php require APP_PATH . '/views/layouts/footer.php'; ?>

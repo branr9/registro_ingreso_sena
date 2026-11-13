@@ -213,31 +213,100 @@ class AmbientesModel
         try {
             $this->connection->beginTransaction();
             $this->lockAmbiente((int)$data['ambiente_id']);
-            if ($this->hasOverlap((int)$data['ambiente_id'], $data['inicio'], $data['fin'])) {
-                $this->connection->rollBack();
-                return ['success' => false, 'message' => 'El ambiente ya tiene una reserva que se superpone con ese horario.'];
+
+            $occurrences = $this->buildReservationOccurrences($data);
+            foreach ($occurrences as $occurrence) {
+                if ($this->hasOverlap((int)$data['ambiente_id'], $occurrence['inicio'], $occurrence['fin'])) {
+                    $this->connection->rollBack();
+                    return ['success' => false, 'message' => 'El ambiente ya tiene una reserva que se superpone con uno de los horarios solicitados.'];
+                }
             }
 
-            $this->db->query(
-                "INSERT INTO reservas (
-                    ambiente_id, solicitante_id, responsable_nombre, responsable_documento,
-                    creado_por, titulo, descripcion, inicio, fin, estado
-                 ) VALUES (
-                    :ambiente_id, :solicitante_id, :responsable_nombre, :responsable_documento,
-                    :creado_por, :titulo, :descripcion, :inicio, :fin, 'CREADA'
-                 )",
-                $data
-            );
-            $id = (int)$this->db->lastInsertId();
+            $sql = "INSERT INTO reservas (
+                        ambiente_id, solicitante_id, responsable_nombre, responsable_documento,
+                        creado_por, titulo, descripcion, inicio, fin, estado
+                    ) VALUES (
+                        :ambiente_id, :solicitante_id, :responsable_nombre, :responsable_documento,
+                        :creado_por, :titulo, :descripcion, :inicio, :fin, 'CREADA'
+                    )";
+
+            // La primera ocurrencia es la reserva base. Se inserta y valida su
+            // ID antes de generar las repeticiones semanales.
+            $baseOccurrence = array_shift($occurrences);
+            if ($baseOccurrence === null) {
+                throw new RuntimeException('No se pudo generar la reserva inicial.');
+            }
+            $firstId = $this->insertReservationOccurrence($sql, $data, $baseOccurrence);
+
+            foreach ($occurrences as $occurrence) {
+                $this->insertReservationOccurrence($sql, $data, $occurrence);
+            }
             $this->connection->commit();
-            return ['success' => true, 'id' => $id];
+            return ['success' => true, 'id' => $firstId, 'count' => count($occurrences) + 1];
         } catch (Throwable $e) {
             if ($this->connection->inTransaction()) {
                 $this->connection->rollBack();
             }
-            error_log('Error al crear reserva: ' . $e->getMessage());
+            $this->logReservationError('crear', $e);
             return ['success' => false, 'message' => 'No fue posible registrar la reserva.'];
         }
+    }
+
+    /**
+     * Builds the individual reservations for a one-time or weekly booking.
+     *
+     * @return array<int, array{inicio: string, fin: string}>
+     */
+    private function buildReservationOccurrences(array $data): array
+    {
+        $start = new DateTimeImmutable($data['inicio']);
+        $end = new DateTimeImmutable($data['fin']);
+        $until = !empty($data['recurrencia_hasta'])
+            ? new DateTimeImmutable($data['recurrencia_hasta'] . ' 23:59:59')
+            : $start;
+        $weekly = !empty($data['recurrencia_semanal']);
+        $occurrences = [];
+
+        for ($date = $start; $date <= $until; $date = $date->modify('+7 days')) {
+            $occurrences[] = [
+                'inicio' => $date->format('Y-m-d H:i:s'),
+                'fin' => $date->setTime(
+                    (int)$end->format('H'),
+                    (int)$end->format('i'),
+                    (int)$end->format('s')
+                )->format('Y-m-d H:i:s'),
+            ];
+            if (!$weekly) {
+                break;
+            }
+        }
+
+        return $occurrences;
+    }
+
+    /**
+     * Inserts one occurrence using only placeholders declared by the INSERT.
+     *
+     * @param array{inicio: string, fin: string} $occurrence
+     */
+    private function insertReservationOccurrence(string $sql, array $data, array $occurrence): int
+    {
+        $params = array_intersect_key(
+            array_merge($data, $occurrence),
+            array_flip([
+                'ambiente_id', 'solicitante_id', 'responsable_nombre',
+                'responsable_documento', 'creado_por', 'titulo',
+                'descripcion', 'inicio', 'fin',
+            ])
+        );
+
+        $this->db->query($sql, $params);
+        $id = (int)$this->db->lastInsertId();
+        if ($id < 1) {
+            throw new RuntimeException('La reserva se insertó sin un identificador válido.');
+        }
+
+        return $id;
     }
 
     public function updateReserva(int $id, array $data): array
@@ -245,29 +314,71 @@ class AmbientesModel
         try {
             $this->connection->beginTransaction();
             $this->lockAmbiente((int)$data['ambiente_id']);
-            if ($this->hasOverlap((int)$data['ambiente_id'], $data['inicio'], $data['fin'], $id)) {
-                $this->connection->rollBack();
-                return ['success' => false, 'message' => 'El ambiente ya tiene una reserva que se superpone con ese horario.'];
+
+            $occurrences = $this->buildReservationOccurrences($data);
+            foreach ($occurrences as $index => $occurrence) {
+                $exceptId = $index === 0 ? $id : null;
+                if ($this->hasOverlap((int)$data['ambiente_id'], $occurrence['inicio'], $occurrence['fin'], $exceptId)) {
+                    $this->connection->rollBack();
+                    return ['success' => false, 'message' => 'El ambiente ya tiene una reserva que se superpone con uno de los horarios solicitados.'];
+                }
             }
 
-            $data['id'] = $id;
+            $baseOccurrence = array_shift($occurrences);
+            if ($baseOccurrence === null) {
+                throw new RuntimeException('No se pudo generar la reserva inicial.');
+            }
+            $updateData = array_intersect_key(
+                array_merge($data, $baseOccurrence, ['id' => $id]),
+                array_flip([
+                    'ambiente_id', 'solicitante_id', 'responsable_nombre',
+                    'responsable_documento', 'titulo', 'descripcion',
+                    'inicio', 'fin', 'id',
+                ])
+            );
             $this->db->query(
                 "UPDATE reservas SET ambiente_id = :ambiente_id, solicitante_id = :solicitante_id,
                         responsable_nombre = :responsable_nombre,
                         responsable_documento = :responsable_documento,
                         titulo = :titulo, descripcion = :descripcion, inicio = :inicio, fin = :fin
                  WHERE id = :id AND estado = 'CREADA'",
-                array_diff_key($data, ['creado_por' => true])
+                $updateData
             );
+
+            $insertSql = "INSERT INTO reservas (
+                            ambiente_id, solicitante_id, responsable_nombre, responsable_documento,
+                            creado_por, titulo, descripcion, inicio, fin, estado
+                          ) VALUES (
+                            :ambiente_id, :solicitante_id, :responsable_nombre, :responsable_documento,
+                            :creado_por, :titulo, :descripcion, :inicio, :fin, 'CREADA'
+                          )";
+            foreach ($occurrences as $occurrence) {
+                $this->insertReservationOccurrence($insertSql, $data, $occurrence);
+            }
+
             $this->connection->commit();
-            return ['success' => true, 'id' => $id];
+            return ['success' => true, 'id' => $id, 'count' => count($occurrences) + 1];
         } catch (Throwable $e) {
             if ($this->connection->inTransaction()) {
                 $this->connection->rollBack();
             }
-            error_log('Error al actualizar reserva: ' . $e->getMessage());
+            $this->logReservationError('actualizar', $e);
             return ['success' => false, 'message' => 'No fue posible actualizar la reserva.'];
         }
+    }
+
+    private function logReservationError(string $operation, Throwable $error): void
+    {
+        $message = sprintf(
+            "[%s] Error al %s reserva: %s en %s:%d%s",
+            date('Y-m-d H:i:s'),
+            $operation,
+            $error->getMessage(),
+            $error->getFile(),
+            $error->getLine(),
+            PHP_EOL
+        );
+        error_log($message, 3, STORAGE_PATH . '/logs/ambientes_errors.log');
     }
 
     public function cancelReserva(int $id): bool

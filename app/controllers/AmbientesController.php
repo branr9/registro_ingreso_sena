@@ -179,8 +179,17 @@ class AmbientesController
             setFlashMessage($result['message'], 'error');
             redirect('/ambientes/reservas/crear');
         }
-        setFlashMessage('Reserva registrada exitosamente.', 'success');
-        redirect('/ambientes/reservas/ver/' . $result['id']);
+        $count = (int)($result['count'] ?? 1);
+        setFlashMessage(
+            $count > 1
+                ? "Se registraron {$count} reservas semanales exitosamente."
+                : 'Reserva registrada exitosamente.',
+            'success'
+        );
+
+        // El listado refleja tanto la reserva base como todas sus repeticiones
+        // y evita reabrir en el navegador el ID de una reserva anterior.
+        redirect('/ambientes/reservas');
     }
 
     public function showReserva(int $id): void
@@ -223,10 +232,23 @@ class AmbientesController
             setFlashMessage($error, 'error');
             redirect('/ambientes/reservas/editar/' . $id);
         }
+        // Las repeticiones creadas desde la edición deben conservar el dueño
+        // y el solicitante de la reserva original.
+        $data['creado_por'] = $reserva['creado_por'];
+        $data['solicitante_id'] = $reserva['solicitante_id'];
         $result = $this->model->updateReserva($id, $data);
         if (!$result['success']) {
             setFlashMessage($result['message'], 'error');
             redirect('/ambientes/reservas/editar/' . $id);
+        }
+        $count = (int)($result['count'] ?? 1);
+        if ($count > 1) {
+            $repetitions = $count - 1;
+            setFlashMessage(
+                "Reserva actualizada y {$repetitions} repeticiones semanales creadas exitosamente.",
+                'success'
+            );
+            redirect('/ambientes/reservas');
         }
         setFlashMessage('Reserva actualizada exitosamente.', 'success');
         redirect('/ambientes/reservas/ver/' . $id);
@@ -366,6 +388,8 @@ class AmbientesController
         $responsableDocumento = strtoupper(trim($input['responsable_documento'] ?? ''));
         $titulo = trim($input['titulo'] ?? '');
         $descripcion = trim($input['descripcion'] ?? '');
+        $recurrenciaSemanal = !empty($input['recurrencia_semanal']);
+        $recurrenciaHasta = trim($input['recurrencia_hasta'] ?? '');
         $inicio = $this->parseLocalDateTime($input['inicio'] ?? '');
         $fin = $this->parseLocalDateTime($input['fin'] ?? '');
 
@@ -390,6 +414,18 @@ class AmbientesController
         if ($inicio < new DateTime('today')) {
             return [[], 'No se pueden registrar reservas en fechas pasadas.'];
         }
+        if ($recurrenciaSemanal) {
+            if (!$this->validDate($recurrenciaHasta)) {
+                return [[], 'Seleccione la fecha hasta la que se repetirá la reserva.'];
+            }
+            if ($recurrenciaHasta < $inicio->format('Y-m-d')) {
+                return [[], 'La fecha final de repetición debe ser igual o posterior a la fecha inicial.'];
+            }
+            $limiteRecurrencia = (clone $inicio)->modify('+1 year')->format('Y-m-d');
+            if ($recurrenciaHasta > $limiteRecurrencia) {
+                return [[], 'Las reservas recurrentes pueden programarse como máximo por un año.'];
+            }
+        }
 
         return [[
             'ambiente_id' => $ambienteId,
@@ -401,6 +437,8 @@ class AmbientesController
             'descripcion' => $descripcion !== '' ? $descripcion : null,
             'inicio' => $inicio->format('Y-m-d H:i:s'),
             'fin' => $fin->format('Y-m-d H:i:s'),
+            'recurrencia_semanal' => $recurrenciaSemanal,
+            'recurrencia_hasta' => $recurrenciaSemanal ? $recurrenciaHasta : null,
         ], null];
     }
 
